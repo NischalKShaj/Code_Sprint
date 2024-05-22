@@ -1,0 +1,5 @@
+# adding the dependecy
+node_modules/
+
+# adding the .env file
+.env
