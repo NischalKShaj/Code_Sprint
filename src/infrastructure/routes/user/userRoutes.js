@@ -3,7 +3,7 @@
 // importing the required modules
 const express = require("express");
 const router = express.Router();
-const userController = require("../../controllers/userController");
+const userController = require("../../../adapters/controllers/userController");
 
 // creating the required routes
 router.get("/", userController.getHome);

@@ -1,5 +1,5 @@
 // file for the users controller
-const userUseCase = require("../../core/usecase/userUseCase");
+const userUseCase = require("../../application/usecase/userUseCase");
 
 // creating the controller for the user
 const userController = {

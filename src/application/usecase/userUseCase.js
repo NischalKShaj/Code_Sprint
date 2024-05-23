@@ -1,7 +1,7 @@
 // file for showcasing the users use-cases
 
 // importing the required modules
-const userRepository = require("../../adapters/repositories/userRepository");
+const userRepository = require("../../infrastructure/repositories/userRepository");
 
 // creating the user use-case
 const userUseCase = {
