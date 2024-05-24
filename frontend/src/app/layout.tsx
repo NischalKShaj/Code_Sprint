@@ -1,8 +1,9 @@
+// root layout of the project
 import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
 import "./globals.css";
-import Header from "@/components/partials/Header";
-import Footer from "@/components/partials/Footer";
+import ConditionalHeader from "@/components/partials/ConditionalHeader";
+import ConditionalFooter from "@/components/partials/ConditionalFooter";
 
 const montserrat = Montserrat({
   weight: ["300", "400", "500", "700"],
@@ -24,9 +25,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={montserrat.className}>
-        <Header />
+        <ConditionalHeader />
         {children}
-        <Footer />
+        <ConditionalFooter />
       </body>
     </html>
   );

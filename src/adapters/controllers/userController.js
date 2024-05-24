@@ -8,6 +8,12 @@ const userController = {
     await userUseCase.createUser();
     res.status(200).json("home page");
   },
+  getLogin: async (req, res) => {
+    const user = req.body;
+    console.log(user);
+    await userUseCase.findUser(user);
+    res.status(200).json("login page");
+  },
 };
 
 // exporting the controller

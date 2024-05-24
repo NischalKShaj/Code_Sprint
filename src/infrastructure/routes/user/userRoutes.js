@@ -7,6 +7,7 @@ const userController = require("../../../adapters/controllers/userController");
 
 // creating the required routes
 router.get("/", userController.getHome);
+router.post("/login", userController.getLogin);
 
 // exporting the module
 module.exports = router;

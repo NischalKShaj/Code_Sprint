@@ -9,6 +9,9 @@ const userUseCase = {
   createUser: async () => {
     return await userRepository.getAllUser();
   },
+  findUser: async (user) => {
+    return await userRepository.findUser(user);
+  },
 };
 
 module.exports = userUseCase;
