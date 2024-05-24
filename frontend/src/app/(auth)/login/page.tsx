@@ -1,6 +1,8 @@
 // file to show the login page for the application
 "use client";
 
+import dotenv from "dotenv";
+dotenv.config();
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import React, { ChangeEventHandler, useState } from "react";
@@ -23,7 +25,7 @@ const Login = () => {
     console.log("testing");
     try {
       const response = await axios.post(
-        "http://localhost:4000/login",
+        `${process.env.NEXT_PUBLIC_BASE_URL}/login`,
         formData
       );
       console.log(response.data);
