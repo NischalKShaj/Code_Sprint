@@ -4,14 +4,20 @@ import dotenv from "dotenv";
 dotenv.config();
 import axios from "axios";
 import React, { ChangeEventHandler, useState } from "react";
+import { useRouter } from "next/navigation";
 
 const Signup = () => {
   const [formData, setFormData] = useState({});
+  const router = useRouter();
 
   // function to handle the changing elements in the form
   const handleSignup: ChangeEventHandler<HTMLInputElement> = (e) => {
     const target = e.currentTarget;
-    setFormData({ ...formData, [target.id]: target.value });
+    if (target.type === "radio") {
+      setFormData((prevData) => ({ ...prevData, role: target.value }));
+    } else {
+      setFormData({ ...formData, [target.id]: target.value });
+    }
   };
 
   // function to handle the signup of the user
@@ -20,9 +26,11 @@ const Signup = () => {
     console.log("base url", process.env.NEXT_PUBLIC_BASE_URL);
     try {
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/signup`
+        `${process.env.NEXT_PUBLIC_BASE_URL}/signup`,
+        formData
       );
       console.log(response.data);
+      router.push("/otp");
     } catch (error) {
       console.log("error", error);
     }
@@ -39,6 +47,7 @@ const Signup = () => {
           <input
             type="text"
             id="username"
+            name="username"
             onChange={handleSignup}
             placeholder="username"
             className="p-4 bg-gray-50 border border-gray-300 rounded-lg  w-full mt-3"
@@ -47,6 +56,7 @@ const Signup = () => {
           <input
             type="email"
             id="email"
+            name="email"
             onChange={handleSignup}
             placeholder="email"
             className="p-4 bg-gray-50 border border-gray-300 rounded-lg  w-full mt-3"
@@ -60,6 +70,7 @@ const Signup = () => {
                 onChange={handleSignup}
                 name="role"
                 value="student"
+                required
               />
               <label htmlFor="student">Student</label>
             </div>
@@ -70,6 +81,7 @@ const Signup = () => {
                 name="role"
                 onChange={handleSignup}
                 value="tutor"
+                required
               />
               <label htmlFor="tutor">Tutor</label>
             </div>
@@ -77,6 +89,7 @@ const Signup = () => {
           <input
             type="text"
             id="phone"
+            name="phone"
             placeholder="phone"
             onChange={handleSignup}
             required
@@ -85,6 +98,7 @@ const Signup = () => {
           <input
             type="password"
             id="password"
+            name="password"
             placeholder="password"
             onChange={handleSignup}
             required

@@ -8,6 +8,8 @@ const userController = require("../../../adapters/controllers/userController");
 // creating the required routes
 router.get("/", userController.getHome);
 router.post("/login", userController.getLogin);
+router.post("/signup", userController.postSignup);
+router.post("/otp", userController.validateOtp);
 
 // exporting the module
 module.exports = router;

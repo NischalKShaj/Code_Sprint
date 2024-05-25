@@ -23,7 +23,7 @@ const AdminFooter = () => {
               </div>
               <div className="grid grid-cols-2 gap-4 sm:gap-6 sm:grid-cols-3">
                 <div>
-                  <h2 className="mb-2 text-sm font-semibold text-gray-900 uppercase dark:text-white">
+                  <h2 className="mb-2 text-sm font-semibold text-gray-900 uppercase dark:text-black">
                     Services
                   </h2>
                   <ul className="text-gray-500 dark:text-gray-400 font-medium space-y-2">
@@ -50,7 +50,7 @@ const AdminFooter = () => {
                   </ul>
                 </div>
                 <div>
-                  <h2 className="mb-2 text-sm font-semibold text-gray-900 uppercase dark:text-white">
+                  <h2 className="mb-2 text-sm font-semibold text-gray-900 uppercase dark:text-black">
                     Follow us
                   </h2>
                   <ul className="text-gray-500 dark:text-gray-400 font-medium space-y-2">
@@ -73,7 +73,7 @@ const AdminFooter = () => {
                   </ul>
                 </div>
                 <div>
-                  <h2 className="mb-2 text-sm font-semibold text-gray-900 uppercase dark:text-white">
+                  <h2 className="mb-2 text-sm font-semibold text-gray-900 uppercase dark:text-black">
                     Legal
                   </h2>
                   <ul className="text-gray-500 dark:text-gray-400 font-medium space-y-2">

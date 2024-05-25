@@ -21,9 +21,23 @@ const userUseCase = {
       const newUser = await userRepository.createUser(userData);
       console.log("userUseCase", newUser);
       if (newUser) {
-        return { success: true, data: "user sign-up success" };
+        return { success: true, data: newUser };
       } else {
         return { success: false, data: "user with same email exists" };
+      }
+    } catch (error) {
+      return { success: false, data: error.message };
+    }
+  },
+
+  // for validating the user
+  validateUser: async (userData) => {
+    try {
+      const newUser = await userRepository.validateUser(userData);
+      if (newUser) {
+        return { success: true, data: newUser };
+      } else {
+        return { success: false, data: "user not found" };
       }
     } catch (error) {
       return { success: false, data: error.message };

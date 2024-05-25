@@ -2,7 +2,7 @@
 const mongoose = require("mongoose");
 
 // creating schema for the database
-const users = new mongoose.Schema(
+const temporaryUsers = new mongoose.Schema(
   {
     username: {
       type: String,
@@ -45,4 +45,4 @@ const users = new mongoose.Schema(
 );
 
 // exporting the collection
-module.exports = new mongoose.model("users", users);
+module.exports = new mongoose.model("users", temporaryUsers);

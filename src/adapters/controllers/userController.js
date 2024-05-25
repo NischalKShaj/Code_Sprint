@@ -1,5 +1,13 @@
 // file for the users controller
 const userUseCase = require("../../application/usecase/userUseCase");
+const tutorUseCase = require("../../application/usecase/tutorUseCase");
+const EmailService = require("../../infrastructure/services/mailer");
+
+// function to generate otp
+const generateOTP = () => {
+  console.log("inside the function");
+  return Math.floor(1000 + Math.random() * 9000).toString();
+};
 
 // creating the controller for the user
 const userController = {
@@ -16,7 +24,7 @@ const userController = {
     try {
       const details = await userUseCase.findUser(user);
       if (details.success) {
-        res.status(202).json("user logged successfully");
+        res.status(202).json(details.data);
       } else {
         res.status(401).json({ message: "invalid credentials" });
       }
@@ -28,13 +36,45 @@ const userController = {
   // controller for getting the signup page
   postSignup: async (req, res) => {
     try {
+      const role = req.body.role;
+      console.log("role", role);
       const userData = req.body;
-      const result = await userUseCase.userSignup(userData);
+      console.log(userData);
+
+      const otp = generateOTP();
+      userData.otp = otp;
+      console.log("otp", userData.otp);
+
+      let result;
+      if (role === "student") {
+        result = await userUseCase.userSignup(userData);
+      } else if (role === "tutor") {
+        result = await tutorUseCase.tutorSignup(userData);
+      }
+
+      const emailService = new EmailService();
+      emailService.sendOtpEmail(userData.email, otp);
+
       console.log("controller", result);
       if (result.success) {
-        res.status(201).json(result.data);
+        res.status(201).json({ ...result.data, otp });
       } else {
         res.status(409).json(result.data);
+      }
+    } catch (error) {
+      res.status(500).json({ message: "internal server error" });
+    }
+  },
+
+  // signing the user after validating the correct otp
+  validateOtp: async (req, res) => {
+    try {
+      const userOtp = req.body;
+      const result = await userUseCase.validateUser(userOtp);
+      if (result.success) {
+        res.status(201).json("user signed successfully");
+      } else {
+        res.status(409).json("invalid otp");
       }
     } catch (error) {
       res.status(500).json({ message: "internal server error" });
