@@ -3,8 +3,11 @@ import Link from "next/link";
 import Image from "next/image";
 import Login from "../button/Login";
 import Signup from "../button/Signup";
+import { AppState } from "@/app/store";
+import Logout from "../button/Logout";
 
 const Header = () => {
+  const { isAuthorized, user } = AppState();
   return (
     <>
       <header className="bg-[#F0E6E6] flex">
@@ -50,8 +53,17 @@ const Header = () => {
             <Link href="/discuss">Discuss</Link>
           </li>
         </ul>
-        <Login />
-        <Signup />
+        {isAuthorized ? (
+          <div>
+            <p>{user?.email}</p>
+            <Logout />
+          </div>
+        ) : (
+          <div>
+            <Login />
+            <Signup />
+          </div>
+        )}
       </header>
     </>
   );

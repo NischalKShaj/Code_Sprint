@@ -6,10 +6,14 @@ dotenv.config();
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import React, { ChangeEventHandler, useState } from "react";
+import { AppState } from "@/app/store";
 
 const Login = () => {
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState<{ email: string; password: string }>(
+    { email: "", password: "" }
+  );
   const router = useRouter();
+  const login = AppState((state) => state.isLoggedIn);
 
   // function for the changing value in the form
   const handleLogin: ChangeEventHandler<HTMLInputElement> = (e) => {
@@ -30,6 +34,7 @@ const Login = () => {
         { ...formData, selectedRole }
       );
       console.log(response.data);
+      login({ email: formData.email });
       router.push("/");
     } catch (error) {
       console.log("error", error);
