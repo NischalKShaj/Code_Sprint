@@ -69,7 +69,8 @@ const userController = {
   // signing the user after validating the correct otp
   validateOtp: async (req, res) => {
     try {
-      const userOtp = req.body;
+      const otp = req.body;
+      const userOtp = Object.values(otp).join("");
       const result = await userUseCase.validateUser(userOtp);
       if (result.success) {
         res.status(201).json("user signed successfully");

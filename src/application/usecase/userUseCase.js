@@ -31,9 +31,9 @@ const userUseCase = {
   },
 
   // for validating the user
-  validateUser: async (userData) => {
+  validateUser: async (userOtp) => {
     try {
-      const newUser = await userRepository.validateUser(userData);
+      const newUser = await userRepository.validateUser(userOtp);
       if (newUser) {
         return { success: true, data: newUser };
       } else {

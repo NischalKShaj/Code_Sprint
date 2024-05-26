@@ -45,4 +45,4 @@ const temporaryUsers = new mongoose.Schema(
 );
 
 // exporting the collection
-module.exports = new mongoose.model("users", temporaryUsers);
+module.exports = new mongoose.model("temporaryUsers", temporaryUsers);

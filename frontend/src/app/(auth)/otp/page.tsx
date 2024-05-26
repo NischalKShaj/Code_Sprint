@@ -23,7 +23,8 @@ const OTP = () => {
         `${process.env.NEXT_PUBLIC_BASE_URL}/otp`,
         otp
       );
-      router.push("/otp");
+      console.log(response.data);
+      router.push("/login");
     } catch (error) {
       console.log("error", error);
     }

@@ -2,13 +2,14 @@
 
 // importing the modules required
 const TemporaryUserCollection = require("../../core/entities/temporaryUserCollection");
+const UserCollection = require("../../core/entities/userCollection");
 const bcryptjs = require("bcryptjs");
 
 // creating userRepository
 const userRepository = {
   // method to get all the users
   getAllUser: async () => {
-    const users = await TemporaryUserCollection.find();
+    const users = await UserCollection.find();
     console.log("users");
   },
 
@@ -50,22 +51,25 @@ const userRepository = {
   },
 
   // method to check whether the user valid or not
-  validateUser: async (userData) => {
+  validateUser: async (userOtp) => {
     try {
-      const userOtp = userData.otp;
+      // const userOtp = userData.otp;
       const userDetail = await TemporaryUserCollection.findOne({
         otp: userOtp,
       });
       if (userDetail) {
         let user = new UserCollection({
-          username: userData.username,
-          email: userData.email,
-          phone: userData.phone,
-          password: userData.password,
-          otp: userData.otp,
+          username: userDetail.username,
+          email: userDetail.email,
+          phone: userDetail.phone,
+          password: userDetail.password,
+          otp: userOtp,
         });
         await user.save();
-        console.log("user");
+        console.log("user", user);
+
+        // removing the user from the temporary collection
+        await TemporaryUserCollection.deleteOne({ otp: userOtp });
         return user;
       } else {
         return null;
