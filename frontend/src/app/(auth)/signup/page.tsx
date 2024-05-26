@@ -15,6 +15,7 @@ const Signup = () => {
     const target = e.currentTarget;
     if (target.type === "radio") {
       setFormData((prevData) => ({ ...prevData, role: target.value }));
+      localStorage.setItem("selectedRole", target.value);
     } else {
       setFormData({ ...formData, [target.id]: target.value });
     }

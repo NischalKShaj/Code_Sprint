@@ -32,4 +32,4 @@ const tutor = new mongoose.Schema(
 );
 
 // exporting the collection
-module.exports = new mongoose.model("tutor", tutor);
+module.exports = new mongoose.model("TemporaryTutor", tutor);

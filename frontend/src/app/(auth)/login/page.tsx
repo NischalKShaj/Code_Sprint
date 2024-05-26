@@ -24,9 +24,10 @@ const Login = () => {
 
     console.log("testing");
     try {
+      const selectedRole = localStorage.getItem("selectedRole");
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_BASE_URL}/login`,
-        formData
+        { ...formData, selectedRole }
       );
       console.log(response.data);
       router.push("/");

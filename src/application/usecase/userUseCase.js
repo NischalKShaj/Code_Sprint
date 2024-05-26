@@ -12,7 +12,16 @@ const userUseCase = {
 
   // for login purpose
   findUser: async (user) => {
-    return await userRepository.findUser(user);
+    try {
+      const result = await userRepository.findUser(user);
+      if (result) {
+        return { success: true, data: result };
+      } else {
+        return { success: false, data: "invalid credentials" };
+      }
+    } catch (error) {
+      return { success: false, data: error.message };
+    }
   },
 
   // for creating new user

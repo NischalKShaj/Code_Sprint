@@ -19,9 +19,10 @@ const OTP = () => {
   const handleOtp = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
+      const selectedRole = localStorage.getItem("selectedRole");
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_BASE_URL}/otp`,
-        otp
+        { ...otp, selectedRole }
       );
       console.log(response.data);
       router.push("/login");

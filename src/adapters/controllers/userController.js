@@ -22,7 +22,14 @@ const userController = {
     const user = req.body;
     console.log(user);
     try {
-      const details = await userUseCase.findUser(user);
+      let details;
+      if (user.selectedRole === "student") {
+        console.log("student");
+        details = await userUseCase.findUser(user);
+      } else if (user.selectedRole === "tutor") {
+        console.log("tutor");
+        details = await tutorUseCase.findTutor(user);
+      }
       if (details.success) {
         res.status(202).json(details.data);
       } else {
@@ -66,12 +73,27 @@ const userController = {
     }
   },
 
-  // signing the user after validating the correct otp
+  // signing the user/tutor after validating the correct otp
   validateOtp: async (req, res) => {
     try {
       const otp = req.body;
-      const userOtp = Object.values(otp).join("");
-      const result = await userUseCase.validateUser(userOtp);
+      console.log("otp", otp);
+
+      const userOtp = Object.entries(otp)
+        .filter(([key]) => key.startsWith("otp"))
+        .map(([_, value]) => value)
+        .join("");
+      console.log("userOtp", userOtp);
+
+      const role = otp.selectedRole;
+
+      let result;
+      if (role === "student") {
+        result = await userUseCase.validateUser(userOtp);
+      } else if (role === "tutor") {
+        result = await tutorUseCase.validateOtp(userOtp);
+      }
+
       if (result.success) {
         res.status(201).json("user signed successfully");
       } else {

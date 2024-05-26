@@ -15,12 +15,22 @@ const userRepository = {
 
   // method for login
   findUser: async (user) => {
-    const users = await use.email;
-    console.log("user", user);
-    if (user.email === users) {
-      console.log("valid credentials");
-    } else {
-      console.log("invalid");
+    try {
+      const userEmail = user.email;
+      const userPassword = user.password;
+      const userDetails = await UserCollection.findOne({ email: userEmail });
+      const validPassword = bcryptjs.compareSync(
+        userPassword,
+        userDetails.password
+      );
+      if (userDetails.email === userEmail && validPassword) {
+        return userDetails;
+      } else {
+        return null;
+      }
+    } catch (error) {
+      console.log("error");
+      throw error;
     }
   },
 
