@@ -20,11 +20,12 @@ export const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     async signIn({ user, account }) {
+      const { email, image, name } = user;
       if (account?.provider === "google") {
         try {
           const response = await axios.post(
             `${process.env.NEXT_PUBLIC_BASE_URL}/api/google`,
-            user
+            { email, image, name }
           );
           if (response.status !== 200) {
             throw new Error("backend failed to load the user details");
@@ -36,7 +37,7 @@ export const authOptions: NextAuthOptions = {
         try {
           const response = await axios.post(
             `${process.env.NEXT_PUBLIC_BASE_URL}/api/github`,
-            user
+            { email, name, image }
           );
           if (response.status !== 200) {
             throw new Error("backend failed to load the user details");

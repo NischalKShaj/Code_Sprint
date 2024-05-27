@@ -5,7 +5,7 @@ import dotenv from "dotenv";
 dotenv.config();
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import React, { ChangeEventHandler, useState } from "react";
+import React, { ChangeEventHandler, useEffect, useState } from "react";
 import { AppState } from "@/app/store";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -13,6 +13,7 @@ import { faGoogle } from "@fortawesome/free-brands-svg-icons";
 import { faGithub } from "@fortawesome/free-brands-svg-icons";
 
 const Login = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [formData, setFormData] = useState<{ email: string; password: string }>(
     { email: "", password: "" }
   );
@@ -46,6 +47,36 @@ const Login = () => {
   };
 
   //  for google and github authentication purpose
+  const handleOAuth = async (provider: string) => {
+    try {
+      if (provider === "google") {
+        await signIn(provider, {
+          callbackUrl: "/",
+          onSuccess: () => {
+            setIsAuthenticated(true);
+          },
+        });
+      } else if (provider === "github") {
+        await signIn(provider, {
+          callbackUrl: "/",
+          onSuccess: () => {
+            setIsAuthenticated(true);
+          },
+        });
+      }
+    } catch (error) {
+      console.error("error", error);
+      setIsAuthenticated(false);
+    }
+  };
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      console.log("inside");
+
+      router.push("/");
+    }
+  }, [isAuthenticated]);
 
   return (
     <div className="flex flex-col items-center mb-36 bg-white mt-16">
@@ -54,14 +85,14 @@ const Login = () => {
       </h3>
       <section className="bg-[#D9D9D9] p-8 h-[400px] w-[370px] rounded-lg shadow-md">
         <button
-          onClick={() => signIn("google")}
+          onClick={() => handleOAuth("google")}
           className="p-4 bg-gray-50 border test border-gray-300 rounded-lg  w-full mt-3"
         >
           <FontAwesomeIcon className="mr-5" icon={faGoogle} />
           continue with google
         </button>
         <button
-          onClick={() => signIn("github")}
+          onClick={() => handleOAuth("github")}
           className="p-4 bg-gray-50 border border-gray-300 rounded-lg  w-full mt-3"
         >
           <FontAwesomeIcon className="mr-5" icon={faGithub} />
