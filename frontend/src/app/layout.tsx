@@ -4,6 +4,9 @@ import { Montserrat } from "next/font/google";
 import "./globals.css";
 import ConditionalHeader from "@/components/partials/ConditionalHeader";
 import ConditionalFooter from "@/components/partials/ConditionalFooter";
+import "@fortawesome/fontawesome-svg-core/styles.css";
+import { config } from "@fortawesome/fontawesome-svg-core";
+config.autoAddCss = false;
 
 const montserrat = Montserrat({
   weight: ["300", "400", "500", "700"],

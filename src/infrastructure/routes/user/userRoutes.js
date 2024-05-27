@@ -10,6 +10,8 @@ router.get("/", userController.getHome);
 router.post("/login", userController.getLogin);
 router.post("/signup", userController.postSignup);
 router.post("/otp", userController.validateOtp);
+router.post("/api/google");
+router.post("/api/github");
 
 // exporting the module
 module.exports = router;
