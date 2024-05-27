@@ -2,6 +2,7 @@
 
 // importing the required modules
 const userRepository = require("../../infrastructure/repositories/userRepository");
+const generateJWT = require("../../infrastructure/services/jwtServices");
 
 // creating the user use-case
 const userUseCase = {
@@ -15,7 +16,8 @@ const userUseCase = {
     try {
       const result = await userRepository.findUser(user);
       if (result) {
-        return { success: true, data: result };
+        const token = generateJWT(result.email);
+        return { success: true, data: result, token };
       } else {
         return { success: false, data: "invalid credentials" };
       }
