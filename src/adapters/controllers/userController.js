@@ -20,18 +20,15 @@ const userController = {
   //controller for getting the login page
   getLogin: async (req, res) => {
     const user = req.body;
-    console.log(user);
+    console.log("user", user);
     try {
-      let details;
-      if (user.selectedRole === "student") {
-        console.log("student");
-        details = await userUseCase.findUser(user);
-      } else if (user.selectedRole === "tutor") {
-        console.log("tutor");
-        details = await tutorUseCase.findTutor(user);
-      }
+      const details = await userUseCase.findUser(user);
+      console.log("details", details);
       if (details.success) {
-        res.status(202).json(details.data);
+        res
+          .cookie("access_token", details.token, { httpOnly: true })
+          .status(202)
+          .json(details.data);
       } else {
         res.status(401).json({ message: "invalid credentials" });
       }
@@ -101,6 +98,14 @@ const userController = {
       }
     } catch (error) {
       res.status(500).json({ message: "internal server error" });
+    }
+  },
+  // controller for log-out
+  logoutUser: (req, res) => {
+    try {
+      res.clearCookie("access_token").status(200).json("logout success");
+    } catch (error) {
+      console.error("error", error);
     }
   },
 };

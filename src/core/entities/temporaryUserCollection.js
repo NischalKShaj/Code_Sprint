@@ -40,6 +40,10 @@ const temporaryUsers = new mongoose.Schema(
     otp: {
       type: String,
     },
+    role: {
+      type: String,
+      default: "student",
+    },
   },
   { timestamps: true }
 );

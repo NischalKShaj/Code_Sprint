@@ -5,6 +5,7 @@ const dotenv = require("dotenv");
 const mongoose = require("../database/connect");
 const cors = require("cors");
 const userRouter = require("../routes/user/userRoutes");
+const cookieParser = require("cookie-parser");
 dotenv.config();
 
 // configuring the app
@@ -13,8 +14,11 @@ const app = express();
 // setting the port for the server
 const port = process.env.PORT;
 
+// configuring the cookie-parser
+app.use(cookieParser());
+
 // enabling cors policy for the application
-app.use(cors({ origin: "http://localhost:3000" }));
+app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 
 // for passing the data
 app.use(express.json());

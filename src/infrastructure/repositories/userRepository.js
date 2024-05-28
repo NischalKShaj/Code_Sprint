@@ -3,6 +3,7 @@
 // importing the modules required
 const TemporaryUserCollection = require("../../core/entities/temporaryUserCollection");
 const UserCollection = require("../../core/entities/userCollection");
+const TutorCollection = require("../../core/entities/tutorCollection");
 const bcryptjs = require("bcryptjs");
 
 // creating userRepository
@@ -19,15 +20,26 @@ const userRepository = {
       const userEmail = user.email;
       const userPassword = user.password;
       const userDetails = await UserCollection.findOne({ email: userEmail });
-      const validPassword = bcryptjs.compareSync(
-        userPassword,
-        userDetails.password
-      );
-      if (userDetails.email === userEmail && validPassword) {
+      const tutorDetails = await TutorCollection.findOne({ email: userEmail });
+
+      // Check if the user details exists and validate password
+      if (
+        userDetails &&
+        bcryptjs.compareSync(userPassword, userDetails.password)
+      ) {
         return userDetails;
-      } else {
-        return null;
       }
+
+      // Check if tutor details exist and validate password
+      if (
+        tutorDetails &&
+        bcryptjs.compareSync(userPassword, tutorDetails.password)
+      ) {
+        return tutorDetails;
+      }
+
+      // If neither match, return null
+      return null;
     } catch (error) {
       console.log("error");
       throw error;

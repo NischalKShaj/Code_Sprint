@@ -24,6 +24,7 @@ const OTP = () => {
         `${process.env.NEXT_PUBLIC_BASE_URL}/otp`,
         { ...otp, selectedRole }
       );
+      localStorage.removeItem("selectedRole");
       console.log(response.data);
       router.push("/login");
     } catch (error) {

@@ -7,7 +7,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import React, { ChangeEventHandler, useEffect, useState } from "react";
 import { AppState } from "@/app/store";
-import { signIn, signOut, useSession } from "next-auth/react";
+import { signIn } from "next-auth/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGoogle } from "@fortawesome/free-brands-svg-icons";
 import { faGithub } from "@fortawesome/free-brands-svg-icons";
@@ -19,6 +19,7 @@ const Login = () => {
   );
   const router = useRouter();
   const login = AppState((state) => state.isLoggedIn);
+  const authorized = AppState((state) => state.isAuthorized);
 
   // function for the changing value in the form
   const handleLogin: ChangeEventHandler<HTMLInputElement> = (e) => {
@@ -33,10 +34,11 @@ const Login = () => {
 
     console.log("testing");
     try {
-      const selectedRole = localStorage.getItem("selectedRole");
+      // const selectedRole = localStorage.getItem("selectedRole");
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_BASE_URL}/login`,
-        { ...formData, selectedRole }
+        formData,
+        { withCredentials: true }
       );
       console.log(response.data);
       login({ email: formData.email });
@@ -70,13 +72,12 @@ const Login = () => {
     }
   };
 
+  // use effect to check the user is authenticated or not
   useEffect(() => {
-    if (isAuthenticated) {
-      console.log("inside");
-
+    if (authorized) {
       router.push("/");
     }
-  }, [isAuthenticated]);
+  }, [authorized]);
 
   return (
     <div className="flex flex-col items-center mb-36 bg-white mt-16">

@@ -1,13 +1,29 @@
 // file for the header
+"use client";
 import Link from "next/link";
 import Image from "next/image";
 import Login from "../button/Login";
 import Signup from "../button/Signup";
 import { AppState } from "@/app/store";
 import Logout from "../button/Logout";
+import { useEffect, useState } from "react";
 
 const Header = () => {
+  const [isLoading, setIsLoading] = useState(true);
   const { isAuthorized, user } = AppState();
+  const authorized = AppState((state) => state.isAuthorized);
+
+  useEffect(() => {
+    // Assuming AppState sets its state asynchronously
+    // Set isLoading to false once the state is ready
+    setIsLoading(false);
+  }, []);
+
+  useEffect(() => {});
+
+  if (isLoading) {
+    return <div>Loading...</div>; // Or a skeleton screen
+  }
   return (
     <>
       <header className="bg-[#F0E6E6] flex">
@@ -53,17 +69,19 @@ const Header = () => {
             <Link href="/discuss">Discuss</Link>
           </li>
         </ul>
-        {isAuthorized ? (
-          <div>
-            <p>{user?.email}</p>
-            <Logout />
-          </div>
-        ) : (
-          <div>
-            <Login />
-            <Signup />
-          </div>
-        )}
+        <div>
+          {authorized ? (
+            <div>
+              <Logout />
+              <p>{user?.email}</p>
+            </div>
+          ) : (
+            <div>
+              <Login />
+              <Signup />
+            </div>
+          )}
+        </div>
       </header>
     </>
   );

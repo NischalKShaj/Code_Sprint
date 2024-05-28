@@ -13,6 +13,7 @@ router.post("/signup", userController.postSignup);
 router.post("/otp", userController.validateOtp);
 router.post("/api/google", oAuthController.postOAuth);
 router.post("/api/github", oAuthController.postOAuth);
+router.get("/logout", userController.logoutUser);
 
 // exporting the module
 module.exports = router;

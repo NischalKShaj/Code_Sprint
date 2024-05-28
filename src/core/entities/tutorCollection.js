@@ -27,6 +27,10 @@ const tutor = new mongoose.Schema(
     otp: {
       type: String,
     },
+    role: {
+      type: String,
+      default: "tutor",
+    },
   },
   { timestamps: true }
 );

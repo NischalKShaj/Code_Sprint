@@ -15,6 +15,7 @@ const userUseCase = {
   findUser: async (user) => {
     try {
       const result = await userRepository.findUser(user);
+      console.log("result", result);
       if (result) {
         const token = generateJWT(result.email);
         return { success: true, data: result, token };
