@@ -3,8 +3,18 @@ import { create } from "zustand";
 
 interface State {
   isAuthorized: boolean;
-  user: { email: string } | null;
-  isLoggedIn: (user: { email: string }) => void;
+  user: {
+    email: string;
+    role: string;
+    username: string;
+    profileImage: string;
+  } | null;
+  isLoggedIn: (user: {
+    email: string;
+    role: string;
+    username: string;
+    profileImage: string;
+  }) => void;
   isLoggedOut: () => void;
 }
 

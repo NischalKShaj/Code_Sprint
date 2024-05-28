@@ -14,15 +14,14 @@ const Header = () => {
   const authorized = AppState((state) => state.isAuthorized);
 
   useEffect(() => {
-    // Assuming AppState sets its state asynchronously
-    // Set isLoading to false once the state is ready
     setIsLoading(false);
   }, []);
 
   useEffect(() => {});
 
   if (isLoading) {
-    return <div>Loading...</div>; // Or a skeleton screen
+    // make it a skeleton
+    return <div>Loading...</div>;
   }
   return (
     <>
@@ -60,10 +59,24 @@ const Header = () => {
             <Link href="/course">Course</Link>
           </li>
           <li>
-            <Link href="/contest">Contest</Link>
+            {user ? (
+              user.role === "student" ? (
+                <Link href="/contest">Contest</Link>
+              ) : user.role === "tutor" ? (
+                <Link href="/mycourse">My Course</Link>
+              ) : null // Add a fallback or null if needed
+            ) : (
+              <Link href="/contest">Contest</Link>
+            )}
           </li>
           <li>
-            <Link href="/problems">Problems</Link>
+            {user ? (
+              user.role === "student" ? (
+                <Link href="/problems">Problems</Link>
+              ) : user.role === "tutor" ? null : null
+            ) : (
+              <Link href="/problems">Problems</Link>
+            )}
           </li>
           <li>
             <Link href="/discuss">Discuss</Link>
@@ -71,9 +84,15 @@ const Header = () => {
         </ul>
         <div>
           {authorized ? (
-            <div>
+            <div className="flex">
               <Logout />
-              <p>{user?.email}</p>
+              {/* <Image
+                src={user?.profileImage || "null"}
+                width={250}
+                height={250}
+                alt="logo"
+              /> */}
+              <p className="mt-[76px] mx-8">{user?.username}</p>
             </div>
           ) : (
             <div>

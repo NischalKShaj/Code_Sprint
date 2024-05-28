@@ -21,22 +21,30 @@ const temporaryUsers = new mongoose.Schema(
       default:
         "https://i.pinimg.com/736x/c0/27/be/c027bec07c2dc08b9df60921dfd539bd.jpg",
     },
-    course: {
-      type: [String],
-      default: [],
-    },
-    tutors: {
-      type: [String],
-      default: [],
-    },
-    problems: {
-      type: [String],
-      default: [],
-    },
-    dailyProblems: {
-      type: [String],
-      default: [],
-    },
+    course: [
+      {
+        type: String,
+        default: [],
+      },
+    ],
+    tutors: [
+      {
+        type: String,
+        default: [],
+      },
+    ],
+    problems: [
+      {
+        type: String,
+        default: [],
+      },
+    ],
+    dailyProblems: [
+      {
+        type: String,
+        default: [],
+      },
+    ],
     otp: {
       type: String,
     },

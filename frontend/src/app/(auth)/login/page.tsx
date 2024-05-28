@@ -41,7 +41,14 @@ const Login = () => {
         { withCredentials: true }
       );
       console.log(response.data);
-      login({ email: formData.email });
+      const role = response.data.role;
+      console.log("role", role);
+      login({
+        email: response.data.email,
+        role: response.data.role,
+        username: response.data.username,
+        profileImage: response.data.profileImage,
+      });
       router.push("/");
     } catch (error) {
       console.log("error", error);

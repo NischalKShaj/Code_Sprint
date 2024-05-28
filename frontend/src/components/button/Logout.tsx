@@ -22,7 +22,7 @@ const Logout = () => {
     <div>
       <button
         onClick={handleLogout}
-        className="bg-[#686DE0] text-white font-bold py-2 px-4 rounded-xl absolute mr-3 mt-16 mx-24"
+        className="bg-[#686DE0] text-white font-bold py-2 px-4 rounded-xl mr-3 mt-16 mx-44 fixed"
       >
         Logout
       </button>
