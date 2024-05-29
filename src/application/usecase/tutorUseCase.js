@@ -2,6 +2,7 @@
 
 // importing the required modules
 const tutorRepository = require("../../infrastructure/repositories/tutorRepository");
+const multer = require("../../infrastructure/services/aws/s3bucket");
 
 // creating the use case for tutor
 const tutorUseCase = {
@@ -34,6 +35,7 @@ const tutorUseCase = {
       return { success: false, data: error.message };
     }
   },
+
   // for validating the otp and registering the tutor
   validateOtp: async (userOtp) => {
     try {
@@ -45,6 +47,18 @@ const tutorUseCase = {
       }
     } catch (error) {
       return { success: false, data: error.message };
+    }
+  },
+
+  // for adding the courses
+  addCourses: async (courseDetails) => {
+    try {
+      const upload = multer();
+      upload(req, res, (err) => {
+        console.log("error", err);
+      });
+    } catch (error) {
+      console.error("error", error);
     }
   },
 };
