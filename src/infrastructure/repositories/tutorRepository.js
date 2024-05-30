@@ -55,6 +55,7 @@ const tutorRepository = {
       throw error;
     }
   },
+
   // method for validating the tutor's otp
   validateOtp: async (userOtp) => {
     try {

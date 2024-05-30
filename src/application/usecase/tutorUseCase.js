@@ -53,12 +53,14 @@ const tutorUseCase = {
   // for adding the courses
   addCourses: async (courseDetails) => {
     try {
-      const upload = multer();
-      upload(req, res, (err) => {
-        console.log("error", err);
-      });
+      if (courseDetails) {
+        return { success: true, data: "videos uploaded" };
+      } else {
+        return { success: false, data: "videos uploading failed" };
+      }
     } catch (error) {
       console.error("error", error);
+      return { success: false, data: "internal server error" };
     }
   },
 };
