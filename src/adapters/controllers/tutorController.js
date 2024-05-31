@@ -1,8 +1,17 @@
+// file for tutor controller
+
+// importing the required modules
 const upload = require("../../infrastructure/services/aws/s3bucket");
 const tutorUseCase = require("../../application/usecase/tutorUseCase");
 
 const tutorController = {
+  //controller for getting the page
+  getCourse: async (req, res) => {},
+
+  // controller for adding course
   addCourse: async (req, res) => {
+    const userDetails = req.query.userEmail;
+    console.log("userDetails", userDetails);
     upload(req, res, async (err) => {
       if (err) {
         console.error("Upload error:", err);
@@ -11,6 +20,8 @@ const tutorController = {
       try {
         const courseDetails = req.files;
         console.log("courseDetails", courseDetails);
+        const course = req.body;
+        console.log("course Data", course.course_name);
 
         if (!courseDetails) {
           return res
@@ -18,13 +29,17 @@ const tutorController = {
             .json({ success: false, data: "No files uploaded" });
         }
 
-        const courses = await tutorUseCase.addCourses(courseDetails);
-        if (courses.success) {
-          console.log("success", courses);
-          res.status(200).json(courses.data);
+        const result = await tutorUseCase.addCourses(
+          course,
+          courseDetails,
+          userDetails
+        );
+        if (result.success) {
+          console.log("success", result);
+          res.status(200).json(result.data);
         } else {
-          console.error("error", courses.data);
-          res.status(400).json(courses.data);
+          console.error("error", result.data);
+          res.status(400).json(result.data);
         }
       } catch (error) {
         console.error("error", error);

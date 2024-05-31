@@ -4,12 +4,14 @@ import { create } from "zustand";
 interface State {
   isAuthorized: boolean;
   user: {
+    id: string;
     email: string;
     role: string;
     username: string;
     profileImage: string;
   } | null;
   isLoggedIn: (user: {
+    id: string;
     email: string;
     role: string;
     username: string;

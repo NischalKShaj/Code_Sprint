@@ -44,6 +44,7 @@ const Login = () => {
       const role = response.data.role;
       console.log("role", role);
       login({
+        id: response.data._id,
         email: response.data.email,
         role: response.data.role,
         username: response.data.username,

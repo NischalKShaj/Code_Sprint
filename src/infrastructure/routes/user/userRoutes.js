@@ -16,6 +16,7 @@ router.post("/otp", userController.validateOtp);
 router.post("/api/google", oAuthController.postOAuth);
 router.post("/api/github", oAuthController.postOAuth);
 router.get("/logout", userController.logoutUser);
+router.post("/addCourse/:id", tutorController.getCourse);
 router.post("/uploads", tutorController.addCourse);
 
 // exporting the module

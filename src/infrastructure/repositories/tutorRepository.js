@@ -3,6 +3,7 @@
 // importing the required modules
 const TutorCollection = require("../../core/entities/user/tutorCollection");
 const TemporaryTutorCollection = require("../../core/entities/temporary/temporaryTutorCollection");
+const CourseCollection = require("../../core/entities/course/courseCollection");
 const bcryptjs = require("bcryptjs");
 
 // creating tutor repository
@@ -77,6 +78,35 @@ const tutorRepository = {
     } catch (error) {
       console.log(error);
       throw error;
+    }
+  },
+
+  // method for adding the courses to the database according to the tutor
+  addCourses: async (course, courses, userData) => {
+    try {
+      const tutor = await TutorCollection.findOne({ email: userData });
+      if (tutor) {
+        const videoDetails = courses.map((course) => ({
+          url: course.location,
+          key: course.key,
+          originalname: course.originalname,
+        }));
+        const url = videoDetails.map((video) => video.url);
+        const courseData = new CourseCollection({
+          course_name: course.course_name,
+          course_category: course.course_category,
+          number_of_videos: course.number_of_videos,
+          tutor: tutor._id,
+          videos: url,
+        });
+        await courseData.save();
+        console.log("courseData", courseData);
+        return courseData;
+      } else {
+        return null;
+      }
+    } catch (error) {
+      console.error("error", error);
     }
   },
 };

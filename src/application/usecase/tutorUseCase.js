@@ -51,9 +51,14 @@ const tutorUseCase = {
   },
 
   // for adding the courses
-  addCourses: async (courseDetails) => {
+  addCourses: async (course, courseDetails, userDetails) => {
     try {
-      if (courseDetails) {
+      const userData = await tutorRepository.addCourses(
+        course,
+        courseDetails,
+        userDetails
+      );
+      if (userData) {
         return { success: true, data: "videos uploaded" };
       } else {
         return { success: false, data: "videos uploading failed" };
