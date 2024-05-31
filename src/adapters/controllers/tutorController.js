@@ -6,7 +6,21 @@ const tutorUseCase = require("../../application/usecase/tutorUseCase");
 
 const tutorController = {
   //controller for getting the page
-  getCourse: async (req, res) => {},
+  getCourse: async (req, res) => {
+    try {
+      const tutor = req.params.id;
+      console.log("tutor", tutor);
+      const course = await tutorUseCase.findCourses(tutor);
+      console.log("course", course.data);
+      if (course.success) {
+        res.status(200).json(course.data);
+      } else {
+        res.status(400).json("no videos");
+      }
+    } catch (error) {
+      res.status(500).json("internal server error");
+    }
+  },
 
   // controller for adding course
   addCourse: async (req, res) => {

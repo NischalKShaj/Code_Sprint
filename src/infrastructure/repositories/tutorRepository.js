@@ -95,10 +95,15 @@ const tutorRepository = {
         const courseData = new CourseCollection({
           course_name: course.course_name,
           course_category: course.course_category,
-          number_of_videos: course.number_of_videos,
+          number_of_videos: courses.length.toString(),
+          description: course.description,
           tutor: tutor._id,
           videos: url,
         });
+        await TutorCollection.updateOne(
+          { _id: tutor._id },
+          { $push: { course: { $each: url } } }
+        );
         await courseData.save();
         console.log("courseData", courseData);
         return courseData;

@@ -27,6 +27,12 @@ const tutor = new mongoose.Schema(
     otp: {
       type: String,
     },
+    course: [
+      {
+        type: String,
+        default: [],
+      },
+    ],
     role: {
       type: String,
       default: "tutor",

@@ -2,6 +2,7 @@
 
 // importing the required modules
 const tutorRepository = require("../../infrastructure/repositories/tutorRepository");
+const courseRepository = require("../../infrastructure/repositories/courseRepository");
 const multer = require("../../infrastructure/services/aws/s3bucket");
 
 // creating the use case for tutor
@@ -62,6 +63,21 @@ const tutorUseCase = {
         return { success: true, data: "videos uploaded" };
       } else {
         return { success: false, data: "videos uploading failed" };
+      }
+    } catch (error) {
+      console.error("error", error);
+      return { success: false, data: "internal server error" };
+    }
+  },
+
+  // for finding the courses for the specific tutor
+  findCourses: async (tutor) => {
+    try {
+      const course = await courseRepository.findCourses(tutor);
+      if (course) {
+        return { success: true, data: course };
+      } else {
+        return { success: false, data: "no courses" };
       }
     } catch (error) {
       console.error("error", error);
