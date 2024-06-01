@@ -100,9 +100,16 @@ const tutorRepository = {
           tutor: tutor._id,
           videos: url,
         });
+
+        const course_Data = {
+          title: course.course_name,
+          description: course.description,
+          category: course.course_category,
+          url: url,
+        };
         await TutorCollection.updateOne(
           { _id: tutor._id },
-          { $push: { course: { $each: url } } }
+          { $push: { course: course_Data } }
         );
         await courseData.save();
         console.log("courseData", courseData);

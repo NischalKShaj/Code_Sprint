@@ -7,6 +7,7 @@ const token = require("../../../adapters/middleware/userAuth");
 const userController = require("../../../adapters/controllers/userController");
 const tutorController = require("../../../adapters/controllers/tutorController");
 const oAuthController = require("../../../adapters/controllers/oAuthController");
+const courseController = require("../../../adapters/controllers/courseController");
 
 // creating the required routes
 router.get("/", userController.getHome);
@@ -18,6 +19,7 @@ router.post("/api/github", oAuthController.postOAuth);
 router.get("/logout", userController.logoutUser);
 router.post("/mycourse/:id", tutorController.getCourse);
 router.post("/uploads", tutorController.addCourse);
+router.post("/courses", courseController.findAllCourses);
 
 // exporting the module
 module.exports = router;

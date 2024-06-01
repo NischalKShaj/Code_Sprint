@@ -1,5 +1,6 @@
 // file to show the repository for courses
 const TutorCollection = require("../../core/entities/user/tutorCollection");
+const CourseCollection = require("../../core/entities/course/courseCollection");
 
 // creating courses repository
 const courseRepository = {
@@ -17,6 +18,21 @@ const courseRepository = {
       }
     } catch (error) {
       console.error("error", error);
+      throw error;
+    }
+  },
+
+  // method to find all the courses
+  findAllCourses: async () => {
+    try {
+      const course = await CourseCollection.find();
+      if (course) {
+        return course;
+      } else {
+        return null;
+      }
+    } catch (error) {
+      console.error(error);
       throw error;
     }
   },

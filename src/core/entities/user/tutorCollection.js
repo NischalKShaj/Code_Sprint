@@ -1,6 +1,25 @@
 // collection for the tutor
 const mongoose = require("mongoose");
 
+// defining a module schema
+const moduleSchema = new mongoose.Schema({
+  title: {
+    type: String,
+  },
+  description: {
+    type: String,
+  },
+  category: {
+    type: String,
+  },
+  url: [
+    {
+      type: String,
+    },
+  ],
+});
+
+// defining the schema
 const tutor = new mongoose.Schema(
   {
     username: {
@@ -29,7 +48,7 @@ const tutor = new mongoose.Schema(
     },
     course: [
       {
-        type: String,
+        type: moduleSchema,
         default: [],
       },
     ],

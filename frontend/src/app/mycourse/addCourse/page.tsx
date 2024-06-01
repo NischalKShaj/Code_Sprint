@@ -1,5 +1,7 @@
 // file for adding the courses
 "use client";
+
+// importing required modules
 import axios from "axios";
 import React, { useState } from "react";
 import dotenv from "dotenv";
