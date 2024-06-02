@@ -4,10 +4,10 @@
 const express = require("express");
 const router = express.Router();
 const token = require("../../../adapters/middleware/userAuth");
-const userController = require("../../../adapters/controllers/userController");
-const tutorController = require("../../../adapters/controllers/tutorController");
-const oAuthController = require("../../../adapters/controllers/oAuthController");
-const courseController = require("../../../adapters/controllers/courseController");
+const userController = require("../../../adapters/controllers/userController/userController");
+const tutorController = require("../../../adapters/controllers/tutorController/tutorController");
+const oAuthController = require("../../../adapters/controllers/oAuthController/oAuthController");
+const courseController = require("../../../adapters/controllers/courseController/courseController");
 
 // creating the required routes
 router.get("/", userController.getHome);

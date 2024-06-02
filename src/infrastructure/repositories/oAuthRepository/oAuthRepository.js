@@ -1,7 +1,7 @@
 // file for the oAuth repository
 
 // import all the required modules
-const UserCollection = require("../../core/entities/user/userCollection");
+const UserCollection = require("../../../core/entities/user/userCollection");
 const bcryptjs = require("bcryptjs");
 
 // creating the repository for the oAuth

@@ -1,7 +1,7 @@
 // file for creating the use case for the courses
 
 // import the required modules
-const courseRepository = require("../../infrastructure/repositories/courseRepository");
+const courseRepository = require("../../../infrastructure/repositories/courseRepository/courseRepository");
 
 const courseUseCase = {
   // use case for finding all the courses

@@ -1,8 +1,8 @@
 // file for showcasing the users use-cases
 
 // importing the required modules
-const userRepository = require("../../infrastructure/repositories/userRepository");
-const generateJWT = require("../../infrastructure/services/jwtServices");
+const userRepository = require("../../../infrastructure/repositories/userRepository/userRepository");
+const generateJWT = require("../../../infrastructure/services/jwtServices");
 
 // creating the user use-case
 const userUseCase = {

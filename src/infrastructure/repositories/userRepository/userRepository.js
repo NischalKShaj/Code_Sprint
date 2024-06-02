@@ -1,9 +1,9 @@
 // file for the user repository
 
 // importing the modules required
-const TemporaryUserCollection = require("../../core/entities/temporary/temporaryUserCollection");
-const UserCollection = require("../../core/entities/user/userCollection");
-const TutorCollection = require("../../core/entities/user/tutorCollection");
+const TemporaryUserCollection = require("../../../core/entities/temporary/temporaryUserCollection");
+const UserCollection = require("../../../core/entities/user/userCollection");
+const TutorCollection = require("../../../core/entities/user/tutorCollection");
 const bcryptjs = require("bcryptjs");
 
 // creating userRepository

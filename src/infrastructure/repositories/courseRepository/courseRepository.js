@@ -1,6 +1,6 @@
 // file to show the repository for courses
-const TutorCollection = require("../../core/entities/user/tutorCollection");
-const CourseCollection = require("../../core/entities/course/courseCollection");
+const TutorCollection = require("../../../core/entities/user/tutorCollection");
+const CourseCollection = require("../../../core/entities/course/courseCollection");
 
 // creating courses repository
 const courseRepository = {

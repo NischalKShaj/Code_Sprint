@@ -1,9 +1,9 @@
 // file for creating the repository for the tutor
 
 // importing the required modules
-const TutorCollection = require("../../core/entities/user/tutorCollection");
-const TemporaryTutorCollection = require("../../core/entities/temporary/temporaryTutorCollection");
-const CourseCollection = require("../../core/entities/course/courseCollection");
+const TutorCollection = require("../../../core/entities/user/tutorCollection");
+const TemporaryTutorCollection = require("../../../core/entities/temporary/temporaryTutorCollection");
+const CourseCollection = require("../../../core/entities/course/courseCollection");
 const bcryptjs = require("bcryptjs");
 
 // creating tutor repository

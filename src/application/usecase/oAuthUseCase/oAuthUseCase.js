@@ -1,7 +1,7 @@
 // file for showcasing the users signed using oAuth
 
 // importing the required modules
-const oAuthRepository = require("../../infrastructure/repositories/oAuthRepository");
+const oAuthRepository = require("../../../infrastructure/repositories/oAuthRepository/oAuthRepository");
 
 // creating the oAuth Usecase
 const OAuthUseCase = {

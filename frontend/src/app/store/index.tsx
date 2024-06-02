@@ -1,6 +1,7 @@
 // file to manage the state of the entire application
 import { create } from "zustand";
 
+// creating the interface for the state of the application
 interface State {
   isAuthorized: boolean;
   user: {
@@ -18,6 +19,12 @@ interface State {
     profileImage: string;
   }) => void;
   isLoggedOut: () => void;
+  isAdmin: boolean;
+  admin: {
+    email: string;
+  } | null;
+  isAdminLoggedIn: (admin: { email: string }) => void;
+  isAdminLoggedOut: () => void;
 }
 
 export const AppState = create<State>((set, get) => {
@@ -30,6 +37,8 @@ export const AppState = create<State>((set, get) => {
     let initialState = {
       isAuthorized: false,
       user: null,
+      isAdmin: false,
+      admin: null,
     };
 
     // Only parse savedState if it's not null
@@ -61,6 +70,22 @@ export const AppState = create<State>((set, get) => {
           JSON.stringify({ isAuthorized: false, user: null })
         );
       },
+      isAdminLoggedIn: (admin) => {
+        set(() => ({ isAdmin: true, admin }));
+        // saving the state to the local storage
+        localStorage.setItem(
+          "appState",
+          JSON.stringify({ isAdmin: true, admin })
+        );
+      },
+      isAdminLoggedOut: () => {
+        set(() => ({ isAdmin: false, admin: null }));
+        // saving the state to the local storage
+        localStorage.setItem(
+          "appState",
+          JSON.stringify({ isAdmin: false, admin: null })
+        );
+      },
     };
   } else {
     // Fallback or alternative behavior for non-browser environments
@@ -69,6 +94,10 @@ export const AppState = create<State>((set, get) => {
       user: null,
       isLoggedIn: () => {},
       isLoggedOut: () => {},
+      isAdmin: false,
+      admin: null,
+      isAdminLoggedIn: () => {},
+      isAdminLoggedOut: () => {},
     };
   }
 });

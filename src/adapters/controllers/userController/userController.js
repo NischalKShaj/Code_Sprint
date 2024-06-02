@@ -1,7 +1,7 @@
 // file for the users controller
-const userUseCase = require("../../application/usecase/userUseCase");
-const tutorUseCase = require("../../application/usecase/tutorUseCase");
-const EmailService = require("../../infrastructure/services/mailer");
+const userUseCase = require("../../../application/usecase/userUseCase/userUseCase");
+const tutorUseCase = require("../../../application/usecase/tutorUseCase/tutorUseCase");
+const EmailService = require("../../../infrastructure/services/mailer");
 
 // function to generate otp
 const generateOTP = () => {

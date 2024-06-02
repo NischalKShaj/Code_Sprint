@@ -1,8 +1,8 @@
 // file for tutor controller
 
 // importing the required modules
-const upload = require("../../infrastructure/services/aws/s3bucket");
-const tutorUseCase = require("../../application/usecase/tutorUseCase");
+const upload = require("../../../infrastructure/services/aws/s3bucket");
+const tutorUseCase = require("../../../application/usecase/tutorUseCase/tutorUseCase");
 
 const tutorController = {
   //controller for getting the page

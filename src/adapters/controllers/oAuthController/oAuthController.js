@@ -1,7 +1,7 @@
 // file to login the user using the OAuth
 
 // importing the required modules
-const OAuthUseCase = require("../../application/usecase/oAuthUseCase");
+const OAuthUseCase = require("../../../application/usecase/courseUseCase/courseUseCase");
 
 // creating the controller for the OAuth
 const oAuth = {

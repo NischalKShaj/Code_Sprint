@@ -1,7 +1,7 @@
 // controller for managing courses
 
 // imports for the files
-const courseUseCase = require("../../application/usecase/courseUseCase");
+const courseUseCase = require("../../../application/usecase/courseUseCase/courseUseCase");
 
 const courseController = {
   // controller for finding all the courses

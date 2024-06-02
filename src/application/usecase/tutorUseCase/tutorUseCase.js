@@ -1,9 +1,9 @@
 // file for showcasing the tutors use-cases
 
 // importing the required modules
-const tutorRepository = require("../../infrastructure/repositories/tutorRepository");
-const courseRepository = require("../../infrastructure/repositories/courseRepository");
-const multer = require("../../infrastructure/services/aws/s3bucket");
+const tutorRepository = require("../../../infrastructure/repositories/tutorRepository/tutorRepository");
+const courseRepository = require("../../../infrastructure/repositories/courseRepository/courseRepository");
+const multer = require("../../../infrastructure/services/aws/s3bucket");
 
 // creating the use case for tutor
 const tutorUseCase = {
