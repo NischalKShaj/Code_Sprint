@@ -1,6 +1,5 @@
 // file for showing tutors courses
 "use client";
-// Importing the required modules
 
 // Importing the required modules
 import Link from "next/link";
@@ -47,6 +46,7 @@ const MyCourse: React.FC = () => {
     }
   }, [tutorId]);
 
+  // function for extracting the url of the videos
   const getMimeType = (url: string): string => {
     const extension = url.split(".").pop();
     switch (extension) {
@@ -59,6 +59,7 @@ const MyCourse: React.FC = () => {
     }
   };
 
+  // function for getting the name of the videos
   const getVideoName = (url: string): string => {
     const parts = url.split("/");
     const filename = parts[parts.length - 1];
@@ -66,17 +67,24 @@ const MyCourse: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col text-left items-center mb-36 bg-white mt-16">
-      <h3 className="text-2xl font-bold mb-6">My Courses</h3>
+    <div className="flex flex-col items-center mb-36 bg-white mt-16">
+      <h1 className="text-3xl mr-[750px] font-bold mb-6">My Courses</h1>
       <section className="bg-[#D9D9D9] p-8 h-[1000px] w-[1000px] rounded-lg shadow-md">
         {courses.map((course) => (
           <div key={course._id} style={{ margin: "20px 0" }}>
-            <h3 className="text-2xl font-bold mb-6">{course.title}</h3>
-            {/* show the category here */}
+            <h3 className="text-2xl text-center font-bold mb-6">
+              course name: {course.title}
+            </h3>
             {course.url.map((videoUrl, videoIndex) => (
-              <div key={videoIndex} style={{ margin: "30px 0" }}>
-                <p className="text-md mb-2">{getVideoName(videoUrl)}</p>
-                <video className="rounded-lg" width="300" controls>
+              <div
+                key={videoIndex}
+                className="justify-center"
+                style={{ margin: "30px 0" }}
+              >
+                <h3 className="text-md text-right mr-[250px] top-[100px] items-center relative">
+                  here {getVideoName(videoUrl)}
+                </h3>
+                <video className="rounded-lg ml-5" width="300" controls>
                   <source
                     src={videoUrl}
                     type={getMimeType(videoUrl)}
