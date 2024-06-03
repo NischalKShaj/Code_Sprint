@@ -3,6 +3,7 @@ import { create } from "zustand";
 
 // creating the interface for the state of the application
 interface State {
+  // users state
   isAuthorized: boolean;
   user: {
     id: string;
@@ -19,12 +20,28 @@ interface State {
     profileImage: string;
   }) => void;
   isLoggedOut: () => void;
+  // admin state
   isAdmin: boolean;
   admin: {
     email: string;
   } | null;
   isAdminLoggedIn: (admin: { email: string }) => void;
   isAdminLoggedOut: () => void;
+  // getting all data required for the dashboard
+  allUser: {
+    id: string;
+    username: string;
+    email: string;
+    profileImage: string;
+  } | null;
+  findAllUsers: (
+    allUser: {
+      id: string;
+      username: string;
+      email: string;
+      profileImage: string;
+    } | null
+  ) => void;
 }
 
 export const AppState = create<State>((set, get) => {
@@ -39,6 +56,7 @@ export const AppState = create<State>((set, get) => {
       user: null,
       isAdmin: false,
       admin: null,
+      allUser: null,
     };
 
     // Only parse savedState if it's not null
@@ -86,6 +104,10 @@ export const AppState = create<State>((set, get) => {
           JSON.stringify({ isAdmin: false, admin: null })
         );
       },
+      findAllUsers(allUser) {
+        set(() => ({ allUser }));
+        localStorage.setItem("appState", JSON.stringify({ allUser }));
+      },
     };
   } else {
     // Fallback or alternative behavior for non-browser environments
@@ -98,6 +120,8 @@ export const AppState = create<State>((set, get) => {
       admin: null,
       isAdminLoggedIn: () => {},
       isAdminLoggedOut: () => {},
+      allUser: null,
+      findAllUsers: () => {},
     };
   }
 });

@@ -21,6 +21,19 @@ const adminController = {
       res.status(500).json("internal server error");
     }
   },
+  findAllUser: async (req, res) => {
+    try {
+      const response = await adminUseCase.findAllUser();
+      if (response.success) {
+        console.log("data", response);
+        res.status(200).json(response.data);
+      } else {
+        res.status(401).json(response.data);
+      }
+    } catch (error) {
+      console.error("error", error);
+    }
+  },
 };
 
 module.exports = adminController;

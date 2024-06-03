@@ -18,6 +18,19 @@ const adminUseCase = {
       return { success: false, data: "internal server error" };
     }
   },
+  findAllUsers: async () => {
+    try {
+      const response = await adminRepository.findAllUsers();
+      if (response) {
+        return { success: true, data: response };
+      } else {
+        return { success: false, data: "no user found for the request" };
+      }
+    } catch (error) {
+      console.error("error", error);
+      return { success: false, data: "internal server error" };
+    }
+  },
 };
 
 module.exports = adminUseCase;

@@ -22,6 +22,7 @@ const adminRepository = {
       throw error;
     }
   },
+  findAllUser: async () => {},
 };
 
 module.exports = adminRepository;
