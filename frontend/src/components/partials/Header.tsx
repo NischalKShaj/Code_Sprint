@@ -17,8 +17,6 @@ const Header = () => {
     setIsLoading(false);
   }, []);
 
-  useEffect(() => {});
-
   if (isLoading) {
     // make it a skeleton
     return <div>Loading...</div>;

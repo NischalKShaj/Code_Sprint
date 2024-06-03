@@ -23,7 +23,7 @@ const adminController = {
   },
   findAllUser: async (req, res) => {
     try {
-      const response = await adminUseCase.findAllUser();
+      const response = await adminUseCase.findAllUsers();
       if (response.success) {
         console.log("data", response);
         res.status(200).json(response.data);

@@ -33,14 +33,14 @@ interface State {
     username: string;
     email: string;
     profileImage: string;
-  } | null;
+  }[];
   findAllUsers: (
     allUser: {
       id: string;
       username: string;
       email: string;
       profileImage: string;
-    } | null
+    }[]
   ) => void;
 }
 
@@ -56,7 +56,7 @@ export const AppState = create<State>((set, get) => {
       user: null,
       isAdmin: false,
       admin: null,
-      allUser: null,
+      allUser: [],
     };
 
     // Only parse savedState if it's not null
@@ -77,7 +77,7 @@ export const AppState = create<State>((set, get) => {
         // Save state to localStorage
         localStorage.setItem(
           "appState",
-          JSON.stringify({ isAuthorized: true, user })
+          JSON.stringify({ ...get(), isAuthorized: true, user })
         );
       },
       isLoggedOut: () => {
@@ -85,7 +85,7 @@ export const AppState = create<State>((set, get) => {
         // Save state to localStorage
         localStorage.setItem(
           "appState",
-          JSON.stringify({ isAuthorized: false, user: null })
+          JSON.stringify({ ...get(), isAuthorized: false, user: null })
         );
       },
       isAdminLoggedIn: (admin) => {
@@ -93,7 +93,7 @@ export const AppState = create<State>((set, get) => {
         // saving the state to the local storage
         localStorage.setItem(
           "appState",
-          JSON.stringify({ isAdmin: true, admin })
+          JSON.stringify({ ...get(), isAdmin: true, admin })
         );
       },
       isAdminLoggedOut: () => {
@@ -101,12 +101,12 @@ export const AppState = create<State>((set, get) => {
         // saving the state to the local storage
         localStorage.setItem(
           "appState",
-          JSON.stringify({ isAdmin: false, admin: null })
+          JSON.stringify({ ...get(), isAdmin: false, admin: null })
         );
       },
       findAllUsers(allUser) {
         set(() => ({ allUser }));
-        localStorage.setItem("appState", JSON.stringify({ allUser }));
+        localStorage.setItem("appState", JSON.stringify({ ...get(), allUser }));
       },
     };
   } else {
@@ -120,7 +120,7 @@ export const AppState = create<State>((set, get) => {
       admin: null,
       isAdminLoggedIn: () => {},
       isAdminLoggedOut: () => {},
-      allUser: null,
+      allUser: [],
       findAllUsers: () => {},
     };
   }

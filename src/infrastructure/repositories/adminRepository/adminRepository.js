@@ -1,6 +1,7 @@
 // file for the admin repository
 
 // importing the required files
+const UserCollection = require("../../../core/entities/user/userCollection");
 const dotenv = require("dotenv");
 dotenv.config();
 
@@ -22,7 +23,19 @@ const adminRepository = {
       throw error;
     }
   },
-  findAllUser: async () => {},
+  findAllUsers: async () => {
+    try {
+      const userData = await UserCollection.find();
+      console.log("userData", userData);
+      if (userData) {
+        return userData;
+      } else {
+        return null;
+      }
+    } catch (error) {
+      throw error;
+    }
+  },
 };
 
 module.exports = adminRepository;
