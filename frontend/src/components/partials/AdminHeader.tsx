@@ -2,9 +2,22 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { AppState } from "@/app/store";
 
 const AdminHeader = () => {
+  const admin = AppState((state) => state.isAdmin);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    setIsLoading(false);
+  }, []);
+
+  if (isLoading) {
+    // make it a skeleton
+    return <div>Loading...</div>;
+  }
+
   return (
     <>
       <header className="bg-[#F0E6E6] flex">
@@ -36,6 +49,11 @@ const AdminHeader = () => {
             className="p-4 bg-gray-50 border-gray-300 rounded-3xl w-[550px] h-10 pl-16 pr-3 mr-3 mt-16"
           />
         </div>
+        {admin && (
+          <button className="bg-[#686DE0] left-[850px] top-[65px] text-white font-bold py-2 px-4 rounded-xl  absolute">
+            logout
+          </button>
+        )}
       </header>
     </>
   );

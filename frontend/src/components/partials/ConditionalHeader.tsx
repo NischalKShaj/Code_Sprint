@@ -8,7 +8,10 @@ import Header from "./Header";
 const ConditionalHeader = () => {
   const pathname = usePathname();
 
-  return pathname === "/admin" ? <AdminHeader /> : <Header />;
+  // Check if the pathname starts with "/admin" exactly
+  const isAdminPath = pathname.startsWith("/admin");
+
+  return isAdminPath ? <AdminHeader /> : <Header />;
 };
 
 export default ConditionalHeader;

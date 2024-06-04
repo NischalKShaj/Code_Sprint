@@ -20,7 +20,11 @@ router.post("/api/github", oAuthController.postOAuth);
 router.get("/logout", userController.logoutUser);
 router.post("/mycourse/:id", tutorController.getCourse);
 router.post("/uploads", tutorController.addCourse);
-router.post("/courses", courseController.findAllCourses);
+router.post(
+  "/courses",
+  //   token.authenticateUserJwt,
+  courseController.findAllCourses
+);
 
 // exporting the module
 module.exports = router;

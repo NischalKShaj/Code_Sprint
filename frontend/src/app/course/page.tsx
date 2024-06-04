@@ -26,6 +26,7 @@ const Course = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        console.log(document.cookie);
         const response = await axios.post(
           `${process.env.NEXT_PUBLIC_BASE_URL}/courses`
         );
