@@ -10,7 +10,7 @@ const Signup = () => {
   const [formData, setFormData] = useState({});
   const router = useRouter();
 
-  // function to handle the changing elements in the form
+  // Function to handle the changing elements in the form
   const handleSignup: ChangeEventHandler<HTMLInputElement> = (e) => {
     const target = e.currentTarget;
     if (target.type === "radio") {
@@ -18,6 +18,10 @@ const Signup = () => {
       localStorage.setItem("selectedRole", target.value);
     } else {
       setFormData({ ...formData, [target.id]: target.value });
+
+      if (target.type === "email") {
+        localStorage.setItem("email", target.value);
+      }
     }
   };
 

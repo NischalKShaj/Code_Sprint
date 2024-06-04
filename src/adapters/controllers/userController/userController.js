@@ -43,7 +43,7 @@ const userController = {
       const role = req.body.role;
       console.log("role", role);
       const userData = req.body;
-      console.log(userData);
+      console.log("userData", userData);
 
       const otp = generateOTP();
       userData.otp = otp;
@@ -100,6 +100,29 @@ const userController = {
       res.status(500).json({ message: "internal server error" });
     }
   },
+
+  // controller for otp resend
+  resendOtp: async (req, res) => {
+    try {
+      const email = req.body.email;
+      // regenerate the new otp
+      const newOTP = generateOTP();
+
+      const emailService = new EmailService();
+      emailService.sendOtpEmail(email, newOTP);
+      console.log("new otp", newOTP);
+      const response = await userUseCase.resendOtp(email, newOTP);
+      if (response.success) {
+        res.status(200).json("otp resending success");
+      } else {
+        res.status(409).json("invalid user");
+      }
+    } catch (error) {
+      console.error("error", error);
+      res.status(500).json(response.data);
+    }
+  },
+
   // controller for log-out
   logoutUser: (req, res) => {
     try {

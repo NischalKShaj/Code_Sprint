@@ -55,6 +55,21 @@ const userUseCase = {
       return { success: false, data: error.message };
     }
   },
+
+  // for otp resending
+  resendOtp: async (userEmail, newOTP) => {
+    try {
+      const user = await userRepository.resendOtp(userEmail, newOTP);
+      if (user) {
+        return { success: true, data: user };
+      } else {
+        return { success: false, data: "otp resending failed" };
+      }
+    } catch (error) {
+      console.error("error", error);
+      return { success: false, data: error.message };
+    }
+  },
 };
 
 module.exports = userUseCase;

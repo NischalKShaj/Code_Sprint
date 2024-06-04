@@ -101,6 +101,24 @@ const userRepository = {
       throw error;
     }
   },
+
+  // method for otp resending
+  resendOtp: async (userEmail, newOTP) => {
+    try {
+      const user = await TemporaryUserCollection.findOne({ email: userEmail });
+      if (user) {
+        await TemporaryUserCollection.updateOne(
+          { email: userEmail },
+          { otp: newOTP }
+        );
+        return user;
+      } else {
+        return null;
+      }
+    } catch (error) {
+      throw error;
+    }
+  },
 };
 
 module.exports = userRepository;

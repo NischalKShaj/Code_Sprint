@@ -14,6 +14,7 @@ router.get("/", userController.getHome);
 router.post("/login", userController.getLogin);
 router.post("/signup", userController.postSignup);
 router.post("/otp", userController.validateOtp);
+router.post("/otp/resend", userController.resendOtp);
 router.post("/api/google", oAuthController.postOAuth);
 router.post("/api/github", oAuthController.postOAuth);
 router.get("/logout", userController.logoutUser);
