@@ -9,6 +9,8 @@ const adminController = require("../../../adapters/controllers/adminControllers/
 router.post("/", adminController.adminLogin);
 router.post("/users", adminController.findAllUser);
 router.post("/tutors", adminController.findAllTutor);
+router.post("/tutor/:id", adminController.tutorBlockUnblock);
+router.post("/user/:id", adminController.userBlockUnblock);
 
 // exporting the routes
 module.exports = router;

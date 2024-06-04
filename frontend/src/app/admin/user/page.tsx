@@ -5,6 +5,7 @@
 import React, { useEffect, useState } from "react";
 import { AppState } from "@/app/store";
 import dynamic from "next/dynamic";
+import axios from "axios";
 const AdminSidePanel = dynamic(
   () => import("@/components/partials/AdminSidePanel"),
   { ssr: false }
@@ -23,6 +24,25 @@ const UserPage = () => {
     return <div>Loading...</div>;
   }
 
+  const handleBlock = async (id: any) => {
+    try {
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/admin/user/${id}`
+      );
+      if (response.status === 200) {
+        console.log("response", response.data);
+        const status = response.data.status;
+        const userIndex = allUser.findIndex((user) => user.id === id);
+
+        if (userIndex !== -1) {
+          AppState.getState().block_unblock(id, !status);
+        }
+      }
+    } catch (error) {
+      console.error("error", error);
+    }
+  };
+
   return (
     <div>
       <AdminSidePanel />
@@ -36,9 +56,9 @@ const UserPage = () => {
                 <th scope="col" className="px-6 py-3">
                   Name
                 </th>
-                <th scope="col" className="px-6 py-3">
+                {/* <th scope="col" className="px-6 py-3">
                   Position
-                </th>
+                </th> */}
                 <th scope="col" className="px-6 py-3">
                   Status
                 </th>
@@ -67,7 +87,7 @@ const UserPage = () => {
                       </div>
                     </div>
                   </th>
-                  <td className="px-6 py-4">React Developer</td>
+                  {/* <td className="px-6 py-4">React Developer</td> */}
                   <td className="px-6 py-4">
                     <div className="flex items-center">
                       <div className="h-2.5 w-2.5 rounded-full bg-green-500 me-2"></div>
@@ -75,12 +95,21 @@ const UserPage = () => {
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <a
-                      href="#"
-                      className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                    >
-                      Edit user
-                    </a>
+                    {user.block ? (
+                      <button
+                        onClick={() => handleBlock(user.id)}
+                        className="font-bold py-2 px-4 rounded-xl absolute bg-green-600 text-white"
+                      >
+                        unblock
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => handleBlock(user.id)}
+                        className="font-bold py-2 px-4 rounded-xl absolute bg-red-600 text-white"
+                      >
+                        block
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))}

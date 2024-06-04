@@ -5,6 +5,7 @@ const adminRepository = require("../../../infrastructure/repositories/adminRepos
 
 // creating the admin use case
 const adminUseCase = {
+  // use-case for admin login
   adminLogin: async (data) => {
     try {
       const response = await adminRepository.adminLogin(data);
@@ -18,6 +19,7 @@ const adminUseCase = {
       return { success: false, data: "internal server error" };
     }
   },
+  // use-case for finding all the users
   findAllUsers: async () => {
     try {
       const response = await adminRepository.findAllUsers();
@@ -31,6 +33,7 @@ const adminUseCase = {
       return { success: false, data: "internal server error" };
     }
   },
+  // use-case for finding all the tutors
   findAllTutor: async () => {
     try {
       const response = await adminRepository.findAllTutor();
@@ -41,6 +44,35 @@ const adminUseCase = {
       }
     } catch (error) {
       console.error("error", error);
+      return { success: false, data: "internal server error" };
+    }
+  },
+  // use-case for block and unblock
+  blockUnblock: async (tutor) => {
+    try {
+      console.log("tutor", tutor);
+      const response = await adminRepository.blockUnblock(tutor);
+      console.log("response", response);
+      if (response) {
+        return { success: true, data: response };
+      } else {
+        return { success: false, data: response };
+      }
+    } catch (error) {
+      return { success: false, data: "internal server error" };
+    }
+  },
+
+  // use-case for block and unblock user
+  userBlockUnblock: async (user) => {
+    try {
+      const response = await adminRepository.userBlockUnblock(user);
+      if (response) {
+        return { success: true, data: response };
+      } else {
+        return { success: false, data: response };
+      }
+    } catch (error) {
       return { success: false, data: "internal server error" };
     }
   },

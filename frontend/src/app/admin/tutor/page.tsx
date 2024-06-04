@@ -12,7 +12,6 @@ import React, { useEffect, useState } from "react";
 const TutorPage = () => {
   const [loading, setLoading] = useState(true);
   const allTutors = AppState((state) => state.allTutor);
-  const blockUnblock = AppState((state) => state.blockUnblock);
 
   useEffect(() => {
     setLoading(false);
@@ -30,8 +29,12 @@ const TutorPage = () => {
       );
       if (response.status === 200) {
         console.log("response", response.data);
-        const status = response.data.block;
-        blockUnblock(id, status);
+        const status = response.data.status;
+        const tutorIndex = allTutors.findIndex((tutor) => tutor.id === id);
+
+        if (tutorIndex !== -1) {
+          AppState.getState().blockUnblock(id, !status);
+        }
       }
     } catch (error) {
       console.error("error", error);
@@ -42,7 +45,7 @@ const TutorPage = () => {
     <div>
       <AdminSidePanel />
       {allTutors && allTutors.length > 0 ? (
-        <div className="relative items-center justify-center overflow-x-auto shadow-md sm:rounded-lg">
+        <div className="relative items-center justify-center overflow-x-auto top-1 shadow-md sm:rounded-lg">
           <table className="w-[950px] top-[100px] items-center justify-items-center ml-[400px] text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
             <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
               <tr>
@@ -93,14 +96,14 @@ const TutorPage = () => {
                     {user.block ? (
                       <button
                         onClick={() => handleBlock(user.id)}
-                        className="font-medium text-green-600 dark:text-green-500 hover:underline"
+                        className="font-bold py-2 px-4 rounded-xl absolute bg-green-600 text-white"
                       >
                         unblock
                       </button>
                     ) : (
                       <button
                         onClick={() => handleBlock(user.id)}
-                        className="font-medium text-red-600 dark:text-red-500 hover:underline"
+                        className="font-bold py-2 px-4 rounded-xl absolute bg-red-600 text-white"
                       >
                         block
                       </button>

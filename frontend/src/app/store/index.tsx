@@ -33,6 +33,7 @@ interface State {
     username: string;
     email: string;
     profileImage: string;
+    block: boolean;
   }[];
   findAllUsers: (
     allUser: {
@@ -40,6 +41,7 @@ interface State {
       username: string;
       email: string;
       profileImage: string;
+      block: boolean;
     }[]
   ) => void;
   allTutor: {
@@ -59,8 +61,11 @@ interface State {
     }[]
   ) => void;
 
-  // for performing block and unblocks
+  // for performing block and unblocks for tutor
   blockUnblock: (id: string, status: boolean) => void;
+
+  // for performing block and unblock for user
+  block_unblock: (id: string, status: boolean) => void;
 }
 
 export const AppState = create<State>((set, get) => {
@@ -135,12 +140,21 @@ export const AppState = create<State>((set, get) => {
           JSON.stringify({ ...get(), allTutor })
         );
       },
-      blockUnblock(id, status) {
-        set((state) => ({
-          allTutor: state.allTutor.map((tutor) =>
-            tutor.id === id ? { ...tutor, status } : tutor
-          ),
-        }));
+      blockUnblock: (id: string, status: boolean) => {
+        set((state) => {
+          const updatedTutors = state.allTutor.map((tutor) =>
+            tutor.id === id ? { ...tutor, block: status } : tutor
+          );
+          return { ...state, allTutor: updatedTutors };
+        });
+      },
+      block_unblock: (id: string, status: boolean) => {
+        set((state) => {
+          const updatedUser = state.allUser.map((user) =>
+            user.id === id ? { ...user, block: status } : user
+          );
+          return { ...state, allUser: updatedUser };
+        });
       },
     };
   } else {
@@ -159,6 +173,7 @@ export const AppState = create<State>((set, get) => {
       allTutor: [],
       findAllTutor: () => {},
       blockUnblock: () => {},
+      block_unblock: () => {},
     };
   }
 });
