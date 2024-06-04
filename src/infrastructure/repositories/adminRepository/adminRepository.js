@@ -2,6 +2,7 @@
 
 // importing the required files
 const UserCollection = require("../../../core/entities/user/userCollection");
+const TutorCollection = require("../../../core/entities/user/tutorCollection");
 const dotenv = require("dotenv");
 dotenv.config();
 
@@ -29,6 +30,19 @@ const adminRepository = {
       console.log("userData", userData);
       if (userData) {
         return userData;
+      } else {
+        return null;
+      }
+    } catch (error) {
+      throw error;
+    }
+  },
+  findAllTutor: async () => {
+    try {
+      const tutorData = await TutorCollection.find();
+      console.log("tutorData", tutorData);
+      if (tutorData) {
+        return tutorData;
       } else {
         return null;
       }

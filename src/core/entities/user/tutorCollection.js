@@ -56,7 +56,12 @@ const tutor = new mongoose.Schema(
       type: String,
       default: "tutor",
     },
+    blocked: {
+      type: Boolean,
+      default: false,
+    },
   },
+
   { timestamps: true }
 );
 

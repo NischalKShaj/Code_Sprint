@@ -11,6 +11,7 @@ dotenv.config();
 const AdminSidePanel = () => {
   const router = useRouter();
   const findUsers = AppState((state) => state.findAllUsers);
+  const findTutors = AppState((state) => state.findAllTutor);
 
   // function to show the user data
   const userRoute = async () => {
@@ -38,6 +39,29 @@ const AdminSidePanel = () => {
   // function to show the dashboard
   const dashboardRoute = () => {
     router.push("/admin/dashboard");
+  };
+
+  // function to show the tutor data
+  const tutorRoute = async () => {
+    try {
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/admin/tutors`
+      );
+      if (response.status === 200) {
+        const formate_data = response.data.map((tutor: any) => ({
+          id: tutor._id,
+          username: tutor.username,
+          email: tutor.email,
+          profileImage: tutor.profileImage,
+          block: tutor.blocked,
+        }));
+        console.log("formate", formate_data);
+        findTutors(formate_data);
+        router.push("/admin/tutor");
+      }
+    } catch (error) {
+      console.error("error", error);
+    }
   };
 
   return (
@@ -109,7 +133,10 @@ const AdminSidePanel = () => {
               </button>
             </li>
             <li>
-              <button className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+              <button
+                onClick={tutorRoute}
+                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+              >
                 <svg
                   className="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
                   aria-hidden="true"

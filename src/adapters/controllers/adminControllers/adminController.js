@@ -32,6 +32,21 @@ const adminController = {
       }
     } catch (error) {
       console.error("error", error);
+      res.status(500).json(response.data);
+    }
+  },
+  findAllTutor: async (req, res) => {
+    try {
+      const response = await adminUseCase.findAllTutor();
+      if (response.success) {
+        console.log("data", response.data);
+        res.status(200).json(response.data);
+      } else {
+        res.status(401).json(response.data);
+      }
+    } catch (error) {
+      console.error("error", error);
+      res.status(500).json(response.data);
     }
   },
 };

@@ -8,6 +8,7 @@ const adminController = require("../../../adapters/controllers/adminControllers/
 // defining all the required routes
 router.post("/", adminController.adminLogin);
 router.post("/users", adminController.findAllUser);
+router.post("/tutors", adminController.findAllTutor);
 
 // exporting the routes
 module.exports = router;

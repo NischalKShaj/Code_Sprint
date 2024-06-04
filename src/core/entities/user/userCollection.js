@@ -52,6 +52,10 @@ const users = new mongoose.Schema(
       type: String,
       default: "student",
     },
+    blocked: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );

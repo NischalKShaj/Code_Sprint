@@ -42,6 +42,25 @@ interface State {
       profileImage: string;
     }[]
   ) => void;
+  allTutor: {
+    id: string;
+    username: string;
+    email: string;
+    profileImage: string;
+    block: boolean;
+  }[];
+  findAllTutor: (
+    allTutor: {
+      id: string;
+      username: string;
+      email: string;
+      profileImage: string;
+      block: boolean;
+    }[]
+  ) => void;
+
+  // for performing block and unblocks
+  blockUnblock: (id: string, status: boolean) => void;
 }
 
 export const AppState = create<State>((set, get) => {
@@ -57,6 +76,7 @@ export const AppState = create<State>((set, get) => {
       isAdmin: false,
       admin: null,
       allUser: [],
+      allTutor: [],
     };
 
     // Only parse savedState if it's not null
@@ -108,6 +128,20 @@ export const AppState = create<State>((set, get) => {
         set(() => ({ allUser }));
         localStorage.setItem("appState", JSON.stringify({ ...get(), allUser }));
       },
+      findAllTutor(allTutor) {
+        set(() => ({ allTutor }));
+        localStorage.setItem(
+          "appState",
+          JSON.stringify({ ...get(), allTutor })
+        );
+      },
+      blockUnblock(id, status) {
+        set((state) => ({
+          allTutor: state.allTutor.map((tutor) =>
+            tutor.id === id ? { ...tutor, status } : tutor
+          ),
+        }));
+      },
     };
   } else {
     // Fallback or alternative behavior for non-browser environments
@@ -122,6 +156,9 @@ export const AppState = create<State>((set, get) => {
       isAdminLoggedOut: () => {},
       allUser: [],
       findAllUsers: () => {},
+      allTutor: [],
+      findAllTutor: () => {},
+      blockUnblock: () => {},
     };
   }
 });
