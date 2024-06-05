@@ -42,15 +42,17 @@ const Login = () => {
         { withCredentials: true }
       );
       console.log(response.data);
-      const role = response.data.role;
+      const { role, token, data } = response.data;
+
       if (response.status === 200) {
         console.log("role", role);
+        localStorage.setItem("access_token", token);
         login({
-          id: response.data._id,
-          email: response.data.email,
-          role: response.data.role,
-          username: response.data.username,
-          profileImage: response.data.profileImage,
+          id: data._id,
+          email: data.email,
+          role: data.role,
+          username: data.username,
+          profileImage: data.profileImage,
         });
         router.push("/");
       } else {

@@ -3,7 +3,9 @@
 // importing the required modules
 const express = require("express");
 const router = express.Router();
-const token = require("../../../adapters/middleware/userAuth");
+const {
+  authenticateUserJwt,
+} = require("../../../adapters/middleware/userAuth");
 const userController = require("../../../adapters/controllers/userController/userController");
 const tutorController = require("../../../adapters/controllers/tutorController/tutorController");
 const oAuthController = require("../../../adapters/controllers/oAuthController/oAuthController");
@@ -20,11 +22,7 @@ router.post("/api/github", oAuthController.postOAuth);
 router.get("/logout", userController.logoutUser);
 router.post("/mycourse/:id", tutorController.getCourse);
 router.post("/uploads", tutorController.addCourse);
-router.post(
-  "/courses",
-  //   token.authenticateUserJwt,
-  courseController.findAllCourses
-);
+router.post("/courses", authenticateUserJwt, courseController.findAllCourses);
 
 // exporting the module
 module.exports = router;

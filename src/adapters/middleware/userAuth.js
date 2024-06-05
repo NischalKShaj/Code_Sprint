@@ -1,19 +1,19 @@
-// file to verify the jwt tokens used for the user
+// jwt authentication
 const jwt = require("jsonwebtoken");
+const dotenv = require("dotenv");
+dotenv.config();
 
-// setting the middleware for the verification of the jwt
 module.exports.authenticateUserJwt = (req, res, next) => {
-  const token =
-    req.headers.authorization && req.headers.authorization.split(" ")[1];
+  const token = req.cookies.access_token || req.headers["authorization"];
   console.log("token", token);
   if (!token) {
-    return res.status(401).json("unauthorized user");
+    return res.status(401).json({ message: "Unauthorized" });
   }
-  jwt.verify(token, process.env.SECRET, (err, user) => {
-    if (err) {
-      return res.status(403).json("invalid token");
-    }
-    req.user = user;
+  try {
+    const decoded = jwt.verify(token, process.env.SECRET);
+    req.user = decoded;
     next();
-  });
+  } catch (error) {
+    return res.status(401).json({ message: "Invalid Token" });
+  }
 };

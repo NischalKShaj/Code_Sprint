@@ -6,6 +6,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import cookie from "js-cookie";
 import dotenv from "dotenv";
+import { useRouter } from "next/navigation";
 dotenv.config();
 
 interface VideoDetails {
@@ -24,18 +25,29 @@ interface Course {
 
 const Course = () => {
   const [courses, setCourses] = useState<Course[]>([]);
+  const router = useRouter();
   useEffect(() => {
     const fetchData = async () => {
       try {
-        console.log("document.cookie", document.cookie);
+        const token = localStorage.getItem("access_token");
         const response = await axios.post(
-          `${process.env.NEXT_PUBLIC_BASE_URL}/courses`
+          `${process.env.NEXT_PUBLIC_BASE_URL}/courses`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            withCredentials: true,
+          }
         );
         if (response.status === 200) {
           setCourses(response.data);
+        } else {
+          router.push("/");
         }
       } catch (error) {
         console.error("error fetching the course page", error);
+        router.push("/login");
       }
     };
     fetchData();

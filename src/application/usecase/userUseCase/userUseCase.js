@@ -17,7 +17,7 @@ const userUseCase = {
       const result = await userRepository.findUser(user);
       console.log("result", result);
       if (result) {
-        const token = generateJWT(result.email);
+        const token = generateJWT.generateJWT(result.email);
         return { success: true, data: result, token };
       } else {
         return { success: false, data: "invalid credentials" };

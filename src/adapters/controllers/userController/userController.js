@@ -28,7 +28,7 @@ const userController = {
         res
           .cookie("access_token", details.token, { httpOnly: true })
           .status(200)
-          .json(details.data);
+          .json({ data: details.data, token: details.token });
       } else {
         res.status(401).json({ message: "invalid credentials" });
       }
@@ -126,7 +126,10 @@ const userController = {
   // controller for log-out
   logoutUser: (req, res) => {
     try {
-      res.clearCookie("access_token").status(200).json("logout success");
+      res
+        .clearCookie("access_token")
+        .status(200)
+        .json({ message: "Logged out successfully" });
     } catch (error) {
       console.error("error", error);
     }
