@@ -25,7 +25,8 @@ const userRepository = {
       // Check if the user details exists and validate password
       if (
         userDetails &&
-        bcryptjs.compareSync(userPassword, userDetails.password)
+        bcryptjs.compareSync(userPassword, userDetails.password) &&
+        userDetails.blocked === false
       ) {
         return userDetails;
       }
@@ -33,7 +34,8 @@ const userRepository = {
       // Check if tutor details exist and validate password
       if (
         tutorDetails &&
-        bcryptjs.compareSync(userPassword, tutorDetails.password)
+        bcryptjs.compareSync(userPassword, tutorDetails.password) &&
+        tutorDetails.blocked === false
       ) {
         return tutorDetails;
       }

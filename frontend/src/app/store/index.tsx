@@ -107,11 +107,7 @@ export const AppState = create<State>((set, get) => {
       },
       isLoggedOut: () => {
         set(() => ({ isAuthorized: false, user: null }));
-        // Save state to localStorage
-        localStorage.setItem(
-          "appState",
-          JSON.stringify({ ...get(), isAuthorized: false, user: null })
-        );
+        localStorage.removeItem("appState");
       },
       isAdminLoggedIn: (admin) => {
         set(() => ({ isAdmin: true, admin }));
@@ -123,11 +119,7 @@ export const AppState = create<State>((set, get) => {
       },
       isAdminLoggedOut: () => {
         set(() => ({ isAdmin: false, admin: null }));
-        // saving the state to the local storage
-        localStorage.setItem(
-          "appState",
-          JSON.stringify({ ...get(), isAdmin: false, admin: null })
-        );
+        localStorage.removeItem("appState");
       },
       findAllUsers(allUser) {
         set(() => ({ allUser }));

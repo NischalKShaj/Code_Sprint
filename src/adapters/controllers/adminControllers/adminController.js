@@ -90,6 +90,11 @@ const adminController = {
       res.status(500).json(response.data);
     }
   },
+
+  // controller for admin logout
+  adminLogout: (req, res) => {
+    res.status(200).json("admin logout success");
+  },
 };
 
 module.exports = adminController;

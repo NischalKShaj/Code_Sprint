@@ -4,6 +4,7 @@
 // import all the required modules
 import axios from "axios";
 import { useEffect, useState } from "react";
+import cookie from "js-cookie";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -26,7 +27,7 @@ const Course = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        console.log(document.cookie);
+        console.log("document.cookie", document.cookie);
         const response = await axios.post(
           `${process.env.NEXT_PUBLIC_BASE_URL}/courses`
         );

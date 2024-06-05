@@ -27,7 +27,7 @@ const userController = {
       if (details.success) {
         res
           .cookie("access_token", details.token, { httpOnly: true })
-          .status(202)
+          .status(200)
           .json(details.data);
       } else {
         res.status(401).json({ message: "invalid credentials" });

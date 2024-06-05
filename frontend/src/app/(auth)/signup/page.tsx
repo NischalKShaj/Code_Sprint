@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 const Signup = () => {
   const [formData, setFormData] = useState({});
   const router = useRouter();
+  const [message, setMessage] = useState("");
 
   // Function to handle the changing elements in the form
   const handleSignup: ChangeEventHandler<HTMLInputElement> = (e) => {
@@ -34,9 +35,20 @@ const Signup = () => {
         `${process.env.NEXT_PUBLIC_BASE_URL}/signup`,
         formData
       );
+      if (response.status === 201) {
+        router.push("/otp");
+      } else if (response.status === 409) {
+        setMessage("User already exists");
+      } else {
+        setMessage("An unexpected error occurred");
+      }
       console.log(response.data);
-      router.push("/otp");
     } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.status === 409) {
+        setMessage("User already exists");
+      } else {
+        setMessage("An error occurred during signup. Please try again.");
+      }
       console.log("error", error);
     }
   };
@@ -47,6 +59,7 @@ const Signup = () => {
         Learn with Passion. Connect with Experts.
         <br /> Sign up today!
       </h3>
+      {message && <p className="text-red-500 mt-4">{message}</p>}
       <section className="bg-[#D9D9D9] p-8 h-[530px] w-[370px] rounded-lg shadow-md">
         <form onSubmit={handleSubmit}>
           <input

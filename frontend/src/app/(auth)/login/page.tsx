@@ -14,6 +14,7 @@ import { faGithub } from "@fortawesome/free-brands-svg-icons";
 
 const Login = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [message, setMessage] = useState("");
   const [formData, setFormData] = useState<{ email: string; password: string }>(
     { email: "", password: "" }
   );
@@ -42,17 +43,22 @@ const Login = () => {
       );
       console.log(response.data);
       const role = response.data.role;
-      console.log("role", role);
-      login({
-        id: response.data._id,
-        email: response.data.email,
-        role: response.data.role,
-        username: response.data.username,
-        profileImage: response.data.profileImage,
-      });
-      router.push("/");
+      if (response.status === 200) {
+        console.log("role", role);
+        login({
+          id: response.data._id,
+          email: response.data.email,
+          role: response.data.role,
+          username: response.data.username,
+          profileImage: response.data.profileImage,
+        });
+        router.push("/");
+      } else {
+        setMessage("invalid user details");
+      }
     } catch (error) {
       console.log("error", error);
+      setMessage("invalid user details");
     }
   };
 
@@ -92,6 +98,7 @@ const Login = () => {
       <h3 className="text-2xl font-bold mb-6">
         Login to your CodeSprint account
       </h3>
+      {message && <p className="text-red-500 mt-4">{message}</p>}
       <section className="bg-[#D9D9D9] p-8 h-[400px] w-[370px] rounded-lg shadow-md">
         <button
           onClick={() => handleOAuth("google")}

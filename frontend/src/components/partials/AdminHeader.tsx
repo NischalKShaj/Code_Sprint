@@ -4,11 +4,16 @@ import Link from "next/link";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { AppState } from "@/app/store";
+import axios from "axios";
+import dotenv from "dotenv";
+import { useRouter } from "next/navigation";
+dotenv.config();
 
 const AdminHeader = () => {
   const admin = AppState((state) => state.isAdmin);
+  const logout = AppState((state) => state.isAdminLoggedOut);
   const [isLoading, setIsLoading] = useState(true);
-
+  const router = useRouter();
   useEffect(() => {
     setIsLoading(false);
   }, []);
@@ -17,6 +22,20 @@ const AdminHeader = () => {
     // make it a skeleton
     return <div>Loading...</div>;
   }
+
+  const handleLogout = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/admin/logout`
+      );
+      if (response.status === 200) {
+        logout();
+        router.push("/admin");
+      }
+    } catch (error) {
+      console.error("error");
+    }
+  };
 
   return (
     <>
@@ -50,7 +69,10 @@ const AdminHeader = () => {
           />
         </div>
         {admin && (
-          <button className="bg-[#686DE0] left-[850px] top-[65px] text-white font-bold py-2 px-4 rounded-xl  absolute">
+          <button
+            onClick={handleLogout}
+            className="bg-[#686DE0] left-[850px] top-[65px] text-white font-bold py-2 px-4 rounded-xl  absolute"
+          >
             logout
           </button>
         )}
