@@ -2,6 +2,7 @@
 
 // importing the required modules
 const oAuthRepository = require("../../../infrastructure/repositories/oAuthRepository/oAuthRepository");
+const generateJWT = require("../../../infrastructure/services/jwtServices");
 
 // creating the oAuth Usecase
 const OAuthUseCase = {
@@ -11,7 +12,8 @@ const OAuthUseCase = {
       const result = await oAuthRepository.oAuth(userData);
       console.log("res", result);
       if (result) {
-        return { success: true, data: result };
+        const token = generateJWT.generateJWT(result.email);
+        return { success: true, data: result, token };
       } else {
         return { success: false, data: "user not found" };
       }

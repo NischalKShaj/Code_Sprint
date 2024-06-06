@@ -5,6 +5,7 @@ dotenv.config();
 import GithubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
 import axios from "axios";
+import { storeToken } from "../utils/authClient"; // Adjust the path as necessary
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -24,10 +25,15 @@ export const authOptions: NextAuthOptions = {
         try {
           const response = await axios.post(
             `${process.env.NEXT_PUBLIC_BASE_URL}/api/google`,
-            { email, image, name }
+            { email, image, name },
+            { withCredentials: true }
           );
-          if (response.status !== 200) {
+          if (response.status !== 202) {
             throw new Error("backend failed to load the user details");
+          }
+          const token = response.data.token;
+          if (token) {
+            storeToken(token);
           }
         } catch (error) {
           console.error("error", error);
@@ -36,10 +42,15 @@ export const authOptions: NextAuthOptions = {
         try {
           const response = await axios.post(
             `${process.env.NEXT_PUBLIC_BASE_URL}/api/github`,
-            { email, name, image }
+            { email, name, image },
+            { withCredentials: true }
           );
-          if (response.status !== 200) {
+          if (response.status !== 202) {
             throw new Error("backend failed to load the user details");
+          }
+          const token = response.data.token;
+          if (token) {
+            storeToken(token);
           }
         } catch (error) {
           console.error("error", error);

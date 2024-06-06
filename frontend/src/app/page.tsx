@@ -8,13 +8,13 @@ import { AppState } from "./store";
 
 const Home = () => {
   const isLoggedOut = AppState((state) => state.isLoggedOut);
-
   useEffect(() => {
     setTimeout(() => {
       isLoggedOut();
       localStorage.removeItem("access_token");
     }, 4000000);
   }, []);
+
   return (
     <div>
       <section className="flex justify-center mt-7 mb-7 space-x-[370px]">

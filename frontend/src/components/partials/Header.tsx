@@ -91,7 +91,7 @@ const Header = () => {
                   className="bg-[#686DE0] text-white font-bold py-2 px-4 rounded-xl mr-3 mt-16 mx-44 absolute"
                   onClick={() => signOut()}
                 >
-                  Sign Out
+                  Logout
                 </button>
               )}
               <p className="mt-[76px] mx-8">{currentUser.username}</p>

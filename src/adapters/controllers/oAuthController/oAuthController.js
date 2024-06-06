@@ -12,7 +12,10 @@ const oAuth = {
       const result = await OAuthUseCase.oAuth(user);
       console.log("result", result);
       if (result.success) {
-        res.status(200).json(result.data);
+        res
+          .cookie("access_token", result.token, { httpOnly: true })
+          .status(202)
+          .json({ data: result.data, token: result.token });
       } else {
         res.status(404).json("user not found");
       }
