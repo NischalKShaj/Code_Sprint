@@ -1,4 +1,3 @@
-// file for the header
 "use client";
 import Link from "next/link";
 import Image from "next/image";
@@ -6,10 +5,12 @@ import Login from "../button/Login";
 import Signup from "../button/Signup";
 import { AppState } from "@/app/store";
 import Logout from "../button/Logout";
+import { useSession, signOut } from "next-auth/react";
 import { useEffect, useState } from "react";
 
 const Header = () => {
   const [isLoading, setIsLoading] = useState(true);
+  const { data: session } = useSession();
   const { isAuthorized, user } = AppState();
   const authorized = AppState((state) => state.isAuthorized);
 
@@ -18,9 +19,17 @@ const Header = () => {
   }, []);
 
   if (isLoading) {
-    // make it a skeleton
     return <div>Loading...</div>;
   }
+
+  // Combine session user and AppState user, prioritizing session user data
+  const currentUser = {
+    ...user,
+    ...session?.user,
+    username: session?.user?.name || user?.username,
+    role: user?.role || "student", // Assume 'student' if no role is defined in session
+  };
+
   return (
     <>
       <header className="bg-[#F0E6E6] flex">
@@ -33,7 +42,7 @@ const Header = () => {
           />
         </Link>
         <div className="flex flex-row">
-          <button className="button bg-gray-50 text-white font-bold py-2 px-4 rounded-3xl absolute left-64 mr-3  mt-16">
+          <button className="button bg-gray-50 text-white font-bold py-2 px-4 rounded-3xl absolute left-64 mr-3 mt-16">
             <span>
               <svg
                 viewBox="0 0 20 20"
@@ -57,22 +66,14 @@ const Header = () => {
             <Link href="/course">Course</Link>
           </li>
           <li>
-            {user ? (
-              user.role === "student" ? (
-                <Link href="/contest">Contest</Link>
-              ) : user.role === "tutor" ? (
-                <Link href="/mycourse">My Course</Link>
-              ) : null // Add a fallback or null if needed
-            ) : (
+            {currentUser.role === "student" ? (
               <Link href="/contest">Contest</Link>
-            )}
+            ) : currentUser.role === "tutor" ? (
+              <Link href="/mycourse">My Course</Link>
+            ) : null}
           </li>
           <li>
-            {user ? (
-              user.role === "student" ? (
-                <Link href="/problems">Problems</Link>
-              ) : user.role === "tutor" ? null : null
-            ) : (
+            {currentUser.role === "student" && (
               <Link href="/problems">Problems</Link>
             )}
           </li>
@@ -81,16 +82,19 @@ const Header = () => {
           </li>
         </ul>
         <div>
-          {authorized ? (
+          {authorized || session ? (
             <div className="flex">
-              <Logout />
-              {/* <Image
-                src={user?.profileImage || "null"}
-                width={250}
-                height={250}
-                alt="logo"
-              /> */}
-              <p className="mt-[76px] mx-8">{user?.username}</p>
+              {authorized ? (
+                <Logout />
+              ) : (
+                <button
+                  className="bg-[#686DE0] text-white font-bold py-2 px-4 rounded-xl mr-3 mt-16 mx-44 absolute"
+                  onClick={() => signOut()}
+                >
+                  Sign Out
+                </button>
+              )}
+              <p className="mt-[76px] mx-8">{currentUser.username}</p>
             </div>
           ) : (
             <div>

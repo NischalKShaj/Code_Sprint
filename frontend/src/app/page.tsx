@@ -1,7 +1,20 @@
 // file to show the landing page for the user and the tutor
+"use client";
+
+// importing the required modules for the page
 import Image from "next/image";
+import { useEffect } from "react";
+import { AppState } from "./store";
 
 const Home = () => {
+  const isLoggedOut = AppState((state) => state.isLoggedOut);
+
+  useEffect(() => {
+    setTimeout(() => {
+      isLoggedOut();
+      localStorage.removeItem("access_token");
+    }, 4000000);
+  }, []);
   return (
     <div>
       <section className="flex justify-center mt-7 mb-7 space-x-[370px]">

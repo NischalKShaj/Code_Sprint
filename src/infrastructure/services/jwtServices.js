@@ -9,6 +9,6 @@ dotenv.config();
 module.exports.generateJWT = (userEmail) => {
   // console.log("email", email);
   return jwt.sign({ email: userEmail }, process.env.SECRET, {
-    expiresIn: "1h",
+    expiresIn: "4h",
   });
 };

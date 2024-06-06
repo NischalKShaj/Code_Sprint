@@ -6,11 +6,13 @@ import axios from "axios";
 import React, { useState } from "react";
 import dotenv from "dotenv";
 import { AppState } from "../../store";
+import { useRouter } from "next/navigation";
 dotenv.config();
 
 const AddCourse = () => {
   const email = AppState((state) => state.user?.email);
   const [files, setFiles] = useState<File[]>([]);
+  const router = useRouter();
   const [form, setForm] = useState({
     course_name: "",
     course_category: "",
@@ -47,14 +49,25 @@ const AddCourse = () => {
         console.log(`${key}: ${value}`);
       });
 
+      const token = localStorage.getItem("access_token");
+
       const response = await axios.post(
         `${
           process.env.NEXT_PUBLIC_BASE_URL
         }/uploads?userEmail=${encodeURIComponent(email)}`,
         formData,
-        { headers: { "Content-Type": "multipart/form-data" } }
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer${token}`,
+          },
+          withCredentials: true,
+        }
       );
       console.log("response", response.data);
+      if (response.status !== 202) {
+        router.push("/login");
+      }
     } catch (error) {
       console.error("Error uploading files", error);
     }

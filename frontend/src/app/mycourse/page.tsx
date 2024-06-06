@@ -7,6 +7,7 @@ import React, { useEffect, useState } from "react";
 import { AppState } from "../store";
 import axios from "axios";
 import dotenv from "dotenv";
+import { useRouter } from "next/navigation";
 
 dotenv.config();
 
@@ -24,26 +25,41 @@ interface Course {
 }
 
 const MyCourse: React.FC = () => {
+  const router = useRouter();
   const [courses, setCourses] = useState<Course[]>([]);
   const tutorId = AppState((state) => state.user?.id);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        const token = localStorage.getItem("access_token");
+        console.log("token");
         const response = await axios.post(
-          `${process.env.NEXT_PUBLIC_BASE_URL}/mycourse/${tutorId}`
+          `${process.env.NEXT_PUBLIC_BASE_URL}/mycourse/${tutorId}`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            withCredentials: true,
+          }
         );
         if (response.status === 200) {
           setCourses(response.data);
+        } else {
+          router.push("/login");
         }
       } catch (error) {
+        if (!tutorId) {
+          router.push("/login");
+        }
         console.error("Error fetching courses:", error);
       }
     };
 
-    if (tutorId) {
-      fetchData();
-    }
+    // if (tutorId) {
+    // }
+    fetchData();
   }, [tutorId]);
 
   // function for extracting the url of the videos

@@ -1,4 +1,4 @@
-// root layout of the project
+// rootlayout.tsx
 import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
 import "./globals.css";
@@ -6,6 +6,7 @@ import ConditionalHeader from "@/components/partials/ConditionalHeader";
 import ConditionalFooter from "@/components/partials/ConditionalFooter";
 import "@fortawesome/fontawesome-svg-core/styles.css";
 import { config } from "@fortawesome/fontawesome-svg-core";
+import { SessionProviderWrapper } from "@/components/SessionProviderWrapper";
 config.autoAddCss = false;
 
 const montserrat = Montserrat({
@@ -28,9 +29,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={montserrat.className}>
-        <ConditionalHeader />
-        {children}
-        <ConditionalFooter />
+        <SessionProviderWrapper>
+          <ConditionalHeader />
+          {children}
+          <ConditionalFooter />
+        </SessionProviderWrapper>
       </body>
     </html>
   );

@@ -9,6 +9,7 @@ const OAuthUseCase = {
   oAuth: async (userData) => {
     try {
       const result = await oAuthRepository.oAuth(userData);
+      console.log("res", result);
       if (result) {
         return { success: true, data: result };
       } else {

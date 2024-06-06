@@ -44,7 +44,7 @@ const Login = () => {
       console.log(response.data);
       const { role, token, data } = response.data;
 
-      if (response.status === 200) {
+      if (response.status === 202) {
         console.log("role", role);
         localStorage.setItem("access_token", token);
         login({

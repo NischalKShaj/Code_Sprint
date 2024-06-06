@@ -27,7 +27,7 @@ const userController = {
       if (details.success) {
         res
           .cookie("access_token", details.token, { httpOnly: true })
-          .status(200)
+          .status(202)
           .json({ data: details.data, token: details.token });
       } else {
         res.status(401).json({ message: "invalid credentials" });
@@ -94,7 +94,7 @@ const userController = {
       if (result.success) {
         res.status(201).json("user signed successfully");
       } else {
-        res.status(409).json("invalid otp");
+        res.status(400).json("invalid otp");
       }
     } catch (error) {
       res.status(500).json({ message: "internal server error" });
@@ -113,9 +113,9 @@ const userController = {
       console.log("new otp", newOTP);
       const response = await userUseCase.resendOtp(email, newOTP);
       if (response.success) {
-        res.status(200).json("otp resending success");
+        res.status(201).json("otp resending success");
       } else {
-        res.status(409).json("invalid user");
+        res.status(400).json("invalid user");
       }
     } catch (error) {
       console.error("error", error);

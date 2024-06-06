@@ -13,7 +13,7 @@ const oAuthRepository = {
         email: userData.email,
       });
       if (userDetail) {
-        return userData;
+        return userDetail;
       } else {
         const password = Math.random().toString(36).slice(-8);
         const hashedPassword = bcryptjs.hashSync(password, 10);
@@ -24,6 +24,7 @@ const oAuthRepository = {
           profile: userData.image,
         });
         await user.save();
+        console.log("user", user);
         return user;
       }
     } catch (error) {

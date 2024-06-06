@@ -50,7 +50,7 @@ const tutorController = {
         );
         if (result.success) {
           console.log("success", result);
-          res.status(200).json(result.data);
+          res.status(202).json(result.data);
         } else {
           console.error("error", result.data);
           res.status(400).json(result.data);

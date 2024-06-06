@@ -1,9 +1,8 @@
-// file to manage the state of the entire application
+// store/index.tsx
 import { create } from "zustand";
 
-// creating the interface for the state of the application
+// Creating the interface for the state of the application
 interface State {
-  // users state
   isAuthorized: boolean;
   user: {
     id: string;
@@ -20,14 +19,10 @@ interface State {
     profileImage: string;
   }) => void;
   isLoggedOut: () => void;
-  // admin state
   isAdmin: boolean;
-  admin: {
-    email: string;
-  } | null;
+  admin: { email: string } | null;
   isAdminLoggedIn: (admin: { email: string }) => void;
   isAdminLoggedOut: () => void;
-  // getting all data required for the dashboard
   allUser: {
     id: string;
     username: string;
@@ -60,112 +55,93 @@ interface State {
       block: boolean;
     }[]
   ) => void;
-
-  // for performing block and unblocks for tutor
   blockUnblock: (id: string, status: boolean) => void;
-
-  // for performing block and unblock for user
   block_unblock: (id: string, status: boolean) => void;
 }
 
 export const AppState = create<State>((set, get) => {
-  // Directly use typeof window!== "undefined" without useState
+  let initialState = {
+    isAuthorized: false,
+    user: null,
+    isAdmin: false,
+    admin: null,
+    allUser: [],
+    allTutor: [],
+  };
+
   if (typeof window !== "undefined") {
-    // Safely read initial state from localStorage
-    let savedState: string | null = localStorage.getItem("appState");
-
-    // Initialize the state with defaults if savedState is null
-    let initialState = {
-      isAuthorized: false,
-      user: null,
-      isAdmin: false,
-      admin: null,
-      allUser: [],
-      allTutor: [],
-    };
-
-    // Only parse savedState if it's not null
-    if (savedState !== null) {
+    const savedState = localStorage.getItem("appState");
+    if (savedState) {
       try {
         initialState = JSON.parse(savedState);
       } catch (error) {
         console.error("Error parsing saved state:", error);
-        // Optionally, fall back to initialState if parsing fails
       }
     }
+  }
 
-    // Return the initial state along with the action handlers
-    return {
-      ...initialState,
-      isLoggedIn: (user) => {
-        set(() => ({ isAuthorized: true, user }));
-        // Save state to localStorage
+  return {
+    ...initialState,
+    isLoggedIn: (user) => {
+      set({ isAuthorized: true, user });
+      if (typeof window !== "undefined") {
         localStorage.setItem(
           "appState",
           JSON.stringify({ ...get(), isAuthorized: true, user })
         );
-      },
-      isLoggedOut: () => {
-        set(() => ({ isAuthorized: false, user: null }));
+      }
+    },
+    isLoggedOut: () => {
+      set({ isAuthorized: false, user: null });
+      if (typeof window !== "undefined") {
         localStorage.removeItem("appState");
-      },
-      isAdminLoggedIn: (admin) => {
-        set(() => ({ isAdmin: true, admin }));
-        // saving the state to the local storage
+      }
+    },
+    isAdminLoggedIn: (admin) => {
+      set({ isAdmin: true, admin });
+      if (typeof window !== "undefined") {
         localStorage.setItem(
           "appState",
           JSON.stringify({ ...get(), isAdmin: true, admin })
         );
-      },
-      isAdminLoggedOut: () => {
-        set(() => ({ isAdmin: false, admin: null }));
+      }
+    },
+    isAdminLoggedOut: () => {
+      set({ isAdmin: false, admin: null });
+      if (typeof window !== "undefined") {
         localStorage.removeItem("appState");
-      },
-      findAllUsers(allUser) {
-        set(() => ({ allUser }));
+      }
+    },
+    findAllUsers: (allUser) => {
+      set({ allUser });
+      if (typeof window !== "undefined") {
         localStorage.setItem("appState", JSON.stringify({ ...get(), allUser }));
-      },
-      findAllTutor(allTutor) {
-        set(() => ({ allTutor }));
+      }
+    },
+    findAllTutor: (allTutor) => {
+      set({ allTutor });
+      if (typeof window !== "undefined") {
         localStorage.setItem(
           "appState",
           JSON.stringify({ ...get(), allTutor })
         );
-      },
-      blockUnblock: (id: string, status: boolean) => {
-        set((state) => {
-          const updatedTutors = state.allTutor.map((tutor) =>
-            tutor.id === id ? { ...tutor, block: status } : tutor
-          );
-          return { ...state, allTutor: updatedTutors };
-        });
-      },
-      block_unblock: (id: string, status: boolean) => {
-        set((state) => {
-          const updatedUser = state.allUser.map((user) =>
-            user.id === id ? { ...user, block: status } : user
-          );
-          return { ...state, allUser: updatedUser };
-        });
-      },
-    };
-  } else {
-    // Fallback or alternative behavior for non-browser environments
-    return {
-      isAuthorized: false,
-      user: null,
-      isLoggedIn: () => {},
-      isLoggedOut: () => {},
-      isAdmin: false,
-      admin: null,
-      isAdminLoggedIn: () => {},
-      isAdminLoggedOut: () => {},
-      allUser: [],
-      findAllUsers: () => {},
-      allTutor: [],
-      findAllTutor: () => {},
-      blockUnblock: () => {},
-      block_unblock: () => {},
-    };
-  }
+      }
+    },
+    blockUnblock: (id, status) => {
+      set((state) => {
+        const updatedTutors = state.allTutor.map((tutor) =>
+          tutor.id === id ? { ...tutor, block: status } : tutor
+        );
+        return { ...state, allTutor: updatedTutors };
+      });
+    },
+    block_unblock: (id, status) => {
+      set((state) => {
+        const updatedUser = state.allUser.map((user) =>
+          user.id === id ? { ...user, block: status } : user
+        );
+        return { ...state, allUser: updatedUser };
+      });
+    },
+  };
 });

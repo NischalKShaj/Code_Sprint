@@ -10,6 +10,7 @@ const oAuth = {
     console.log("user", user);
     try {
       const result = await OAuthUseCase.oAuth(user);
+      console.log("result", result);
       if (result.success) {
         res.status(200).json(result.data);
       } else {

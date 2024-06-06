@@ -1,4 +1,3 @@
-// file for the configuration for googleAuth and githubAuth
 import { NextAuthOptions } from "next-auth";
 import dotenv from "dotenv";
 dotenv.config();
@@ -47,6 +46,22 @@ export const authOptions: NextAuthOptions = {
         }
       }
       return true;
+    },
+    async jwt({ token, user }) {
+      if (user) {
+        token.name = user.name;
+        token.email = user.email;
+        token.image = user.image as string;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      if (session.user) {
+        session.user.name = token.name;
+        session.user.email = token.email;
+        session.user.image = token.image as string;
+      }
+      return session;
     },
   },
 };

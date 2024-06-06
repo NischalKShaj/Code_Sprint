@@ -20,8 +20,8 @@ router.post("/otp/resend", userController.resendOtp);
 router.post("/api/google", oAuthController.postOAuth);
 router.post("/api/github", oAuthController.postOAuth);
 router.get("/logout", userController.logoutUser);
-router.post("/mycourse/:id", tutorController.getCourse);
-router.post("/uploads", tutorController.addCourse);
+router.post("/mycourse/:id", authenticateUserJwt, tutorController.getCourse);
+router.post("/uploads", authenticateUserJwt, tutorController.addCourse);
 router.post("/courses", authenticateUserJwt, courseController.findAllCourses);
 
 // exporting the module
