@@ -10,6 +10,7 @@ const userController = require("../../../adapters/controllers/userController/use
 const tutorController = require("../../../adapters/controllers/tutorController/tutorController");
 const oAuthController = require("../../../adapters/controllers/oAuthController/oAuthController");
 const courseController = require("../../../adapters/controllers/courseController/courseController");
+const profileController = require("../../../adapters/controllers/profileController/profileController");
 
 // creating the required routes
 router.get("/", userController.getHome);
@@ -23,6 +24,11 @@ router.get("/logout", userController.logoutUser);
 router.post("/mycourse/:id", authenticateUserJwt, tutorController.getCourse);
 router.post("/uploads", authenticateUserJwt, tutorController.addCourse);
 router.post("/courses", authenticateUserJwt, courseController.findAllCourses);
+router.post(
+  "/profile/user/:id",
+  authenticateUserJwt,
+  profileController.postUserProfile
+);
 
 // exporting the module
 module.exports = router;

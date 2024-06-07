@@ -11,6 +11,7 @@ import { signIn } from "next-auth/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGoogle } from "@fortawesome/free-brands-svg-icons";
 import { faGithub } from "@fortawesome/free-brands-svg-icons";
+import Swal from "sweetalert2";
 
 const Login = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -47,6 +48,13 @@ const Login = () => {
       if (response.status === 202) {
         console.log("role", role);
         localStorage.setItem("access_token", token);
+        Swal.fire({
+          position: "center",
+          icon: "success",
+          title: "Login successful!",
+          showConfirmButton: false,
+          timer: 1700,
+        });
         login({
           id: data._id,
           email: data.email,

@@ -7,6 +7,7 @@ import React, { useState } from "react";
 import dotenv from "dotenv";
 import { AppState } from "../../store";
 import { useRouter } from "next/navigation";
+import Swal from "sweetalert2";
 dotenv.config();
 
 const AddCourse = () => {
@@ -51,6 +52,14 @@ const AddCourse = () => {
 
       const token = localStorage.getItem("access_token");
 
+      Swal.fire({
+        icon: "success",
+        title: "Playlist Uploading in Progress",
+        text: "Your playlist will be uploaded within a few minutes. Please check back later.",
+        confirmButtonText: "OK",
+      });
+      router.push("/mycourse");
+
       const response = await axios.post(
         `${
           process.env.NEXT_PUBLIC_BASE_URL
@@ -64,12 +73,19 @@ const AddCourse = () => {
           withCredentials: true,
         }
       );
+
       console.log("response", response.data);
       if (response.status !== 202) {
         router.push("/login");
       }
     } catch (error) {
       console.error("Error uploading files", error);
+      Swal.fire({
+        icon: "error",
+        title: "Upload Failed",
+        text: "There was an error processing your request. Please try again.",
+        confirmButtonText: "Try Again",
+      });
     }
   };
 

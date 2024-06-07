@@ -94,7 +94,12 @@ const Header = () => {
                   Logout
                 </button>
               )}
-              <p className="mt-[76px] mx-8">{currentUser.username}</p>
+              <Link
+                href={`/profile/${currentUser.role}`}
+                className="mt-[76px] mx-8"
+              >
+                {currentUser.username}
+              </Link>
             </div>
           ) : (
             <div>

@@ -4,6 +4,7 @@ import axios from "axios";
 import React, { ChangeEventHandler, useEffect, useState } from "react";
 import dotenv from "dotenv";
 import { useRouter } from "next/navigation";
+import Swal from "sweetalert2";
 dotenv.config();
 
 const OTP = () => {
@@ -31,6 +32,13 @@ const OTP = () => {
         localStorage.removeItem("selectedRole");
         localStorage.removeItem("email");
         console.log(response.data);
+        Swal.fire({
+          position: "center",
+          icon: "success",
+          title: "Signup successful!",
+          showConfirmButton: false,
+          timer: 1700,
+        });
         router.push("/login");
       } else {
         setMessage("invalid otp");
