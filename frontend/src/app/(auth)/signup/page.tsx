@@ -1,27 +1,55 @@
-// page for user and tutor signup
 "use client";
 import dotenv from "dotenv";
 dotenv.config();
 import axios from "axios";
 import React, { ChangeEventHandler, useState } from "react";
 import { useRouter } from "next/navigation";
+import {
+  isValidUsername,
+  isStrongPassword,
+  validPhone,
+} from "../../../utils/validation";
+
+// Define the type for form data
+interface FormData {
+  username?: string;
+  email?: string;
+  role?: string;
+  phone?: string;
+  password?: string;
+}
 
 const Signup = () => {
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState<FormData>({});
+  const [errors, setErrors] = useState<FormData>({});
   const router = useRouter();
   const [message, setMessage] = useState("");
 
   // Function to handle the changing elements in the form
   const handleSignup: ChangeEventHandler<HTMLInputElement> = (e) => {
     const target = e.currentTarget;
-    if (target.type === "radio") {
-      setFormData((prevData) => ({ ...prevData, role: target.value }));
-      localStorage.setItem("selectedRole", target.value);
-    } else {
-      setFormData({ ...formData, [target.id]: target.value });
+    const { id, value, type } = target;
+    let error = "";
 
-      if (target.type === "email") {
-        localStorage.setItem("email", target.value);
+    if (id === "username" && !isValidUsername(value)) {
+      error = "Username should only contain alphabetic characters";
+    } else if (id === "password" && !isStrongPassword(value)) {
+      error =
+        "Password must be at least 8 characters long and include an uppercase letter, a lowercase letter, a digit, and a special character";
+    } else if (id === "phone" && !validPhone(value)) {
+      error = "Phone number must be exactly 10 digits";
+    }
+
+    setErrors((prevErrors) => ({ ...prevErrors, [id]: error }));
+
+    if (type === "radio") {
+      setFormData((prevData) => ({ ...prevData, role: value }));
+      localStorage.setItem("selectedRole", value);
+    } else {
+      setFormData((prevData) => ({ ...prevData, [id]: value }));
+
+      if (type === "email") {
+        localStorage.setItem("email", value);
       }
     }
   };
@@ -29,6 +57,13 @@ const Signup = () => {
   // function to handle the signup of the user
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    // Check for validation errors before submitting
+    if (Object.values(errors).some((error) => error !== "")) {
+      setMessage("Please fix the errors before submitting");
+      return;
+    }
+
     console.log("base url", process.env.NEXT_PUBLIC_BASE_URL);
     try {
       const response = await axios.post(
@@ -68,16 +103,19 @@ const Signup = () => {
             name="username"
             onChange={handleSignup}
             placeholder="username"
-            className="p-4 bg-gray-50 border border-gray-300 rounded-lg  w-full mt-3"
+            className="p-4 bg-gray-50 border border-gray-300 rounded-lg w-full mt-3"
             required
           />
+          {errors.username && (
+            <p className="text-red-500 mt-1">{errors.username}</p>
+          )}
           <input
             type="email"
             id="email"
             name="email"
             onChange={handleSignup}
             placeholder="email"
-            className="p-4 bg-gray-50 border border-gray-300 rounded-lg  w-full mt-3"
+            className="p-4 bg-gray-50 border border-gray-300 rounded-lg w-full mt-3"
             required
           />
           <div className="border border-gray-300 bg-gray-50 rounded-lg p-4 w-full mt-3">
@@ -111,8 +149,9 @@ const Signup = () => {
             placeholder="phone"
             onChange={handleSignup}
             required
-            className="p-4 bg-gray-50 border border-gray-300 rounded-lg  w-full mt-3"
+            className="p-4 bg-gray-50 border border-gray-300 rounded-lg w-full mt-3"
           />
+          {errors.phone && <p className="text-red-500 mt-1">{errors.phone}</p>}
           <input
             type="password"
             id="password"
@@ -120,8 +159,11 @@ const Signup = () => {
             placeholder="password"
             onChange={handleSignup}
             required
-            className="p-4 bg-gray-50 border border-gray-300 rounded-lg  w-full mt-3"
+            className="p-4 bg-gray-50 border border-gray-300 rounded-lg w-full mt-3"
           />
+          {errors.password && (
+            <p className="text-red-500 mt-1">{errors.password}</p>
+          )}
           <button className="bg-[#686DE0] text-white font-bold py-2 px-4 rounded-xl w-full mt-7">
             signup
           </button>

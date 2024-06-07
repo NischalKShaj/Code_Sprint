@@ -30,6 +30,7 @@ const Course = () => {
     const fetchData = async () => {
       try {
         const token = localStorage.getItem("access_token");
+        console.log("access_token", token);
         const response = await axios.post(
           `${process.env.NEXT_PUBLIC_BASE_URL}/courses`,
           {},

@@ -10,6 +10,7 @@ const OTP = () => {
   const [otp, setOtp] = useState({});
   const [timer, setTimer] = useState(60);
   const [isResending, setIsResending] = useState(false);
+  const [message, setMessage] = useState("");
   const router = useRouter();
   // adding the otp to the state
   const handleValue: ChangeEventHandler<HTMLInputElement> = (e) => {
@@ -26,11 +27,16 @@ const OTP = () => {
         `${process.env.NEXT_PUBLIC_BASE_URL}/otp`,
         { ...otp, selectedRole }
       );
-      localStorage.removeItem("selectedRole");
-      localStorage.removeItem("email");
-      console.log(response.data);
-      router.push("/login");
+      if (response.status === 201) {
+        localStorage.removeItem("selectedRole");
+        localStorage.removeItem("email");
+        console.log(response.data);
+        router.push("/login");
+      } else {
+        setMessage("invalid otp");
+      }
     } catch (error) {
+      setMessage("invalid otp");
       console.log("error", error);
     }
   };
@@ -78,6 +84,7 @@ const OTP = () => {
         </p>
 
         <div className="mb-6">
+          {message && <p className="text-sm text-red-500">{message}</p>}
           <form onSubmit={handleOtp}>
             <label
               htmlFor="email"

@@ -1,3 +1,5 @@
+// src/lib/auth.ts
+
 import { NextAuthOptions } from "next-auth";
 import dotenv from "dotenv";
 dotenv.config();
@@ -5,7 +7,7 @@ dotenv.config();
 import GithubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
 import axios from "axios";
-import { storeToken } from "../utils/authClient"; // Adjust the path as necessary
+import local from "local-storage";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -33,7 +35,16 @@ export const authOptions: NextAuthOptions = {
           }
           const token = response.data.token;
           if (token) {
-            storeToken(token);
+            // Add this line before ls.set() to log the token
+            console.log("Token to be stored:", token);
+
+            (local as any).set("access_token", token);
+
+            // Add this line after ls.set() to verify if the token is stored
+            console.log(
+              "Token stored in localStorage:",
+              (local as any).get("access_token")
+            );
           }
         } catch (error) {
           console.error("error", error);
@@ -49,9 +60,9 @@ export const authOptions: NextAuthOptions = {
             throw new Error("backend failed to load the user details");
           }
           const token = response.data.token;
-          if (token) {
-            storeToken(token);
-          }
+          // if (token) {
+          //   // storeToken(token);
+          // }
         } catch (error) {
           console.error("error", error);
         }
