@@ -52,13 +52,15 @@ const MyCourse: React.FC = () => {
       } catch (error) {
         if (!tutorId) {
           router.push("/login");
+        } else {
+          // Handle other network or server errors
+          console.error("Error fetching courses:", error);
+          // Optionally, redirect to an error page or show a notification
+          router.push("/error");
         }
-        console.error("Error fetching courses:", error);
       }
     };
 
-    // if (tutorId) {
-    // }
     fetchData();
   }, [tutorId]);
 

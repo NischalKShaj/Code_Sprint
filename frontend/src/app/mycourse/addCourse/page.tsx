@@ -86,6 +86,7 @@ const AddCourse = () => {
         text: "There was an error processing your request. Please try again.",
         confirmButtonText: "Try Again",
       });
+      router.push("/error");
     }
   };
 

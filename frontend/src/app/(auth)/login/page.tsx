@@ -63,6 +63,8 @@ const Login = () => {
           profileImage: data.profileImage,
         });
         router.push("/");
+      } else if (response.status === 500) {
+        router.push("/error");
       } else {
         setMessage("invalid user details");
       }

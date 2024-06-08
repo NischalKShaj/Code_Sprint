@@ -42,8 +42,12 @@ const Profile = () => {
           router.push("/login");
         }
       } catch (error) {
-        console.error("error", error);
-        router.push("/login");
+        if (!id) {
+          router.push("/login");
+        } else {
+          console.error("error", error);
+          router.push("/error");
+        }
       }
     };
     fetchData();

@@ -13,7 +13,7 @@ const courseController = {
         console.log("result", result.data);
         res.status(200).json(result.data);
       } else {
-        res.status(404).json(result.data);
+        res.status(401).json(result.data);
       }
     } catch (error) {
       res.status(500).json("internal server error");

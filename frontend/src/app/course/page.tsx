@@ -43,12 +43,20 @@ const Course = () => {
         );
         if (response.status === 200) {
           setCourses(response.data);
+        } else if (response.status === 500) {
+          router.push("/error");
         } else {
           router.push("/");
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error("error fetching the course page", error);
-        router.push("/login");
+        if (error.response && error.response.status === 401) {
+          // Handle unauthorized error specifically
+          router.push("/login");
+        } else {
+          // Handle other errors
+          router.push("/error"); // Or another appropriate route
+        }
       }
     };
     fetchData();
