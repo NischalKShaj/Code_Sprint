@@ -1,26 +1,29 @@
-// collection for the tutor
 const mongoose = require("mongoose");
 
-// defining a module schema
+// defining a module schema for courses within the tutor schema
 const moduleSchema = new mongoose.Schema({
   title: {
     type: String,
+    required: true,
   },
   description: {
     type: String,
+    required: true,
   },
   category: {
     type: String,
+    required: true,
   },
   url: [
     {
       type: String,
+      required: true,
     },
   ],
 });
 
-// defining the schema
-const tutor = new mongoose.Schema(
+// defining the tutor schema
+const tutorSchema = new mongoose.Schema(
   {
     username: {
       type: String,
@@ -61,9 +64,8 @@ const tutor = new mongoose.Schema(
       default: false,
     },
   },
-
   { timestamps: true }
 );
 
 // exporting the collection
-module.exports = new mongoose.model("tutor", tutor);
+module.exports = mongoose.model("Tutor", tutorSchema);

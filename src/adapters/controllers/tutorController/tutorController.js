@@ -1,7 +1,10 @@
 // file for tutor controller
 
 // importing the required modules
-const upload = require("../../../infrastructure/services/aws/s3bucket");
+const {
+  upload,
+  sendMessageToQueue,
+} = require("../../../infrastructure/services/aws/s3bucket");
 const tutorUseCase = require("../../../application/usecase/tutorUseCase/tutorUseCase");
 
 const tutorController = {
@@ -26,18 +29,21 @@ const tutorController = {
   addCourse: async (req, res) => {
     const userDetails = req.query.userEmail;
     console.log("userDetails", userDetails);
+
     upload(req, res, async (err) => {
       if (err) {
         console.error("Upload error:", err);
         return res.status(400).json({ success: false, data: err.message });
       }
+
       try {
         const courseDetails = req.files;
         console.log("courseDetails", courseDetails);
+
         const course = req.body;
         console.log("course Data", course.course_name);
 
-        if (!courseDetails) {
+        if (!courseDetails || courseDetails.length === 0) {
           return res
             .status(400)
             .json({ success: false, data: "No files uploaded" });
@@ -50,6 +56,7 @@ const tutorController = {
         );
         if (result.success) {
           console.log("success", result);
+          await sendMessageToQueue({ course, courseDetails, userDetails });
           res.status(202).json(result.data);
         } else {
           console.error("error", result.data);

@@ -1,8 +1,7 @@
-// database for the courses
 const mongoose = require("mongoose");
 
 // creating the schema for the course database
-const course = new mongoose.Schema(
+const courseSchema = new mongoose.Schema(
   {
     course_name: {
       type: String,
@@ -28,7 +27,7 @@ const course = new mongoose.Schema(
     ],
     tutor: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "tutorCollection",
+      ref: "Tutor",
       required: true,
     },
   },
@@ -36,4 +35,4 @@ const course = new mongoose.Schema(
 );
 
 // exporting the modules
-module.exports = new mongoose.model("course", course);
+module.exports = mongoose.model("Course", courseSchema);

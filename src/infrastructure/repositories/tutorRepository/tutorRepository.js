@@ -91,34 +91,39 @@ const tutorRepository = {
           key: course.key,
           originalname: course.originalname,
         }));
-        const url = videoDetails.map((video) => video.url);
+
+        console.log("videoDetails", videoDetails);
+
+        const urls = videoDetails.map((video) => video.url);
         const courseData = new CourseCollection({
           course_name: course.course_name,
           course_category: course.course_category,
           number_of_videos: courses.length.toString(),
           description: course.description,
           tutor: tutor._id,
-          videos: url,
+          videos: urls,
         });
 
         const course_Data = {
           title: course.course_name,
           description: course.description,
           category: course.course_category,
-          url: url,
+          url: urls,
         };
+
         await TutorCollection.updateOne(
           { _id: tutor._id },
           { $push: { course: course_Data } }
         );
         await courseData.save();
         console.log("courseData", courseData);
-        return courseData;
+        return { success: true, data: courseData };
       } else {
-        return null;
+        return { success: false, data: "Tutor not found" };
       }
     } catch (error) {
       console.error("error", error);
+      return { success: false, data: "Internal server error" };
     }
   },
 };

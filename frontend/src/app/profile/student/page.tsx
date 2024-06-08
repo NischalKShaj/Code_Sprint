@@ -51,7 +51,7 @@ const Profile = () => {
       }
     };
     fetchData();
-  }, []);
+  }, [router, user?.id]);
   return (
     <div>
       <h3>profile</h3>

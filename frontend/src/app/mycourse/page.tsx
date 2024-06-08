@@ -1,4 +1,3 @@
-// file for showing tutors courses
 "use client";
 
 // Importing the required modules
@@ -62,7 +61,7 @@ const MyCourse: React.FC = () => {
     };
 
     fetchData();
-  }, [tutorId]);
+  }, [router, tutorId]);
 
   // function for extracting the url of the videos
   const getMimeType = (url: string): string => {
@@ -78,7 +77,12 @@ const MyCourse: React.FC = () => {
   };
 
   // function for getting the name of the videos
-  const getVideoName = (url: string): string => {
+  const getVideoName = (url: string | null | undefined): string => {
+    if (!url) {
+      console.error("Invalid URL:", url);
+      return "Unknown Video";
+    }
+
     const parts = url.split("/");
     const filename = parts[parts.length - 1];
     return filename.split(".")[0];
@@ -93,14 +97,14 @@ const MyCourse: React.FC = () => {
             <h3 className="text-2xl text-center font-bold mb-6">
               course name: {course.title}
             </h3>
-            {course.url.map((videoUrl, videoIndex) => (
+            {course.url?.map((videoUrl, videoIndex) => (
               <div
                 key={videoIndex}
                 className="justify-center"
                 style={{ margin: "30px 0" }}
               >
                 <h3 className="text-md text-right mr-[250px] top-[100px] items-center relative">
-                  here {getVideoName(videoUrl)}
+                  {getVideoName(videoUrl)}
                 </h3>
                 <video className="rounded-lg ml-5" width="300" controls>
                   <source

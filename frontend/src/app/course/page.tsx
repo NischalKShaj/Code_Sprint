@@ -60,7 +60,7 @@ const Course = () => {
       }
     };
     fetchData();
-  }, []);
+  }, [router]);
 
   // function to get the videos type
   const getMimeType = (url: string): string => {
