@@ -112,7 +112,7 @@ const AddCourse = () => {
       <h3 className="text-2xl font-bold mb-6 text-center items-center">
         Add New Course
       </h3>
-      <section className="bg-[#D9D9D9] p-8 h-[430px] w-[370px] rounded-lg shadow-md">
+      <section className="bg-[#D9D9D9] p-8 h-[520px] w-[370px] rounded-lg shadow-md">
         <form
           onSubmit={handleSubmit}
           encType="multipart/form-data"
@@ -146,13 +146,26 @@ const AddCourse = () => {
             onChange={handleChange}
           />
           <input
+            className="p-4 bg-gray-50 border border-gray-300 rounded-lg  w-full mt-3"
+            type="number"
+            name="amount"
+            required
+            id="amount"
+            min={0}
+            placeholder="Enter the price for the course"
+            onChange={handleChange}
+          />
+          <label htmlFor="videos" className="text-gray-500 mr-[50px]">
+            select mp4 or webm format
+          </label>
+          <input
             onChange={videoChange}
             type="file"
             className="p-4 bg-gray-50 border border-gray-300 rounded-lg  w-full mt-3"
             id="video"
             name="courses"
             multiple
-            accept="video/*"
+            accept="video/mp4,video/webm"
             required
           />
           <button

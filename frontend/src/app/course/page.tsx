@@ -4,7 +4,6 @@
 // import all the required modules
 import axios from "axios";
 import { useEffect, useState } from "react";
-import cookie from "js-cookie";
 import dotenv from "dotenv";
 import { useRouter } from "next/navigation";
 dotenv.config();
@@ -75,6 +74,40 @@ const Course = () => {
     }
   };
 
+  // function for showing the main course page and the payment details etc..
+  const handleSubscribe = async (id: string) => {
+    try {
+      const token = localStorage.getItem("access_token");
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/courses/${id}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
+        }
+      );
+      console.log("response", response.data);
+      if (response.status === 202) {
+        router.push(`course/${id}`);
+      } else if (response.status === 500) {
+        router.push("/error");
+      } else {
+        router.push("/");
+      }
+    } catch (error: any) {
+      console.error("error");
+      if (error.response && error.response.status === 401) {
+        // Handle unauthorized error specifically
+        router.push("/login");
+      } else {
+        // Handle other errors
+        router.push("/error"); // Or another appropriate route
+      }
+    }
+  };
+
   return (
     <div className="flex flex-col items-center mb-36 bg-white mt-16">
       <h1 className="text-3xl mr-[500px] font-bold mb-6">
@@ -101,6 +134,14 @@ const Course = () => {
                 Course Category: {course.course_category}
               </p>
               <p className="text-sm">{course.description}</p>
+            </div>
+            <div>
+              <button
+                onClick={() => handleSubscribe(course._id)}
+                className="bg-[#686DE0] text-white font-bold py-2 px-4 rounded-xl absolute ml-[150px] top-[420px]"
+              >
+                Subscribe
+              </button>
             </div>
           </div>
         ))}
