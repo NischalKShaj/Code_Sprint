@@ -95,7 +95,7 @@ const Signup = () => {
         <br /> Sign up today!
       </h3>
       {message && <p className="text-red-500 mt-4">{message}</p>}
-      <section className="bg-[#D9D9D9] p-8 h-[530px] w-[370px] rounded-lg shadow-md">
+      <section className="bg-[#D9D9D9] p-8 w-[370px] rounded-lg shadow-md">
         <form onSubmit={handleSubmit}>
           <input
             type="text"

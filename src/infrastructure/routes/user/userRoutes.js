@@ -29,6 +29,7 @@ router.post(
   authenticateUserJwt,
   profileController.postUserProfile
 );
+router.post("/courses/:id", authenticateUserJwt, courseController.showCourse);
 
 // exporting the module
 module.exports = router;

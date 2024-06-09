@@ -17,6 +17,18 @@ const courseUseCase = {
       return { success: false, data: "internal server error" };
     }
   },
+  showCourse: async (courseId) => {
+    try {
+      const course = await courseRepository.showCourse(courseId);
+      if (course) {
+        return { success: true, data: course };
+      } else {
+        return { success: false, data: null };
+      }
+    } catch (error) {
+      return { success: false, data: error.message };
+    }
+  },
 };
 
 module.exports = courseUseCase;

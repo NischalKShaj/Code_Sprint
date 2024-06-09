@@ -6,6 +6,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import dotenv from "dotenv";
 import { useRouter } from "next/navigation";
+import { CourseState } from "../store/courseStore";
 dotenv.config();
 
 interface VideoDetails {
@@ -23,6 +24,7 @@ interface Course {
 }
 
 const Course = () => {
+  const showCourse = CourseState((state) => state.showCourse);
   const [courses, setCourses] = useState<Course[]>([]);
   const router = useRouter();
   useEffect(() => {
@@ -76,8 +78,10 @@ const Course = () => {
 
   // function for showing the main course page and the payment details etc..
   const handleSubscribe = async (id: string) => {
+    console.log("inside");
     try {
       const token = localStorage.getItem("access_token");
+      console.log("token", token);
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_BASE_URL}/courses/${id}`,
         {},
@@ -90,6 +94,15 @@ const Course = () => {
       );
       console.log("response", response.data);
       if (response.status === 202) {
+        showCourse({
+          course_name: response.data.course_name,
+          course_category: response.data.course_category,
+          description: response.data.description,
+          number_of_tutorials: response.data.number_of_videos,
+          videos: response.data.videos.map((video: string) => ({ url: video })),
+          course_id: response.data._id,
+          tutor_id: response.data.tutor,
+        });
         router.push(`course/${id}`);
       } else if (response.status === 500) {
         router.push("/error");

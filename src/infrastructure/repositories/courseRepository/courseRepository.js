@@ -36,6 +36,19 @@ const courseRepository = {
       throw error;
     }
   },
+  showCourse: async (courseId) => {
+    try {
+      const courses = await CourseCollection.findById({ _id: courseId });
+      console.log("course", courses);
+      if (courses) {
+        return courses;
+      } else {
+        return null;
+      }
+    } catch (error) {
+      throw error;
+    }
+  },
 };
 
 module.exports = courseRepository;
