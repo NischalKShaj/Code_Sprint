@@ -30,6 +30,10 @@ const courseSchema = new mongoose.Schema(
       ref: "Tutor",
       required: true,
     },
+    price: {
+      type: String,
+      required: true,
+    },
   },
   { timestamps: true }
 );

@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import dotenv from "dotenv";
 import { useRouter } from "next/navigation";
 import { CourseState } from "../store/courseStore";
+import { AppState } from "../store";
 dotenv.config();
 
 interface VideoDetails {
@@ -25,6 +26,7 @@ interface Course {
 
 const Course = () => {
   const showCourse = CourseState((state) => state.showCourse);
+  const user = AppState((state) => state.user);
   const [courses, setCourses] = useState<Course[]>([]);
   const router = useRouter();
   useEffect(() => {
@@ -102,6 +104,7 @@ const Course = () => {
           videos: response.data.videos.map((video: string) => ({ url: video })),
           course_id: response.data._id,
           tutor_id: response.data.tutor,
+          price: response.data.price,
         });
         router.push(`course/${id}`);
       } else if (response.status === 500) {
@@ -149,12 +152,14 @@ const Course = () => {
               <p className="text-sm">{course.description}</p>
             </div>
             <div>
-              <button
-                onClick={() => handleSubscribe(course._id)}
-                className="bg-[#686DE0] text-white font-bold py-2 px-4 rounded-xl absolute ml-[150px] top-[420px]"
-              >
-                Subscribe
-              </button>
+              {user && (
+                <button
+                  onClick={() => handleSubscribe(course._id)}
+                  className="bg-[#686DE0] text-white font-bold py-2 px-4 rounded-xl absolute ml-[150px] top-[420px]"
+                >
+                  Subscribe
+                </button>
+              )}
             </div>
           </div>
         ))}
