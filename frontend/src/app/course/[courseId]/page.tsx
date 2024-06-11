@@ -8,18 +8,53 @@ import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
+import dotenv from "dotenv";
+// import PaymentButton from "@/components/button/PaymentButton";
+import { PayPalButton } from "react-paypal-button-v2";
+dotenv.config();
 
 const CourseId = () => {
+  const [scriptLoading, setScriptLoading] = useState(false);
+  const [paypalEnabled, setPaypalEnabled] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const { courseId } = useParams() as { courseId: string };
   const course = CourseState((state) => state.course);
   const showCourse = CourseState((state) => state.showCourse);
-  // const completedVideos = CourseState((state) => state.completedVideos) || {};
   const toggleVideoCompletion = CourseState(
     (state) => state.toggleVideoCompletion
   );
   console.log("course", course);
   const router = useRouter();
+
+  // for paypal gateway
+  const addPayPal = () => {
+    if (window.paypal) {
+      setScriptLoading(true);
+      return;
+    }
+    const script = document.createElement("script");
+    script.src = `https://www.paypal.com/sdk/js?client-id=AY1cdDvuGZktEjFWaavwMKK083K7ucQGDduLDDA1xH6eTN-n23ripgvvG9jWqvdHczkeUPPpeb-jAdzJ`;
+    script.type = "text/javascript";
+    script.async = true;
+
+    script.onload = () => {
+      setScriptLoading(true);
+    };
+
+    script.onerror = (error) => {
+      console.error("Error loading PayPal SDK", error);
+    };
+
+    document.body.appendChild(script);
+
+    setTimeout(() => {
+      console.log("PayPal SDK after delay", window.paypal);
+    }, 2000);
+  };
+
+  useEffect(() => {
+    addPayPal();
+  }, []);
 
   // fetching the course according to the id
   useEffect(() => {
@@ -99,17 +134,44 @@ const CourseId = () => {
       <>
         {course && (
           <>
-            <div className="course-details flex justify-start text-end bg-gradient-to-r from-purple-500 to-indigo-500 py-4 px-8 h-[300px]">
+            <div className="course-details flex justify-start text-end bg-gradient-to-r from-purple-500 to-indigo-500 py-4 px-8 ">
               <Link className="text-left flex" href="/course">
                 Back to courses
               </Link>
               <h1 className="mr-[300px] text-left ml-[1000px] mt-[100px] mb-5 p-3 bg-gradient-to-r from-purple-500 to-indigo-500 shadow-lg rounded-lg">
                 Category:{course.course_category} <br />
                 Course Details Page: {course.description}
-                <button className="bg-[#2a31f8] mt-5 text-white font-bold py-2 px-4 rounded-xl">
+                <button
+                  className="bg-[#2a31f8] mt-5 text-white font-bold py-2 px-4 rounded-xl"
+                  onClick={() => {
+                    // Only set paypalEnabled to true if it's currently false
+                    if (!paypalEnabled) {
+                      setPaypalEnabled(true);
+                    }
+                  }}
+                >
                   Subscribe
                 </button>
-                <p>price: &#8377;{course.price}</p>
+                {paypalEnabled && (
+                  <PayPalButton
+                    amount={course?.price}
+                    onSuccess={(details: any, data: any) => {
+                      alert(
+                        "Transaction completed by " +
+                          details.payer.name.given_name
+                      );
+
+                      // OPTIONAL: Call your server to save the transaction
+                      return fetch("/paypal-transaction-complete", {
+                        method: "post",
+                        body: JSON.stringify({
+                          orderID: data.orderID,
+                        }),
+                      });
+                    }}
+                  />
+                )}
+                <p>price: ${course.price} USD</p>
               </h1>
             </div>
             <div className="flex">
