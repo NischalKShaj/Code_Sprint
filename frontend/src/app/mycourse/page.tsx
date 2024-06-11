@@ -25,6 +25,8 @@ interface Course {
 
 const MyCourse: React.FC = () => {
   const router = useRouter();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [coursesPerPage] = useState(5);
   const [courses, setCourses] = useState<Course[]>([]);
   const tutorId = AppState((state) => state.user?.id);
 
@@ -85,13 +87,19 @@ const MyCourse: React.FC = () => {
 
     const parts = url.split("/");
     const filename = parts[parts.length - 1];
-    return filename.split(".")[0];
+    return filename.split(".")[1];
   };
+
+  const indexOfLastCourse = currentPage * coursesPerPage;
+  const indexOfFirstCourse = indexOfLastCourse - coursesPerPage;
+  const currentCourses = courses.slice(indexOfFirstCourse, indexOfLastCourse);
+
+  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
   return (
     <div className="flex flex-col items-center mb-36 bg-white mt-16">
       <h1 className="text-3xl mr-[750px] font-bold mb-6">My Courses</h1>
-      <section className="bg-[#D9D9D9] p-8 h-[1000px] w-[1000px] rounded-lg shadow-md">
+      <section className="bg-[#D9D9D9] p-8 w-[1000px] rounded-lg shadow-md">
         {courses.map((course) => (
           <div key={course._id} style={{ margin: "20px 0" }}>
             <h3 className="text-2xl text-center font-bold mb-6">
@@ -126,6 +134,22 @@ const MyCourse: React.FC = () => {
           </button>
         </Link>
       </section>
+      <nav className="mt-4" aria-label="Pagination">
+        <ul className="flex justify-center">
+          {Array.from({
+            length: Math.ceil(courses.length / coursesPerPage),
+          }).map((_, index) => (
+            <li key={index}>
+              <button
+                className="px-4 py-2 mx-1 bg-gray-200 rounded-md"
+                onClick={() => paginate(index + 1)}
+              >
+                {index + 1}
+              </button>
+            </li>
+          ))}
+        </ul>
+      </nav>
     </div>
   );
 };

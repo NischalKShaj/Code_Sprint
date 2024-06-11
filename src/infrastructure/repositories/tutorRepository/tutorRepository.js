@@ -93,6 +93,8 @@ const tutorRepository = {
         }));
 
         console.log("videoDetails", videoDetails);
+        console.log("course data", course); // Added log
+        console.log("price", course.price);
 
         const urls = videoDetails.map((video) => video.url);
         const courseData = new CourseCollection({
@@ -102,6 +104,7 @@ const tutorRepository = {
           description: course.description,
           tutor: tutor._id,
           videos: urls,
+          price: course.amount,
         });
 
         const course_Data = {

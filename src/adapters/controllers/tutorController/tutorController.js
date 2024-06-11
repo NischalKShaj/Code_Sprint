@@ -41,7 +41,7 @@ const tutorController = {
         console.log("courseDetails", courseDetails);
 
         const course = req.body;
-        console.log("course Data", course.course_name);
+        console.log("course Data", course);
 
         if (!courseDetails || courseDetails.length === 0) {
           return res

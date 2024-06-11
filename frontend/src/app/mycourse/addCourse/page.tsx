@@ -1,13 +1,13 @@
-// file for adding the courses
 "use client";
 
-// importing required modules
+// Importing required modules
 import axios from "axios";
 import React, { useState } from "react";
 import dotenv from "dotenv";
 import { AppState } from "../../store";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
+
 dotenv.config();
 
 const AddCourse = () => {
@@ -18,6 +18,7 @@ const AddCourse = () => {
     course_name: "",
     course_category: "",
     description: "",
+    amount: "",
   });
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -40,6 +41,7 @@ const AddCourse = () => {
       formData.append("course_name", form.course_name);
       formData.append("course_category", form.course_category);
       formData.append("description", form.description);
+      formData.append("amount", form.amount);
 
       for (const file of files) {
         formData.append("courses", file);
@@ -68,7 +70,7 @@ const AddCourse = () => {
         {
           headers: {
             "Content-Type": "multipart/form-data",
-            Authorization: `Bearer${token}`,
+            Authorization: `Bearer ${token}`,
           },
           withCredentials: true,
         }
@@ -156,13 +158,13 @@ const AddCourse = () => {
             onChange={handleChange}
           />
           <label htmlFor="videos" className="text-gray-500 mr-[50px]">
-            select mp4 or webm format
+            Select MP4 or WebM format
           </label>
           <input
             onChange={videoChange}
             type="file"
             className="p-4 bg-gray-50 border border-gray-300 rounded-lg  w-full mt-3"
-            id="video"
+            id="videos"
             name="courses"
             multiple
             accept="video/mp4,video/webm"

@@ -26,7 +26,13 @@ interface Course {
 
 const Course = () => {
   const showCourse = CourseState((state) => state.showCourse);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [coursesPerPage] = useState(5);
   const user = AppState((state) => state.user);
+  let role: string;
+  if (user?.role === "student") {
+    role = "student";
+  }
   const [courses, setCourses] = useState<Course[]>([]);
   const router = useRouter();
   useEffect(() => {
@@ -69,8 +75,8 @@ const Course = () => {
   const getMimeType = (url: string): string => {
     const extension = url.split(".").pop();
     switch (extension) {
-      case "mp4":
-        return "video/mp4";
+      case "webm":
+        return "video/webm";
       case "webm":
         return "video/webm";
       default:
@@ -124,16 +130,22 @@ const Course = () => {
     }
   };
 
+  const indexOfLastCourse = currentPage * coursesPerPage;
+  const indexOfFirstCourse = indexOfLastCourse - coursesPerPage;
+  const currentCourses = courses.slice(indexOfFirstCourse, indexOfLastCourse);
+
+  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+
   return (
     <div className="flex flex-col items-center mb-36 bg-white mt-16">
       <h1 className="text-3xl mr-[500px] font-bold mb-6">
         Explore, Learn, Achieve, Master
       </h1>
-      <section className="bg-[#D9D9D9] p-8 h-[1000px] w-[1000px] rounded-lg shadow-md">
+      <section className="bg-[#D9D9D9] p-8 w-[1300px] rounded-lg shadow-md">
         {courses.map((course) => (
           <div
             key={course._id}
-            className="flex items-start border border-black p-4 mb-4 rounded-lg"
+            className="flex items-start border border-black p-4 mb-4 rounded-lg relative"
           >
             {course.videos && course.videos.length > 0 && (
               <video className="rounded-lg w-72 mr-4" controls>
@@ -144,26 +156,42 @@ const Course = () => {
                 Your browser does not support the video tag.
               </video>
             )}
-            <div className="ml-[100px] mt-[50px]">
+            <div className="ml-[100px] mt-[50px] flex-grow">
               <h2 className="text-xl font-bold mb-2">{course.course_name}</h2>
               <p className="text-sm mb-1">
                 Course Category: {course.course_category}
               </p>
               <p className="text-sm">{course.description}</p>
             </div>
-            <div>
-              {user && (
+            {role && (
+              <div className="flex items-center mt-[100px]">
                 <button
                   onClick={() => handleSubscribe(course._id)}
-                  className="bg-[#686DE0] text-white font-bold py-2 px-4 rounded-xl absolute ml-[150px] top-[420px]"
+                  className="bg-[#686DE0] text-white font-bold py-2 px-4 rounded-xl"
                 >
                   Subscribe
                 </button>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         ))}
       </section>
+      <nav className="mt-4" aria-label="Pagination">
+        <ul className="flex justify-center">
+          {Array.from({
+            length: Math.ceil(courses.length / coursesPerPage),
+          }).map((_, index) => (
+            <li key={index}>
+              <button
+                className="px-4 py-2 mx-1 bg-gray-200 rounded-md"
+                onClick={() => paginate(index + 1)}
+              >
+                {index + 1}
+              </button>
+            </li>
+          ))}
+        </ul>
+      </nav>
     </div>
   );
 };
