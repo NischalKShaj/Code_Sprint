@@ -13,23 +13,49 @@ const courseController = require("../../../adapters/controllers/courseController
 const profileController = require("../../../adapters/controllers/profileController/profileController");
 
 // creating the required routes
+
+// router for getting the home page
 router.get("/", userController.getHome);
+
+// router for posting the login details
 router.post("/login", userController.getLogin);
+
+// router for posting the signup details
 router.post("/signup", userController.postSignup);
+
+// router for posting the otp
 router.post("/otp", userController.validateOtp);
+
+// router for otp resend
 router.post("/otp/resend", userController.resendOtp);
+
+// router for google auth
 router.post("/api/google", oAuthController.postOAuth);
+
+// router for github auth
 router.post("/api/github", oAuthController.postOAuth);
+
+// router for performing the logout
 router.get("/logout", userController.logoutUser);
-router.post("/mycourse/:id", authenticateUserJwt, tutorController.getCourse);
+
+// router for getting the courses for the tutor
+router.get("/mycourse/:id", authenticateUserJwt, tutorController.getCourse);
+
+// router to add new courses
 router.post("/uploads", authenticateUserJwt, tutorController.addCourse);
-router.post("/courses", authenticateUserJwt, courseController.findAllCourses);
+
+// router for getting the course page
+router.get("/courses", authenticateUserJwt, courseController.findAllCourses);
+
+// router for getting the profile page
 router.post(
   "/profile/user/:id",
   authenticateUserJwt,
   profileController.postUserProfile
 );
-router.post("/courses/:id", authenticateUserJwt, courseController.showCourse);
+
+// router for getting the single course
+router.get("/courses/:id", authenticateUserJwt, courseController.showCourse);
 
 // exporting the module
 module.exports = router;

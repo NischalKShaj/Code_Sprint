@@ -19,6 +19,8 @@ const courseController = {
       res.status(500).json("internal server error");
     }
   },
+
+  // controller for showing the specific course
   showCourse: async (req, res) => {
     try {
       const courseId = req.params.id;

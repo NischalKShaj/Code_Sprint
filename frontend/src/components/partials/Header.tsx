@@ -73,8 +73,10 @@ const Header = () => {
             ) : null}
           </li>
           <li>
-            {currentUser.role === "student" && (
+            {currentUser.role === "student" ? (
               <Link href="/problems">Problems</Link>
+            ) : (
+              <Link href="/mycourse/addCourse">Add Course</Link>
             )}
           </li>
           <li>

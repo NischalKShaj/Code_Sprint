@@ -25,12 +25,21 @@ const TutorPage = () => {
   // function to handle tutor block and unblock
   const handleBlock = async (id: string) => {
     try {
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/admin/tutor/${id}`
+      const token = localStorage.getItem("admin_access_token");
+      const response = await axios.patch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/admin/tutor/${id}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
+        }
       );
       if (response.status === 200) {
         console.log("response", response.data);
         const status = response.data.status;
+        localStorage.removeItem("access_token");
         const tutorIndex = allTutors.findIndex((tutor) => tutor.id === id);
 
         if (tutorIndex !== -1) {

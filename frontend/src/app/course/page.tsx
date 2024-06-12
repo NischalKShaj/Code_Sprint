@@ -41,9 +41,8 @@ const Course = () => {
       try {
         const token = localStorage.getItem("access_token");
         console.log("access_token", token);
-        const response = await axios.post(
+        const response = await axios.get(
           `${process.env.NEXT_PUBLIC_BASE_URL}/courses`,
-          {},
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -87,9 +86,8 @@ const Course = () => {
     try {
       const token = localStorage.getItem("access_token");
       console.log("token", token);
-      const response = await axios.post(
+      const response = await axios.get(
         `${process.env.NEXT_PUBLIC_BASE_URL}/courses/${id}`,
-        {},
         {
           headers: {
             Authorization: `Bearer ${token}`,

@@ -27,12 +27,23 @@ const UserPage = () => {
 
   const handleBlock = async (id: any) => {
     try {
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/admin/user/${id}`
+      const token = localStorage.getItem("admin_access_token");
+      console.log("token", token);
+      const response = await axios.patch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/admin/user/${id}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
+        }
       );
       if (response.status === 200) {
         console.log("response", response.data);
         const status = response.data.status;
+        console.log("status", status);
+        localStorage.removeItem("access_token");
         const userIndex = allUser.findIndex((user) => user.id === id);
 
         if (userIndex !== -1) {

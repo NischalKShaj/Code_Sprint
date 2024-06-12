@@ -64,9 +64,8 @@ const CourseId = () => {
     const fetchData = async (id: string) => {
       try {
         const token = localStorage.getItem("access_token");
-        const response = await axios.post(
+        const response = await axios.get(
           `${process.env.NEXT_PUBLIC_BASE_URL}/courses/${id}`,
-          {},
           {
             headers: {
               Authorization: `Bearer ${token}`,

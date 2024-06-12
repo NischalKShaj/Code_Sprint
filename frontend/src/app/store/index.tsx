@@ -10,6 +10,7 @@ interface State {
     role: string;
     username: string;
     profileImage: string;
+    blocked: boolean;
   } | null;
   isLoggedIn: (user: {
     id: string;
@@ -17,6 +18,7 @@ interface State {
     role: string;
     username: string;
     profileImage: string;
+    blocked: boolean;
   }) => void;
   isLoggedOut: () => void;
   isAdmin: boolean;

@@ -85,7 +85,7 @@ const adminController = {
       const response = await adminUseCase.userBlockUnblock(user);
       console.log("response", response);
       if (response.success) {
-        res.status(200).json(response.data);
+        res.clearCookie("access_token").status(200).json(response.data);
       } else {
         res.status(401).json(response.data);
       }

@@ -7,6 +7,7 @@ import { AppState } from "../store";
 import axios from "axios";
 import dotenv from "dotenv";
 import { useRouter } from "next/navigation";
+import SpinnerWrapper from "@/components/partials/SpinnerWrapper";
 
 dotenv.config();
 
@@ -41,9 +42,8 @@ const MyCourse: React.FC = () => {
       try {
         const token = localStorage.getItem("access_token");
         console.log("token");
-        const response = await axios.post(
+        const response = await axios.get(
           `${process.env.NEXT_PUBLIC_BASE_URL}/mycourse/${tutorId}`,
-          {},
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -111,55 +111,52 @@ const MyCourse: React.FC = () => {
 
   return (
     <div className="flex flex-col items-center mb-36 bg-white mt-16">
-      <h1 className="text-3xl mr-[750px] font-bold mb-6">My Courses</h1>
-      <section className="bg-[#D9D9D9] p-8 w-[1000px] rounded-lg shadow-md">
-        {currentVideos.map((video, index) => (
-          <div key={index} style={{ margin: "20px 0" }}>
-            <h3 className="text-2xl text-center font-bold mb-6">
-              Course Name: {video.courseTitle}
-            </h3>
-            <div className="justify-center" style={{ margin: "30px 0" }}>
-              <h3 className="text-md text-right mr-[250px] top-[100px] items-center relative">
-                {getVideoName(video.videoUrl)}
+      <SpinnerWrapper>
+        <h1 className="text-3xl mr-[750px] font-bold mb-6">My Courses</h1>
+        <section className="bg-[#D9D9D9] p-8 w-[1000px] rounded-lg shadow-md">
+          {currentVideos.map((video, index) => (
+            <div key={index} style={{ margin: "20px 0" }}>
+              <h3 className="text-2xl text-center font-bold mb-6">
+                Course Name: {video.courseTitle}
               </h3>
-              <video className="rounded-lg ml-5" width="300" controls>
-                <source
-                  src={video.videoUrl}
-                  type={getMimeType(video.videoUrl)}
-                  onError={(e) =>
-                    console.error(
-                      `Error loading video at ${video.videoUrl}:`,
-                      e
-                    )
-                  }
-                />
-                Your browser does not support the video tag.
-              </video>
+              <div className="justify-center" style={{ margin: "30px 0" }}>
+                <h3 className="text-md text-right mr-[250px] top-[100px] items-center relative">
+                  {getVideoName(video.videoUrl)}
+                </h3>
+                <video className="rounded-lg ml-5" width="300" controls>
+                  <source
+                    src={video.videoUrl}
+                    type={getMimeType(video.videoUrl)}
+                    onError={(e) =>
+                      console.error(
+                        `Error loading video at ${video.videoUrl}:`,
+                        e
+                      )
+                    }
+                  />
+                  Your browser does not support the video tag.
+                </video>
+              </div>
             </div>
-          </div>
-        ))}
-        <Link href="/mycourse/addCourse">
-          <button className="bg-[#686DE0] text-white font-bold py-2 px-4 rounded-xl w-full mt-[170px]">
-            Add Course
-          </button>
-        </Link>
-      </section>
-      <nav className="mt-4" aria-label="Pagination">
-        <ul className="flex justify-center">
-          {Array.from({
-            length: Math.ceil(flattenedVideos.length / videosPerPage),
-          }).map((_, index) => (
-            <li key={index}>
-              <button
-                className="px-4 py-2 mx-1 bg-gray-200 rounded-md"
-                onClick={() => paginate(index + 1)}
-              >
-                {index + 1}
-              </button>
-            </li>
           ))}
-        </ul>
-      </nav>
+        </section>
+        <nav className="mt-4" aria-label="Pagination">
+          <ul className="flex justify-center">
+            {Array.from({
+              length: Math.ceil(flattenedVideos.length / videosPerPage),
+            }).map((_, index) => (
+              <li key={index}>
+                <button
+                  className="px-4 py-2 mx-1 bg-gray-200 rounded-md"
+                  onClick={() => paginate(index + 1)}
+                >
+                  {index + 1}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </SpinnerWrapper>
     </div>
   );
 };

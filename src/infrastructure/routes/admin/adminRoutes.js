@@ -9,19 +9,31 @@ const {
 } = require("../../../adapters/middleware/adminAuth");
 
 // defining all the required routes
+
+// route for getting the admin login
 router.post("/", adminController.adminLogin);
-router.post("/users", authenticateAdminJwt, adminController.findAllUser);
-router.post("/tutors", authenticateAdminJwt, adminController.findAllTutor);
-router.post(
+
+// router for getting the user details
+router.get("/users", authenticateAdminJwt, adminController.findAllUser);
+
+// router for getting the tutor details
+router.get("/tutors", authenticateAdminJwt, adminController.findAllTutor);
+
+// router for blocking the tutor
+router.patch(
   "/tutor/:id",
   authenticateAdminJwt,
   adminController.tutorBlockUnblock
 );
-router.post(
+
+// router for blocking the user
+router.patch(
   "/user/:id",
   authenticateAdminJwt,
   adminController.userBlockUnblock
 );
+
+// router for logging out
 router.get("/logout", adminController.adminLogout);
 
 // exporting the routes

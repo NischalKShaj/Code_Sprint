@@ -24,9 +24,8 @@ const AdminSidePanel = () => {
         throw new Error("No token found");
       }
 
-      const response = await axios.post(
+      const response = await axios.get(
         `${process.env.NEXT_PUBLIC_BASE_URL}/admin/users`,
-        {},
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -43,6 +42,7 @@ const AdminSidePanel = () => {
           username: user.username,
           email: user.email,
           profileImage: user.profileImage,
+          block: user.blocked,
         }));
 
         console.log("Formatted Data:", formattedData);
@@ -70,9 +70,8 @@ const AdminSidePanel = () => {
   const tutorRoute = async () => {
     try {
       const token = localStorage.getItem("admin_access_token");
-      const response = await axios.post(
+      const response = await axios.get(
         `${process.env.NEXT_PUBLIC_BASE_URL}/admin/tutors`,
-        {},
         {
           headers: {
             Authorization: `Bearer ${token}`,
