@@ -13,7 +13,10 @@ const adminController = {
       const result = await adminUseCase.adminLogin(data);
       if (result.success) {
         console.log("result", result);
-        res.status(200).json(result.data);
+        res
+          .cookie("admin_access_token", result.token, { httpOnly: true })
+          .status(202)
+          .json({ data: result.data, token: result.token });
       } else {
         res.status(401).json(result.data);
       }
@@ -93,7 +96,10 @@ const adminController = {
 
   // controller for admin logout
   adminLogout: (req, res) => {
-    res.status(200).json("admin logout success");
+    res
+      .clearCookie("admin_access_token")
+      .status(200)
+      .json("admin logout success");
   },
 };
 

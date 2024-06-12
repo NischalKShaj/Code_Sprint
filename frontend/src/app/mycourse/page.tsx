@@ -23,11 +23,17 @@ interface Course {
   _id: string;
 }
 
+interface FlattenedVideo {
+  courseTitle: string;
+  videoUrl: string;
+}
+
 const MyCourse: React.FC = () => {
   const router = useRouter();
   const [currentPage, setCurrentPage] = useState(1);
-  const [coursesPerPage] = useState(5);
+  const [videosPerPage] = useState(5);
   const [courses, setCourses] = useState<Course[]>([]);
+  const [flattenedVideos, setFlattenedVideos] = useState<FlattenedVideo[]>([]);
   const tutorId = AppState((state) => state.user?.id);
 
   useEffect(() => {
@@ -47,6 +53,14 @@ const MyCourse: React.FC = () => {
         );
         if (response.status === 200) {
           setCourses(response.data);
+          // Flatten the video URLs into a single list
+          const flattened = response.data.flatMap((course: Course) =>
+            course.url.map((videoUrl) => ({
+              courseTitle: course.title,
+              videoUrl,
+            }))
+          );
+          setFlattenedVideos(flattened);
         } else {
           router.push("/login");
         }
@@ -54,9 +68,7 @@ const MyCourse: React.FC = () => {
         if (!tutorId) {
           router.push("/login");
         } else {
-          // Handle other network or server errors
           console.error("Error fetching courses:", error);
-          // Optionally, redirect to an error page or show a notification
           router.push("/error");
         }
       }
@@ -65,7 +77,6 @@ const MyCourse: React.FC = () => {
     fetchData();
   }, [router, tutorId]);
 
-  // function for extracting the url of the videos
   const getMimeType = (url: string): string => {
     const extension = url.split(".").pop();
     switch (extension) {
@@ -78,7 +89,6 @@ const MyCourse: React.FC = () => {
     }
   };
 
-  // function for getting the name of the videos
   const getVideoName = (url: string | null | undefined): string => {
     if (!url) {
       console.error("Invalid URL:", url);
@@ -90,9 +100,12 @@ const MyCourse: React.FC = () => {
     return filename.split(".")[1];
   };
 
-  const indexOfLastCourse = currentPage * coursesPerPage;
-  const indexOfFirstCourse = indexOfLastCourse - coursesPerPage;
-  const currentCourses = courses.slice(indexOfFirstCourse, indexOfLastCourse);
+  const indexOfLastVideo = currentPage * videosPerPage;
+  const indexOfFirstVideo = indexOfLastVideo - videosPerPage;
+  const currentVideos = flattenedVideos.slice(
+    indexOfFirstVideo,
+    indexOfLastVideo
+  );
 
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
@@ -100,32 +113,29 @@ const MyCourse: React.FC = () => {
     <div className="flex flex-col items-center mb-36 bg-white mt-16">
       <h1 className="text-3xl mr-[750px] font-bold mb-6">My Courses</h1>
       <section className="bg-[#D9D9D9] p-8 w-[1000px] rounded-lg shadow-md">
-        {courses.map((course) => (
-          <div key={course._id} style={{ margin: "20px 0" }}>
+        {currentVideos.map((video, index) => (
+          <div key={index} style={{ margin: "20px 0" }}>
             <h3 className="text-2xl text-center font-bold mb-6">
-              course name: {course.title}
+              Course Name: {video.courseTitle}
             </h3>
-            {course.url?.map((videoUrl, videoIndex) => (
-              <div
-                key={videoIndex}
-                className="justify-center"
-                style={{ margin: "30px 0" }}
-              >
-                <h3 className="text-md text-right mr-[250px] top-[100px] items-center relative">
-                  {getVideoName(videoUrl)}
-                </h3>
-                <video className="rounded-lg ml-5" width="300" controls>
-                  <source
-                    src={videoUrl}
-                    type={getMimeType(videoUrl)}
-                    onError={(e) =>
-                      console.error(`Error loading video at ${videoUrl}:`, e)
-                    }
-                  />
-                  Your browser does not support the video tag.
-                </video>
-              </div>
-            ))}
+            <div className="justify-center" style={{ margin: "30px 0" }}>
+              <h3 className="text-md text-right mr-[250px] top-[100px] items-center relative">
+                {getVideoName(video.videoUrl)}
+              </h3>
+              <video className="rounded-lg ml-5" width="300" controls>
+                <source
+                  src={video.videoUrl}
+                  type={getMimeType(video.videoUrl)}
+                  onError={(e) =>
+                    console.error(
+                      `Error loading video at ${video.videoUrl}:`,
+                      e
+                    )
+                  }
+                />
+                Your browser does not support the video tag.
+              </video>
+            </div>
           </div>
         ))}
         <Link href="/mycourse/addCourse">
@@ -137,7 +147,7 @@ const MyCourse: React.FC = () => {
       <nav className="mt-4" aria-label="Pagination">
         <ul className="flex justify-center">
           {Array.from({
-            length: Math.ceil(courses.length / coursesPerPage),
+            length: Math.ceil(flattenedVideos.length / videosPerPage),
           }).map((_, index) => (
             <li key={index}>
               <button

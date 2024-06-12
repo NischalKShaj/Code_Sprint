@@ -14,25 +14,50 @@ const AdminSidePanel = () => {
   const findTutors = AppState((state) => state.findAllTutor);
 
   // function to show the user data
+
   const userRoute = async () => {
     try {
+      const token = localStorage.getItem("admin_access_token");
+      console.log("Token:", token);
+
+      if (!token) {
+        throw new Error("No token found");
+      }
+
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/admin/users`
+        `${process.env.NEXT_PUBLIC_BASE_URL}/admin/users`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
+        }
       );
+
       if (response.status === 200) {
-        console.log("response", response.data);
-        const formateData = response.data.map((user: any) => ({
+        console.log("Response:", response.data);
+
+        const formattedData = response.data.map((user: any) => ({
           id: user._id,
           username: user.username,
           email: user.email,
           profileImage: user.profileImage,
         }));
-        console.log("formateData", formateData);
-        findUsers(formateData);
+
+        console.log("Formatted Data:", formattedData);
+
+        findUsers(formattedData);
         router.push("/admin/user");
+      } else {
+        console.error("Unexpected response status:", response.status);
       }
-    } catch (error) {
-      console.error("error", error);
+    } catch (error: any) {
+      if (axios.isAxiosError(error)) {
+        console.error("Axios error:", error.response?.data || error.message);
+      } else {
+        console.error("Error:", error.message);
+      }
     }
   };
 
@@ -44,8 +69,16 @@ const AdminSidePanel = () => {
   // function to show the tutor data
   const tutorRoute = async () => {
     try {
+      const token = localStorage.getItem("admin_access_token");
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/admin/tutors`
+        `${process.env.NEXT_PUBLIC_BASE_URL}/admin/tutors`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
+        }
       );
       if (response.status === 200) {
         const formate_data = response.data.map((tutor: any) => ({

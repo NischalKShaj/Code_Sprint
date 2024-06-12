@@ -7,6 +7,7 @@ import { AppState } from "@/app/store";
 import axios from "axios";
 import dotenv from "dotenv";
 import { useRouter } from "next/navigation";
+import Swal from "sweetalert2";
 dotenv.config();
 
 const AdminHeader = () => {
@@ -25,12 +26,30 @@ const AdminHeader = () => {
 
   const handleLogout = async () => {
     try {
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/admin/logout`
-      );
-      if (response.status === 200) {
-        logout();
-        router.push("/admin");
+      const result = await Swal.fire({
+        position: "center",
+        icon: "warning",
+        title: "Are you sure you want to logout",
+        showConfirmButton: true,
+        showCancelButton: true,
+        confirmButtonText: "Yes, Logout",
+        denyButtonText: "Cancel",
+
+        customClass: {
+          confirmButton: "btn-confirm",
+          denyButton: "btn-deny",
+        },
+      });
+
+      if (result.isConfirmed) {
+        const response = await axios.get(
+          `${process.env.NEXT_PUBLIC_BASE_URL}/admin/logout`
+        );
+        if (response.status === 200) {
+          logout();
+          localStorage.removeItem("admin_access_token");
+          router.push("/admin");
+        }
       }
     } catch (error) {
       console.error("error");

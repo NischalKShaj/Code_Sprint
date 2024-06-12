@@ -2,6 +2,7 @@
 
 // importing all the required modules
 const adminRepository = require("../../../infrastructure/repositories/adminRepository/adminRepository");
+const generateJWT = require("../../../infrastructure/services/jwtServices");
 
 // creating the admin use case
 const adminUseCase = {
@@ -10,7 +11,8 @@ const adminUseCase = {
     try {
       const response = await adminRepository.adminLogin(data);
       if (response) {
-        return { success: true, data: response };
+        const token = generateJWT.adminGenerateJWT(data.email);
+        return { success: true, data: response, token };
       } else {
         return { success: false, data: "invalid email" };
       }

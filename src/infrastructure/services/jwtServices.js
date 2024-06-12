@@ -12,3 +12,10 @@ module.exports.generateJWT = (userEmail) => {
     expiresIn: "4h",
   });
 };
+
+// creating the jwt token for the admin
+module.exports.adminGenerateJWT = (adminEmail) => {
+  return jwt.sign({ email: adminEmail }, process.env.ADMIN_SECRET, {
+    expiresIn: "4h",
+  });
+};

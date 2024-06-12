@@ -2,16 +2,23 @@
 "use client";
 
 // importing the required modules
-import React, { ChangeEventHandler, ReactEventHandler, useState } from "react";
+import React, {
+  ChangeEventHandler,
+  ReactEventHandler,
+  useEffect,
+  useState,
+} from "react";
 import { AppState } from "../store";
 import dotenv from "dotenv";
 dotenv.config();
 import { useRouter } from "next/navigation";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 const AdminLogin = () => {
   // const isAdmin = AppState((state) => state.isAdmin);// for jwt purpose comment it now
   const isAdminLoggedIn = AppState((state) => state.isAdminLoggedIn);
+  const isAdmin = AppState((state) => state.isAdmin);
   const router = useRouter();
   const [formData, setFormData] = useState<{ email: string; password: string }>(
     { email: "", password: "" }
@@ -31,14 +38,30 @@ const AdminLogin = () => {
         `${process.env.NEXT_PUBLIC_BASE_URL}/admin`,
         formData
       );
-      if (response.status === 200) {
+      if (response.status === 202) {
+        const { token } = response.data;
+        localStorage.setItem("admin_access_token", token);
         isAdminLoggedIn({ email: response.data.email });
+        Swal.fire({
+          position: "center",
+          icon: "success",
+          title: "Login successful!",
+          showConfirmButton: false,
+          timer: 1700,
+        });
         router.push("/admin/dashboard");
       }
     } catch (error) {
       console.error("error", error);
     }
   };
+
+  // useEffect for the redirection if the user already present
+  useEffect(() => {
+    if (isAdmin) {
+      router.push("/admin/dashboard");
+    }
+  });
 
   return (
     <div className="flex flex-col items-center mb-36 bg-white mt-16">
