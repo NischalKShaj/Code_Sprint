@@ -1,8 +1,8 @@
 "use client";
 
-// importing the required modules
+// Import necessary modules
 import { CourseState } from "@/app/store/courseStore";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -10,12 +10,10 @@ import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import dotenv from "dotenv";
 import SpinnerWrapper from "@/components/partials/SpinnerWrapper";
-// import { PayPalButton } from "react-paypal-button-v2";
+import { loadScript } from "@/utils/razorpay";
 dotenv.config();
 
 const CourseId = () => {
-  const [scriptLoading, setScriptLoading] = useState(false);
-  const [paypalEnabled, setPaypalEnabled] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const videosPerPage = 2;
@@ -25,40 +23,8 @@ const CourseId = () => {
   const toggleVideoCompletion = CourseState(
     (state) => state.toggleVideoCompletion
   );
-  console.log("course", course);
   const router = useRouter();
 
-  // for paypal gateway
-  const addPayPal = () => {
-    if (window.paypal) {
-      setScriptLoading(true);
-      return;
-    }
-    const script = document.createElement("script");
-    script.src = `https://www.paypal.com/sdk/js?client-id=AY1cdDvuGZktEjFWaavwMKK083K7ucQGDduLDDA1xH6eTN-n23ripgvvG9jWqvdHczkeUPPpeb-jAdzJ`;
-    script.type = "text/javascript";
-    script.async = true;
-
-    script.onload = () => {
-      setScriptLoading(true);
-    };
-
-    script.onerror = (error) => {
-      console.error("Error loading PayPal SDK", error);
-    };
-
-    document.body.appendChild(script);
-
-    setTimeout(() => {
-      console.log("PayPal SDK after delay", window.paypal);
-    }, 2000);
-  };
-
-  useEffect(() => {
-    addPayPal();
-  }, []);
-
-  // fetching the course according to the id
   useEffect(() => {
     setIsLoading(false);
     const fetchData = async (id: string) => {
@@ -73,7 +39,6 @@ const CourseId = () => {
             withCredentials: true,
           }
         );
-        console.log("response", response.data);
         if (response.status === 202) {
           showCourse({
             course_name: response.data.course_name,
@@ -93,12 +58,9 @@ const CourseId = () => {
           router.push("/");
         }
       } catch (error: any) {
-        console.error("error", error);
         if (error.response && error.response.status === 401) {
-          // Handle unauthorized error specifically
           router.push("/login");
         } else {
-          // Handle other errors
           router.push("/error");
         }
       }
@@ -162,11 +124,57 @@ const CourseId = () => {
   if (isLoading) {
     return <div>Loading...</div>;
   }
+  // function to initiate the online payment
+  const handleSubscribe = async () => {
+    try {
+      const scriptLoaded = await loadScript(
+        "https://checkout.razorpay.com/v1/checkout.js"
+      );
+
+      if (!scriptLoaded) {
+        throw new Error("Failed to load Razorpay script");
+      }
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/razorpay`,
+        {
+          amount: course?.price,
+        }
+      );
+      const { id: order_id, currency } = response.data;
+
+      const options = {
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID!,
+        amount: parseInt(course?.price || "0", 10) * 100,
+        currency,
+        name: course?.course_name,
+        description: course?.description,
+        order_id,
+        handler: function (response: any) {
+          alert(response.razorpay_payment_id);
+          alert(response.razorpay_order_id);
+          alert(response.razorpay_signature);
+        },
+        prefill: {
+          name: "Your Name",
+          email: "your.email@example.com",
+          contact: "9999999999",
+        },
+        theme: {
+          color: "#3399cc",
+        },
+      };
+
+      const rzp = new (window as any).Razorpay(options);
+      rzp.open();
+    } catch (error: AxiosError | any) {
+      console.error("Error initiating payment: ", error);
+    }
+  };
 
   function getVideoName(url: string) {
     const parts = url.split("/");
     const fileName = parts[parts.length - 1];
-    const nameWithoutExtension = fileName.split(".")[1];
+    const nameWithoutExtension = fileName.split(".")[0];
     return nameWithoutExtension;
   }
 
@@ -176,7 +184,7 @@ const CourseId = () => {
         <>
           {course && (
             <>
-              <div className="course-details flex flex-col justify-start text-end bg-gradient-to-r from-purple-500 to-indigo-500 py-4 px-8 ">
+              <div className="course-details flex flex-col justify-start text-end bg-gradient-to-r from-purple-500 to-indigo-500 py-4 px-8">
                 <Link className="text-left flex" href="/course">
                   Back to courses
                 </Link>
@@ -184,35 +192,11 @@ const CourseId = () => {
                   {course.description}
                   <button
                     className="bg-[#2a31f8] mt-5 text-white font-bold py-2 px-4 rounded-xl"
-                    onClick={() => {
-                      if (!paypalEnabled) {
-                        setPaypalEnabled(true);
-                      }
-                    }}
+                    onClick={handleSubscribe}
                   >
                     Subscribe
                   </button>
-
-                  {/* will be done after the review */}
-                  {/* {paypalEnabled && (
-                  // <PayPalButton
-                  //   amount={course?.price}
-                  //   onSuccess={(details: any, data: any) => {
-                  //     alert(
-                  //       "Transaction completed by " +
-                  //         details.payer.name.given_name
-                  //     );
-
-                  //     return fetch("/paypal-transaction-complete", {
-                  //       method: "post",
-                  //       body: JSON.stringify({
-                  //         orderID: data.orderID,
-                  //       }),
-                  //     });
-                  //   }}
-                  // />
-                )} */}
-                  <p>price: ${course.price} USD</p>
+                  <p>Price: ${course.price} USD</p>
                 </h1>
               </div>
               <div className="flex">

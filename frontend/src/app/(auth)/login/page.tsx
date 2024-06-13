@@ -61,6 +61,7 @@ const Login = () => {
           role: data.role,
           username: data.username,
           profileImage: data.profileImage,
+          blocked: data.blocked,
         });
         router.push("/");
       } else if (response.status === 500) {

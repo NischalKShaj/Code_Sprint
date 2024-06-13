@@ -61,7 +61,7 @@ const Profile = () => {
     <div>
       <UserSideBar />
       <div className="flex items-center mb-36 bg-white mt-6">
-        <section className="bg-[#D9D9D9] p-8 ml-[400px] mt-5  w-[500px] h-[300px] rounded-lg shadow-lg">
+        <section className="bg-[#D9D9D9] p-8 ml-[400px]  w-[500px] h-[300px] rounded-lg shadow-lg">
           <h1 className="text-left text-xl font-semibold">
             Course Completion Status
           </h1>
