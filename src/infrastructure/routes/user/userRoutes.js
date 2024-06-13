@@ -48,7 +48,7 @@ router.post("/uploads", authenticateUserJwt, tutorController.addCourse);
 router.get("/courses", authenticateUserJwt, courseController.findAllCourses);
 
 // router for getting the profile page
-router.post(
+router.get(
   "/profile/user/:id",
   authenticateUserJwt,
   profileController.postUserProfile
