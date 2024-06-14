@@ -21,16 +21,22 @@ const users = new mongoose.Schema(
       default:
         "https://i.pinimg.com/736x/c0/27/be/c027bec07c2dc08b9df60921dfd539bd.jpg",
     },
-    course: [
+    courses: [
       {
-        type: String,
-        default: [],
+        courseId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Course",
+          required: true,
+        },
       },
     ],
     tutors: [
       {
-        type: String,
-        default: [],
+        tutorId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Tutor",
+          required: true,
+        },
       },
     ],
     problems: [

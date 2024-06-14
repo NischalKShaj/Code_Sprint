@@ -5,6 +5,7 @@ const TemporaryUserCollection = require("../../../core/entities/temporary/tempor
 const UserCollection = require("../../../core/entities/user/userCollection");
 const TutorCollection = require("../../../core/entities/user/tutorCollection");
 const bcryptjs = require("bcryptjs");
+const CourseCollection = require("../../../core/entities/course/courseCollection");
 
 // creating userRepository
 const userRepository = {
@@ -116,6 +117,21 @@ const userRepository = {
         return user;
       } else {
         return null;
+      }
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  // method for adding the subscribed courses
+  AddSubscription: async (course, user) => {
+    try {
+      const courseData = await CourseCollection.findById({ _id: course });
+      console.log("course", courseData);
+      const userData = await UserCollection.findById({ _id: user });
+      console.log("user", userData);
+      if (courseData && userData) {
+        return { courseData, userData };
       }
     } catch (error) {
       throw error;

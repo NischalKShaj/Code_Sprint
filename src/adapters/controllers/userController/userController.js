@@ -127,25 +127,14 @@ const userController = {
   // controller for validating the payment
   handler: async (req, res) => {
     if (req.method === "POST") {
-      const { amount } = req.body;
-
-      // Initialize Razorpay instance with API keys
-      const razorpay = new Razorpay({
-        key_id: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-        key_secret: process.env.RAZORPAY_KEY_SECRET,
-      });
-
-      // Configuration options for creating an order
-      const options = {
-        amount: parseInt(amount, 10) * 100, // amount in smallest currency unit
-        currency: "INR", // Adjust currency as per your requirements
-        receipt: "order_rcptid_11", // Example receipt ID
-      };
-
       try {
-        // Create an order using Razorpay API
-        const order = await razorpay.orders.create(options);
-        res.status(200).json(order);
+        const { amount, user, course } = req.body;
+        const response = await userUseCase.verifyPayment(amount, course, user);
+        if (response.success) {
+          res.status(200).json(response.data);
+        } else {
+          res.status(400).json(response.data);
+        }
       } catch (error) {
         // Handle errors
         res.status(500).json({ error: error.message });

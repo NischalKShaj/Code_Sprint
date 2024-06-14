@@ -11,9 +11,12 @@ import "react-circular-progressbar/dist/styles.css";
 import dotenv from "dotenv";
 import SpinnerWrapper from "@/components/partials/SpinnerWrapper";
 import { loadScript } from "@/utils/razorpay";
+import { AppState } from "@/app/store";
+import Swal from "sweetalert2";
 dotenv.config();
 
 const CourseId = () => {
+  const user = AppState((state) => state.user);
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const videosPerPage = 2;
@@ -137,6 +140,8 @@ const CourseId = () => {
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/razorpay`,
         {
+          user: user?.id,
+          course: course?.course_id,
           amount: course?.price,
         }
       );
@@ -147,17 +152,36 @@ const CourseId = () => {
         amount: parseInt(course?.price || "0", 10) * 100,
         currency,
         name: course?.course_name,
-        description: course?.description,
         order_id,
-        handler: function (response: any) {
-          alert(response.razorpay_payment_id);
-          alert(response.razorpay_order_id);
-          alert(response.razorpay_signature);
+        handler: async function (response: any) {
+          // to update the subscription
+          try {
+            const response = await axios.post(
+              `${process.env.NEXT_PUBLIC_BASE_URL}/api/payment-success`,
+              { user: user?.id, course: course?.course_id }
+            );
+            if (response.status === 202) {
+              Swal.fire({
+                title: "Payment Success!",
+                text: "Thank you for subscribing! Get ready to dive into the course and unlock your potential!",
+                icon: "success",
+                confirmButtonText: "OK",
+              });
+            } else {
+              Swal.fire({
+                title: "Payment Failed!",
+                text: "Your payment has be rejected!",
+                icon: "warning",
+                confirmButtonText: "OK",
+              });
+            }
+          } catch (error) {
+            console.error("error", error);
+          }
         },
         prefill: {
-          name: "Your Name",
-          email: "your.email@example.com",
-          contact: "9999999999",
+          name: user?.username,
+          email: user?.email,
         },
         theme: {
           color: "#3399cc",
@@ -174,7 +198,7 @@ const CourseId = () => {
   function getVideoName(url: string) {
     const parts = url.split("/");
     const fileName = parts[parts.length - 1];
-    const nameWithoutExtension = fileName.split(".")[0];
+    const nameWithoutExtension = fileName.split(".")[1];
     return nameWithoutExtension;
   }
 

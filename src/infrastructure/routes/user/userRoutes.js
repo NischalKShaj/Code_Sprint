@@ -38,6 +38,9 @@ router.post("/api/github", oAuthController.postOAuth);
 // router for online payment
 router.post("/api/razorpay", userController.handler);
 
+// router for verifying the payment
+router.post("/api/payment-success", userController.verifyPayment);
+
 // router for performing the logout
 router.get("/logout", userController.logoutUser);
 

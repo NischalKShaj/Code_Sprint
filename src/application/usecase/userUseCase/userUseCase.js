@@ -3,6 +3,7 @@
 // importing the required modules
 const userRepository = require("../../../infrastructure/repositories/userRepository/userRepository");
 const generateJWT = require("../../../infrastructure/services/jwtServices");
+const Razorpay = require("razorpay");
 
 // creating the user use-case
 const userUseCase = {
@@ -64,6 +65,34 @@ const userUseCase = {
         return { success: true, data: user };
       } else {
         return { success: false, data: "otp resending failed" };
+      }
+    } catch (error) {
+      console.error("error", error);
+      return { success: false, data: error.message };
+    }
+  },
+
+  // for managing the subscription for courses
+  verifyPayment: async (amount, course, user) => {
+    const razorpay = new Razorpay({
+      key_id: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+      key_secret: process.env.RAZORPAY_KEY_SECRET,
+    });
+
+    // Configuration options for creating an order
+    const options = {
+      amount: parseInt(amount, 10) * 100,
+      currency: "INR",
+      receipt: "order_rcptid_11",
+    };
+
+    try {
+      const order = await razorpay.orders.create(options);
+      const data = await userRepository.AddSubscription(course, user);
+      if (data) {
+        return { success: true, data: course, data, order };
+      } else {
+        return { success: false, data: "invalid details" };
       }
     } catch (error) {
       console.error("error", error);
