@@ -182,7 +182,8 @@ const CourseId = () => {
                 icon: "success",
                 confirmButtonText: "OK",
               });
-              // the value is not correctly updated in the state check it
+              // the value is not correctly updated in the state check
+              // try mapping the array course
               const courseDetails = response.data.course;
               console.log("course Details", courseDetails);
               let subScribedCourse;
