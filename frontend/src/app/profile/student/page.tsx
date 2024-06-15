@@ -14,7 +14,8 @@ dotenv.config();
 
 const Profile = () => {
   const user = AppState((state) => state.user);
-  const [profile, setProfile] = useState({});
+  const subscribedCourse = CourseState((state) => state.isSubscribed);
+  console.log("subCourse", subscribedCourse);
   const courseCompletion = CourseState((state) => state.completedVideos);
   console.log("course", courseCompletion);
   const router = useRouter();
@@ -36,12 +37,6 @@ const Profile = () => {
         );
         if (response.status === 202) {
           // area to set the profile details after the completion of the subscription and the google works
-          // setProfile({
-          //   id: response.data._id,
-          //   username: response.data.username,
-          //   profileImage: response.data.profileImage,
-          //   role: response.data.role,
-          // });
         } else {
           router.push("/login");
         }

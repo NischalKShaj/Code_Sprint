@@ -28,13 +28,9 @@ const CourseId = () => {
   );
   const router = useRouter();
   const subscribe = CourseState((state) => state.subscribe);
-  const { isSubscribed } = CourseState();
-  // isSubscribed.forEach((sub) =>
-  //   console.log("Subscribed course_id", sub.course_id)
-  // );
   const subCourses = CourseState((state) => state.isSubscribed);
 
-  const courseSubscribed = isSubscribed.some(
+  const courseSubscribed = subCourses.some(
     (sub) => sub.course_id === course?.course_id
   );
 
@@ -69,6 +65,19 @@ const CourseId = () => {
             tutor_id: response.data.courses.tutor,
             price: response.data.courses.price,
           });
+
+          if (response.data.subCourse) {
+            const subscribedCourse = {
+              user_id: userData?.id,
+              username: userData?.username,
+              course_name: response.data.courses.course_name,
+              course_category: response.data.courses.course_category,
+              description: response.data.courses.description,
+              course_id: response.data.courses._id,
+              tutor_id: response.data.courses.tutor,
+            };
+            subscribe([subscribedCourse]);
+          }
         } else if (response.status === 500) {
           router.push("/error");
         } else {
@@ -184,23 +193,24 @@ const CourseId = () => {
               });
               // the value is not correctly updated in the state check
               // try mapping the array course
-              const courseDetails = response.data.course;
+              const courseDetails = response.data.courses;
               console.log("course Details", courseDetails);
-              let subScribedCourse;
-              if (courseDetails) {
-                subScribedCourse = {
-                  user_id: userData?.id,
-                  username: userData?.username,
-                  course_name: course?.course_name,
-                  course_category: course?.course_category,
-                  description: course?.description,
-                  tutor_id: courseDetails.tutorId,
-                  course_id: courseDetails.courseId,
-                };
-              }
-              if (subScribedCourse) {
-                subscribe([subScribedCourse]);
-                console.log("course id", courseDetails.courseId);
+              // let subScribedCourse;
+              if (courseDetails && courseDetails.length > 0) {
+                const subscribedCourses = courseDetails.map(
+                  (courseDetail: { tutorId: any; courseId: any }) => ({
+                    user_id: userData?.id,
+                    username: userData?.username,
+                    course_name: course?.course_name,
+                    course_category: course?.course_category,
+                    description: course?.description,
+                    tutor_id: courseDetail.tutorId,
+                    course_id: courseDetail.courseId,
+                  })
+                );
+
+                subscribe(subscribedCourses);
+                console.log("Subscribed Courses:", subscribedCourses);
               } else {
                 console.error(
                   "Course details are not available in the response"
@@ -259,16 +269,17 @@ const CourseId = () => {
                 </Link>
                 <div className="mr-[300px] text-left ml-[1000px] mt-[100px] mb-5 p-3 bg-gradient-to-r from-purple-500 to-indigo-500 shadow-lg rounded-lg">
                   {course.description}
-
-                  <>
-                    <button
-                      className="bg-[#2a31f8] mt-5 text-white font-bold py-2 px-4 rounded-xl"
-                      onClick={handleSubscribe}
-                    >
-                      Subscribe
-                    </button>
-                    <p>Price: ${course.price} USD</p>
-                  </>
+                  {!courseSubscribed && (
+                    <>
+                      <button
+                        className="bg-[#2a31f8] mt-5 text-white font-bold py-2 px-4 rounded-xl"
+                        onClick={handleSubscribe}
+                      >
+                        Subscribe
+                      </button>
+                      <p>Price: ${course.price} USD</p>
+                    </>
+                  )}
                 </div>
               </div>
               <div className="flex">

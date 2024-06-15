@@ -168,14 +168,23 @@ const Course = () => {
                   </p>
                   <p className="text-sm">{course.description}</p>
                 </div>
-                {role && !isCourseSubscribed && (
+                {role && (
                   <div className="flex items-center mt-[100px]">
-                    <button
-                      onClick={() => handleSubscribe(course._id)}
-                      className="bg-[#686DE0] text-white font-bold py-2 px-4 rounded-xl"
-                    >
-                      Subscribe
-                    </button>
+                    {!isCourseSubscribed ? (
+                      <button
+                        onClick={() => handleSubscribe(course._id)}
+                        className="bg-[#686DE0] text-white font-bold py-2 px-4 rounded-xl"
+                      >
+                        Subscribe
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => handleSubscribe(course._id)}
+                        className="bg-[#686DE0] text-white font-bold py-2 px-4 rounded-xl"
+                      >
+                        Show
+                      </button>
+                    )}
                   </div>
                 )}
               </div>
