@@ -61,7 +61,7 @@ router.get(
 );
 
 // router for getting the single course
-router.get("/courses/:id", authenticateUserJwt, courseController.showCourse);
+router.post("/courses/:id", authenticateUserJwt, courseController.showCourse);
 
 // exporting the module
 module.exports = router;

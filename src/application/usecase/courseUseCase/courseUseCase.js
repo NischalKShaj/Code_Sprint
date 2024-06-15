@@ -2,6 +2,7 @@
 
 // import the required modules
 const courseRepository = require("../../../infrastructure/repositories/courseRepository/courseRepository");
+const userRepository = require("../../../infrastructure/repositories/userRepository/userRepository");
 
 const courseUseCase = {
   // use case for finding all the courses
@@ -17,9 +18,9 @@ const courseUseCase = {
       return { success: false, data: "internal server error" };
     }
   },
-  showCourse: async (courseId) => {
+  showCourse: async (courseId, id) => {
     try {
-      const course = await courseRepository.showCourse(courseId);
+      const course = await courseRepository.showCourse(courseId, id);
       if (course) {
         return { success: true, data: course };
       } else {

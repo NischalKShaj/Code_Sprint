@@ -7,6 +7,7 @@ module.exports.authenticateUserJwt = (req, res, next) => {
   const token = req.cookies.access_token || req.headers["authorization"];
   console.log("token", token);
   if (!token) {
+    console.log("inside !token");
     return res.status(401).json({ message: "Unauthorized" });
   }
   try {

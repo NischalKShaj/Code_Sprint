@@ -99,6 +99,22 @@ const userUseCase = {
       return { success: false, data: error.message };
     }
   },
+
+  // for verifying the payment
+  paymentSuccess: async (course, user) => {
+    try {
+      const result = await userRepository.paymentSuccess(course, user);
+      console.log("result", result);
+      if (result) {
+        return { success: true, data: result };
+      } else {
+        return { success: false, data: result };
+      }
+    } catch (error) {
+      console.error("error", error);
+      return { success: false, data: error.message };
+    }
+  },
 };
 
 module.exports = userUseCase;

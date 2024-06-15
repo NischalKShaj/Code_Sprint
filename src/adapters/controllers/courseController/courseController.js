@@ -24,8 +24,10 @@ const courseController = {
   showCourse: async (req, res) => {
     try {
       const courseId = req.params.id;
+      const { id } = req.body;
+      console.log(id);
       console.log("cid", courseId);
-      const result = await courseUseCase.showCourse(courseId);
+      const result = await courseUseCase.showCourse(courseId, id);
       if (result.success) {
         console.log("result", result.data);
         res.status(202).json(result.data);

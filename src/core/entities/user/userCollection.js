@@ -21,24 +21,23 @@ const users = new mongoose.Schema(
       default:
         "https://i.pinimg.com/736x/c0/27/be/c027bec07c2dc08b9df60921dfd539bd.jpg",
     },
-    courses: [
-      {
-        courseId: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "Course",
-          required: true,
+    courses: {
+      type: [
+        {
+          courseId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Course",
+            required: true,
+          },
+          tutorId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Tutor",
+            required: true,
+          },
         },
-      },
-    ],
-    tutors: [
-      {
-        tutorId: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "Tutor",
-          required: true,
-        },
-      },
-    ],
+      ],
+      default: [],
+    },
     problems: [
       {
         type: String,

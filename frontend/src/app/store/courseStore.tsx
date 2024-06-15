@@ -40,27 +40,23 @@ interface State {
     }[]
   ) => void;
   isSubscribed: {
-    user_id: string;
-    username: string;
+    user_id: string | undefined;
+    username: string | undefined;
+    course_name: string | undefined;
+    course_category: string | undefined;
+    description: string | undefined;
     tutor_id: string;
-    tutorName: string;
     course_id: string;
-    course_name: string;
-    course_category: string;
-    description: string;
-    videos: { url: string }[];
   }[];
   subscribe: (
     isSubscribed: {
-      user_id: string;
-      username: string;
+      user_id: string | undefined;
+      username: string | undefined;
+      course_name: string | undefined;
+      course_category: string | undefined;
+      description: string | undefined;
       tutor_id: string;
-      tutorName: string;
       course_id: string;
-      course_name: string;
-      course_category: string;
-      description: string;
-      videos: { url: string }[];
     }[]
   ) => void;
   completedVideos: Record<string, Record<string, boolean>>;

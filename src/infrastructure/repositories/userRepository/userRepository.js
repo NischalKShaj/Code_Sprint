@@ -137,6 +137,31 @@ const userRepository = {
       throw error;
     }
   },
+
+  // method for verifying the payment
+  paymentSuccess: async (course, user) => {
+    try {
+      const courseData = await CourseCollection.findById({ _id: course });
+      const userData = await UserCollection.findById({ _id: user });
+      if (courseData && userData) {
+        const updatedUser = await UserCollection.findByIdAndUpdate(
+          user,
+          {
+            $push: {
+              courses: { courseId: courseData._id, tutorId: courseData.tutor },
+            },
+          },
+          { new: true }
+        );
+        console.log("updatedUser", updatedUser);
+        return updatedUser;
+      } else {
+        return null;
+      }
+    } catch (error) {
+      throw error;
+    }
+  },
 };
 
 module.exports = userRepository;

@@ -1,6 +1,7 @@
 // file to show the repository for courses
 const TutorCollection = require("../../../core/entities/user/tutorCollection");
 const CourseCollection = require("../../../core/entities/course/courseCollection");
+const UserCollection = require("../../../core/entities/user/userCollection");
 
 // creating courses repository
 const courseRepository = {
@@ -36,12 +37,24 @@ const courseRepository = {
       throw error;
     }
   },
-  showCourse: async (courseId) => {
+
+  // method to show the specific course as well as to check whether the course is subscribed or not
+  showCourse: async (courseId, id) => {
     try {
       const courses = await CourseCollection.findById({ _id: courseId });
+      const user = await UserCollection.findById({ _id: id });
+      console.log("user", user);
       console.log("course", courses);
+
+      // for checking whether the user schema has the course
+      const subCourse = user.courses.some(
+        (course) => course.courseId.toString() === courseId.toString()
+      );
+
+      console.log("subCourse", subCourse);
+
       if (courses) {
-        return courses;
+        return { courses, subCourse };
       } else {
         return null;
       }

@@ -16,7 +16,7 @@ import Swal from "sweetalert2";
 dotenv.config();
 
 const CourseId = () => {
-  const user = AppState((state) => state.user);
+  const userData = AppState((state) => state.user);
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const videosPerPage = 2;
@@ -27,14 +27,27 @@ const CourseId = () => {
     (state) => state.toggleVideoCompletion
   );
   const router = useRouter();
+  const subscribe = CourseState((state) => state.subscribe);
+  const { isSubscribed } = CourseState();
+  // isSubscribed.forEach((sub) =>
+  //   console.log("Subscribed course_id", sub.course_id)
+  // );
+  const subCourses = CourseState((state) => state.isSubscribed);
+
+  const courseSubscribed = isSubscribed.some(
+    (sub) => sub.course_id === course?.course_id
+  );
 
   useEffect(() => {
     setIsLoading(false);
     const fetchData = async (id: string) => {
       try {
         const token = localStorage.getItem("access_token");
-        const response = await axios.get(
+        const response = await axios.post(
           `${process.env.NEXT_PUBLIC_BASE_URL}/courses/${id}`,
+          {
+            id: userData?.id,
+          },
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -42,18 +55,19 @@ const CourseId = () => {
             withCredentials: true,
           }
         );
+        console.log("response", response.data);
         if (response.status === 202) {
           showCourse({
-            course_name: response.data.course_name,
-            course_category: response.data.course_category,
-            description: response.data.description,
-            number_of_tutorials: response.data.number_of_videos,
-            videos: response.data.videos.map((video: string) => ({
+            course_name: response.data.courses.course_name,
+            course_category: response.data.courses.course_category,
+            description: response.data.courses.description,
+            number_of_tutorials: response.data.courses.number_of_videos,
+            videos: response.data.courses.videos.map((video: string) => ({
               url: video,
             })),
-            course_id: response.data._id,
-            tutor_id: response.data.tutor,
-            price: response.data.price,
+            course_id: response.data.courses._id,
+            tutor_id: response.data.courses.tutor,
+            price: response.data.courses.price,
           });
         } else if (response.status === 500) {
           router.push("/error");
@@ -71,7 +85,7 @@ const CourseId = () => {
     if (courseId) {
       fetchData(courseId);
     }
-  }, [courseId, router, showCourse]);
+  }, [courseId, router, showCourse, userData?.id, userData?.username]);
 
   const handleCheckboxChange = (video: { url: string }) => {
     toggleVideoCompletion(courseId, video.url);
@@ -140,7 +154,7 @@ const CourseId = () => {
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/razorpay`,
         {
-          user: user?.id,
+          user: userData?.id,
           course: course?.course_id,
           amount: course?.price,
         }
@@ -158,8 +172,9 @@ const CourseId = () => {
           try {
             const response = await axios.post(
               `${process.env.NEXT_PUBLIC_BASE_URL}/api/payment-success`,
-              { user: user?.id, course: course?.course_id }
+              { user: userData?.id, course: course?.course_id }
             );
+            console.log("response", response.data);
             if (response.status === 202) {
               Swal.fire({
                 title: "Payment Success!",
@@ -167,6 +182,29 @@ const CourseId = () => {
                 icon: "success",
                 confirmButtonText: "OK",
               });
+              // the value is not correctly updated in the state check it
+              const courseDetails = response.data.course;
+              console.log("course Details", courseDetails);
+              let subScribedCourse;
+              if (courseDetails) {
+                subScribedCourse = {
+                  user_id: userData?.id,
+                  username: userData?.username,
+                  course_name: course?.course_name,
+                  course_category: course?.course_category,
+                  description: course?.description,
+                  tutor_id: courseDetails.tutorId,
+                  course_id: courseDetails.courseId,
+                };
+              }
+              if (subScribedCourse) {
+                subscribe([subScribedCourse]);
+                console.log("course id", courseDetails.courseId);
+              } else {
+                console.error(
+                  "Course details are not available in the response"
+                );
+              }
             } else {
               Swal.fire({
                 title: "Payment Failed!",
@@ -176,12 +214,18 @@ const CourseId = () => {
               });
             }
           } catch (error) {
+            Swal.fire({
+              title: "Payment Failed!",
+              text: "Your payment has be rejected!",
+              icon: "warning",
+              confirmButtonText: "OK",
+            });
             console.error("error", error);
           }
         },
         prefill: {
-          name: user?.username,
-          email: user?.email,
+          name: userData?.username,
+          email: userData?.email,
         },
         theme: {
           color: "#3399cc",
@@ -212,16 +256,19 @@ const CourseId = () => {
                 <Link className="text-left flex" href="/course">
                   Back to courses
                 </Link>
-                <h1 className="mr-[300px] text-left ml-[1000px] mt-[100px] mb-5 p-3 bg-gradient-to-r from-purple-500 to-indigo-500 shadow-lg rounded-lg">
+                <div className="mr-[300px] text-left ml-[1000px] mt-[100px] mb-5 p-3 bg-gradient-to-r from-purple-500 to-indigo-500 shadow-lg rounded-lg">
                   {course.description}
-                  <button
-                    className="bg-[#2a31f8] mt-5 text-white font-bold py-2 px-4 rounded-xl"
-                    onClick={handleSubscribe}
-                  >
-                    Subscribe
-                  </button>
-                  <p>Price: ${course.price} USD</p>
-                </h1>
+
+                  <>
+                    <button
+                      className="bg-[#2a31f8] mt-5 text-white font-bold py-2 px-4 rounded-xl"
+                      onClick={handleSubscribe}
+                    >
+                      Subscribe
+                    </button>
+                    <p>Price: ${course.price} USD</p>
+                  </>
+                </div>
               </div>
               <div className="flex">
                 <section className="bg-[#D9D9D9] p-8 ml-[200px] mt-5 mb-5 w-[650px] rounded-lg shadow-lg">

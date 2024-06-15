@@ -145,6 +145,22 @@ const userController = {
     }
   },
 
+  // controller for payment verification
+  verifyPayment: async (req, res) => {
+    try {
+      const { course, user } = req.body;
+      const response = await userUseCase.paymentSuccess(course, user);
+      console.log("response", response);
+      if (response.success) {
+        res.status(202).json(response.data);
+      } else {
+        res.status(404).json(response.data);
+      }
+    } catch (error) {
+      res.status(500).json("internal server error");
+    }
+  },
+
   // controller for log-out
   logoutUser: (req, res) => {
     try {
