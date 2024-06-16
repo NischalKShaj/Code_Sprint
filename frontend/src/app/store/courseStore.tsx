@@ -40,6 +40,7 @@ interface State {
     }[]
   ) => void;
   isSubscribed: {
+    [x: string]: any;
     user_id: string | undefined;
     username: string | undefined;
     course_name: string | undefined;

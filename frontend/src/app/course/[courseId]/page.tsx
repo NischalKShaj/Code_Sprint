@@ -96,6 +96,7 @@ const CourseId = () => {
     }
   }, [courseId, router, showCourse, userData?.id, userData?.username]);
 
+  // to handle the course completion status
   const handleCheckboxChange = (video: { url: string }) => {
     toggleVideoCompletion(courseId, video.url);
   };
@@ -111,6 +112,7 @@ const CourseId = () => {
     (completedCount / totalTutorials) * 100
   );
 
+  // to handle the pagination
   const handlePageChange = (pageNumber: number) => {
     setCurrentPage(pageNumber);
   };
