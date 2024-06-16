@@ -6,6 +6,16 @@ const TutorCollection = require("../../../core/entities/user/tutorCollection");
 const dotenv = require("dotenv");
 dotenv.config();
 
+// Function to format date to "yyyy-month-date" format
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  const year = date.getFullYear();
+  const month = date.toLocaleString("default", { month: "long" }); // Full month name
+  const day = date.getDate();
+
+  return `${year}-${month}-${day}`;
+};
+
 // creating admin repository
 const adminRepository = {
   // method for admin login
@@ -89,6 +99,29 @@ const adminRepository = {
           await UserCollection.findByIdAndUpdate(user, { blocked: true });
           return { id: userData._id, status: userData.blocked };
         }
+      } else {
+        return null;
+      }
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  // method for getting the chart in the dashboard
+  adminGraphs: async () => {
+    try {
+      const userData = await UserCollection.find();
+      const userGraphs = userData.map((user) => formatDate(user.createdAt));
+
+      console.log("userGraph", userGraphs);
+
+      const tutorData = await TutorCollection.find();
+      const tutorGraphs = tutorData.map((tutor) => formatDate(tutor.createdAt));
+
+      console.log("tutorGraph", tutorGraphs);
+
+      if (userGraphs && tutorGraphs) {
+        return { userGraphs, tutorGraphs };
       } else {
         return null;
       }

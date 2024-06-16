@@ -94,6 +94,20 @@ const adminController = {
     }
   },
 
+  // controller for getting the graphs for the admin dashboard
+  adminGraphs: async (req, res) => {
+    try {
+      const response = await adminUseCase.adminGraphs();
+      if (response.success) {
+        res.status(202).json(response.data);
+      } else {
+        res.status(404).json(response.data);
+      }
+    } catch (error) {
+      res.status(500).json(response.data);
+    }
+  },
+
   // controller for admin logout
   adminLogout: (req, res) => {
     res

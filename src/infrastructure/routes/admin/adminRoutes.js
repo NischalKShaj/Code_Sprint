@@ -19,19 +19,22 @@ router.get("/users", authenticateAdminJwt, adminController.findAllUser);
 // router for getting the tutor details
 router.get("/tutors", authenticateAdminJwt, adminController.findAllTutor);
 
-// router for blocking the tutor
+// router for blocking and unblocking the tutor
 router.patch(
   "/tutor/:id",
   authenticateAdminJwt,
   adminController.tutorBlockUnblock
 );
 
-// router for blocking the user
+// router for blocking and unblocking the user
 router.patch(
   "/user/:id",
   authenticateAdminJwt,
   adminController.userBlockUnblock
 );
+
+// router for getting the details for the graph
+router.get("/graphs", authenticateAdminJwt, adminController.adminGraphs);
 
 // router for logging out
 router.get("/logout", adminController.adminLogout);

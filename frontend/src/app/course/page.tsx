@@ -111,7 +111,7 @@ const Course = () => {
           tutor_id: response.data.courses.tutor,
           price: response.data.courses.price,
         });
-        router.push(`course/${id}`);
+        router.push(`/course/${id}`);
       } else if (response.status === 500) {
         router.push("/error");
       } else {

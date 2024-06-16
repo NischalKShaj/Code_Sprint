@@ -78,6 +78,21 @@ const adminUseCase = {
       return { success: false, data: "internal server error" };
     }
   },
+
+  // use-case for showing all the graphs in the admin side
+  adminGraphs: async () => {
+    try {
+      const response = await adminRepository.adminGraphs();
+      if (response) {
+        return { success: true, data: response };
+      } else {
+        return { success: false, data: response };
+      }
+    } catch (error) {
+      console.error("error", error);
+      return { success: false, data: "internal server error" };
+    }
+  },
 };
 
 module.exports = adminUseCase;

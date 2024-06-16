@@ -7,6 +7,7 @@ import ConditionalFooter from "@/components/partials/ConditionalFooter";
 import "@fortawesome/fontawesome-svg-core/styles.css";
 import { config } from "@fortawesome/fontawesome-svg-core";
 import { SessionProviderWrapper } from "@/components/SessionProviderWrapper";
+import SpinnerWrapper from "@/components/partials/SpinnerWrapper";
 
 config.autoAddCss = false;
 
@@ -31,9 +32,11 @@ export default function RootLayout({
     <html lang="en">
       <body className={montserrat.className}>
         <SessionProviderWrapper>
-          <ConditionalHeader />
-          {children}
-          <ConditionalFooter />
+          <SpinnerWrapper>
+            <ConditionalHeader />
+            {children}
+            <ConditionalFooter />
+          </SpinnerWrapper>
         </SessionProviderWrapper>
       </body>
     </html>
