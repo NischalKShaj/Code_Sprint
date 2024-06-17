@@ -120,9 +120,11 @@ const UserSideBar = () => {
               <hr className="w-48 h-1 mx-auto my-4 bg-gray-100 border-0 mb-[20px] rounded md:my-10 dark:bg-gray-700" />
             </li>
             <li>
-              <button className="bg-[#686DE0] text-white font-bold py-2 px-4 rounded-xl mb-[100px]">
-                Edit Profile
-              </button>
+              <Link href={`/profile/student/${user?.id}`}>
+                <button className="bg-[#686DE0] text-white font-bold py-2 px-4 rounded-xl mb-[100px]">
+                  Edit Profile
+                </button>
+              </Link>
             </li>
           </ul>
         </div>
