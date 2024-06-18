@@ -1,4 +1,4 @@
-// side bar that is shown in the user and tutors profile
+// file to show the side bar for the tutor
 "use client";
 
 // importing the required modules
@@ -9,7 +9,7 @@ import dotenv from "dotenv";
 dotenv.config();
 import React from "react";
 
-const UserSideBar = () => {
+const TutorSideBar = () => {
   const user = AppState((state) => state.user);
   return (
     <div>
@@ -124,7 +124,7 @@ const UserSideBar = () => {
               <hr className="w-48 h-1 mx-auto my-4 bg-gray-100 border-0 mb-[20px] rounded md:my-10 dark:bg-gray-700" />
             </li>
             <li>
-              <Link href={`/profile/student/${user?.id}`}>
+              <Link href={`/profile/tutor/${user?.id}`}>
                 <button className="bg-[#686DE0] text-white font-bold py-2 px-4 rounded-xl mb-[100px]">
                   Edit Profile
                 </button>
@@ -137,4 +137,4 @@ const UserSideBar = () => {
   );
 };
 
-export default UserSideBar;
+export default TutorSideBar;

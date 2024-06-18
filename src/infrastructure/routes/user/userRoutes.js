@@ -54,7 +54,7 @@ router.post("/uploads", authenticateUserJwt, tutorController.addCourse);
 // router for getting the course page
 router.get("/courses", authenticateUserJwt, courseController.findAllCourses);
 
-// router for getting the profile page
+// router for getting the user profile page
 router.get(
   "/profile/user/:id",
   authenticateUserJwt,
@@ -70,6 +70,13 @@ router.put(
   upload.single("profileImage"),
   authenticateUserJwt,
   userController.editStudent
+);
+
+// router for getting the tutor profile page
+router.get(
+  "/profile/tutor/:id",
+  authenticateUserJwt,
+  profileController.postTutorProfile
 );
 
 // exporting the module

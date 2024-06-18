@@ -13,7 +13,7 @@ const Home = () => {
       isLoggedOut();
       localStorage.removeItem("access_token");
     }, 4000000);
-  }, []);
+  }, [isLoggedOut]);
 
   return (
     <div>

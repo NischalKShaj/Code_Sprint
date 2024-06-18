@@ -3,6 +3,7 @@
 // importing the required modules
 const UserCollection = require("../../../core/entities/user/userCollection");
 const CourseCollection = require("../../../core/entities/course/courseCollection");
+const TutorCollection = require("../../../core/entities/user/tutorCollection");
 
 // creating the profile repository
 const profileRepository = {
@@ -31,6 +32,21 @@ const profileRepository = {
       }
     } catch (error) {
       console.error("error", error);
+      throw error;
+    }
+  },
+
+  // method for getting the tutors profile page
+  tutorProfile: async (tutorId) => {
+    try {
+      const tutorData = await TutorCollection.findById(tutorId);
+      console.log("tutorData");
+      if (tutorData) {
+        return tutorData;
+      } else {
+        return null;
+      }
+    } catch (error) {
       throw error;
     }
   },

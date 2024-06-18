@@ -18,8 +18,22 @@ const profileController = {
         res.status(404).json(response.data);
       }
     } catch (error) {
-      console.error("error", error);
-      res.status(500).json(error);
+      res.status(500).json(error.message);
+    }
+  },
+
+  // controller for getting the tutor profile Page
+  postTutorProfile: async (req, res) => {
+    try {
+      const tutorId = req.params.id;
+      const response = await profileUseCase.tutorProfile(tutorId);
+      if (response.success) {
+        res.status(202).json(response.data);
+      } else {
+        res.status(404).json(response.data);
+      }
+    } catch (error) {
+      res.status(500).json(error.message);
     }
   },
 };

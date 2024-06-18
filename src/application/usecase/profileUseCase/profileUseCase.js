@@ -20,6 +20,20 @@ const profileUseCase = {
       return { success: false, data: "internal server error" };
     }
   },
+  // use case for the tutor profile
+  tutorProfile: async (tutorId) => {
+    try {
+      const response = await profileRepository.tutorProfile(tutorId);
+      if (response) {
+        return { success: true, data: response };
+      } else {
+        return { success: false, data: response };
+      }
+    } catch (error) {
+      console.log("error", error);
+      return { success: false, data: "internal server error" };
+    }
+  },
 };
 
 module.exports = profileUseCase;
