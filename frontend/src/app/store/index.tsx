@@ -3,7 +3,9 @@ import { create } from "zustand";
 
 // Creating the interface for the state of the application
 interface State {
+  // for checking whether user is valid or not
   isAuthorized: boolean;
+  // for adding the user details to the state
   user: {
     id: string;
     email: string;
@@ -11,7 +13,9 @@ interface State {
     username: string;
     profileImage: string;
     blocked: boolean;
+    phone: string;
   } | null;
+  // function for implementing the userLogin
   isLoggedIn: (user: {
     id: string;
     email: string;
@@ -19,12 +23,18 @@ interface State {
     username: string;
     profileImage: string;
     blocked: boolean;
+    phone: string;
   }) => void;
+  // function for implementing the user Logout
   isLoggedOut: () => void;
+  // to check whether there is a valid admin
   isAdmin: boolean;
   admin: { email: string } | null;
+  // for logging in purpose
   isAdminLoggedIn: (admin: { email: string }) => void;
+  // for logout purpose
   isAdminLoggedOut: () => void;
+  // for displaying all the users
   allUser: {
     id: string;
     username: string;
@@ -32,6 +42,7 @@ interface State {
     profileImage: string;
     block: boolean;
   }[];
+  // function to show all the users
   findAllUsers: (
     allUser: {
       id: string;
@@ -41,6 +52,7 @@ interface State {
       block: boolean;
     }[]
   ) => void;
+  //  show all the tutors
   allTutor: {
     id: string;
     username: string;
@@ -48,6 +60,7 @@ interface State {
     profileImage: string;
     block: boolean;
   }[];
+  // function for showing all the tutor
   findAllTutor: (
     allTutor: {
       id: string;
@@ -57,8 +70,27 @@ interface State {
       block: boolean;
     }[]
   ) => void;
+  // function to block and unblock the user
   blockUnblock: (id: string, status: boolean) => void;
   block_unblock: (id: string, status: boolean) => void;
+
+  // for editing and updating the user status
+  editUserDetails: {
+    id: string;
+    username: string;
+    email: string;
+    profileImage: string;
+    phone: string;
+  } | null;
+
+  // function for editing the user
+  setEditUser: (user: {
+    id: string;
+    username: string;
+    email: string;
+    profileImage: string;
+    phone: string;
+  }) => void;
 }
 
 export const AppState = create<State>((set, get) => {
@@ -69,6 +101,7 @@ export const AppState = create<State>((set, get) => {
     admin: null,
     allUser: [],
     allTutor: [],
+    editUserDetails: null,
   };
 
   if (typeof window !== "undefined") {
@@ -144,6 +177,15 @@ export const AppState = create<State>((set, get) => {
         );
         return { ...state, allUser: updatedUser };
       });
+    },
+    setEditUser(user) {
+      set({ editUserDetails: user });
+      if (typeof window !== "undefined") {
+        localStorage.setItem(
+          "appState",
+          JSON.stringify({ ...get(), editUserDetails: user })
+        );
+      }
     },
   };
 });

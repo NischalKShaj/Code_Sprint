@@ -115,6 +115,21 @@ const userUseCase = {
       return { success: false, data: error.message };
     }
   },
+
+  // for editing the user profile
+  editStudent: async (userData, profileImage) => {
+    try {
+      const result = await userRepository.editStudent(userData, profileImage);
+      if (result) {
+        return { success: true, data: result };
+      } else {
+        return { success: false, data: result };
+      }
+    } catch (error) {
+      console.error("error", error);
+      return { success: false, data: error.message };
+    }
+  },
 };
 
 module.exports = userUseCase;

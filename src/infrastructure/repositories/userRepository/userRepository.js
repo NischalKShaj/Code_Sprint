@@ -162,6 +162,17 @@ const userRepository = {
       throw error;
     }
   },
+
+  // method for editing the user
+  editStudent: async (userData, profileImage) => {
+    try {
+      const userDetails = await UserCollection.findOne({
+        email: userData.email,
+      });
+    } catch (error) {
+      throw error;
+    }
+  },
 };
 
 module.exports = userRepository;

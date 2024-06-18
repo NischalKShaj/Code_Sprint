@@ -57,6 +57,9 @@ const users = new mongoose.Schema(
       type: String,
       default: "student",
     },
+    phone: {
+      type: String,
+    },
     blocked: {
       type: Boolean,
       default: false,

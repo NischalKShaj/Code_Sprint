@@ -161,6 +161,22 @@ const userController = {
     }
   },
 
+  // controller for editing the student details
+  editStudent: async (req, res) => {
+    try {
+      const userData = req.body;
+      const profileImage = req.file;
+      const response = await userUseCase.editStudent(userData, profileImage);
+      if (response.success) {
+        res.status(202).json(response.data);
+      } else {
+        res.status(404).json(response.data);
+      }
+    } catch (error) {
+      res.status(500).json("internal server error");
+    }
+  },
+
   // controller for log-out
   logoutUser: (req, res) => {
     try {

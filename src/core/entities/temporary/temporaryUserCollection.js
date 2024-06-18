@@ -48,6 +48,9 @@ const temporaryUsers = new mongoose.Schema(
     otp: {
       type: String,
     },
+    phone: {
+      type: String,
+    },
     role: {
       type: String,
       default: "student",

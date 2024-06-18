@@ -62,6 +62,7 @@ const Login = () => {
           username: data.username,
           profileImage: data.profileImage,
           blocked: data.blocked,
+          phone: data.phone,
         });
         router.push("/");
       } else if (response.status === 500) {

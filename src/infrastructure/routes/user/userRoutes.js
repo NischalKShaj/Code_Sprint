@@ -11,6 +11,7 @@ const tutorController = require("../../../adapters/controllers/tutorController/t
 const oAuthController = require("../../../adapters/controllers/oAuthController/oAuthController");
 const courseController = require("../../../adapters/controllers/courseController/courseController");
 const profileController = require("../../../adapters/controllers/profileController/profileController");
+const upload = require("../../../adapters/middleware/multer");
 
 // creating the required routes
 
@@ -62,6 +63,14 @@ router.get(
 
 // router for getting the single course
 router.post("/courses/:id", authenticateUserJwt, courseController.showCourse);
+
+// router for updating the userDetails
+router.put(
+  "/profile/edit/:id",
+  upload.single("profileImage"),
+  authenticateUserJwt,
+  userController.editStudent
+);
 
 // exporting the module
 module.exports = router;
