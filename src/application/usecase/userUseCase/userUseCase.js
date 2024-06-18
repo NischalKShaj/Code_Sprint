@@ -117,9 +117,13 @@ const userUseCase = {
   },
 
   // for editing the user profile
-  editStudent: async (userData, profileImage) => {
+  editStudent: async (userData, profileImage, userId) => {
     try {
-      const result = await userRepository.editStudent(userData, profileImage);
+      const result = await userRepository.editStudent(
+        userData,
+        profileImage,
+        userId
+      );
       if (result) {
         return { success: true, data: result };
       } else {

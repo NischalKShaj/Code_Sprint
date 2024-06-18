@@ -1,6 +1,6 @@
 # adding the dependecy
 node_modules/
 .vscode
-
+storage
 # adding the .env file
 .env

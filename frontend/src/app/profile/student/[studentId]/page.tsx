@@ -15,7 +15,7 @@ dotenv.config();
 const StudentId = () => {
   const router = useRouter();
   const user = AppState((state) => state.user);
-  const setEditUser = AppState((state) => state.setEditUser);
+  const isLoggedIn = AppState((state) => state.isLoggedIn);
   const id = user?.id;
 
   // Initialize form state
@@ -61,12 +61,6 @@ const StudentId = () => {
       data.append("profileImage", file); // Append the File object, not URL
     }
 
-    if (data.has("username") && data.has("email")) {
-      const uservalue = data.get("username");
-      const emailV = data.get("email");
-      console.log("uservalue", uservalue, emailV);
-    }
-
     const token = localStorage.getItem("access_token");
 
     console.log("data", data);
@@ -84,6 +78,8 @@ const StudentId = () => {
         }
       );
 
+      console.log("response", response.data);
+
       if (response.status === 202) {
         Swal.fire({
           position: "center",
@@ -92,6 +88,17 @@ const StudentId = () => {
           showConfirmButton: false,
           timer: 1700,
         });
+
+        isLoggedIn({
+          id: user?.id!,
+          username: response.data.username,
+          email: response.data.email,
+          phone: response.data.phone,
+          profileImage: response.data.profileImage,
+          role: user?.role!,
+          blocked: user?.blocked!,
+        });
+
         router.push("/profile/student");
       }
     } catch (error) {

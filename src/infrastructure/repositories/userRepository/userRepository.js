@@ -164,11 +164,28 @@ const userRepository = {
   },
 
   // method for editing the user
-  editStudent: async (userData, profileImage) => {
+  editStudent: async (userData, profileImage, userId) => {
     try {
-      const userDetails = await UserCollection.findOne({
+      const user = {
+        username: userData.username,
         email: userData.email,
+        phone: userData.phone,
+      };
+
+      if (profileImage) {
+        console.log("profileImage", profileImage);
+        user.profileImage = profileImage;
+      }
+
+      const userDetails = await UserCollection.findByIdAndUpdate(userId, user, {
+        new: true,
       });
+      console.log("userDetails", userDetails);
+      if (userDetails) {
+        return userDetails;
+      } else {
+        return null;
+      }
     } catch (error) {
       throw error;
     }

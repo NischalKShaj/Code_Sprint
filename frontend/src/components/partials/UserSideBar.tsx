@@ -5,6 +5,8 @@
 import { AppState } from "@/app/store";
 import Image from "next/image";
 import Link from "next/link";
+import dotenv from "dotenv";
+dotenv.config();
 import React from "react";
 
 const UserSideBar = () => {
@@ -43,13 +45,16 @@ const UserSideBar = () => {
           <ul className="space-y-2 font-medium flex flex-col items-center">
             <li>
               <div className="relative">
-                <Image
-                  className="w-100 h-100 rounded-full ring-4 dark:ring-gray-800 mt-[10px]"
-                  width={100}
-                  height={100}
-                  src={user?.profileImage || ""}
-                  alt="profile image"
-                />
+                {user?.profileImage && (
+                  <Image
+                    className="w-100 h-100 rounded-full ring-4 dark:ring-gray-800 mt-[10px]"
+                    width={100}
+                    height={100}
+                    // src={user?.profileImage}
+                    src={user.profileImage}
+                    alt="Profile Image"
+                  />
+                )}
                 <span className="bottom-0 left-16 absolute  w-3.5 h-3.5 bg-green-400 border-2 border-white dark:border-gray-800 rounded-full"></span>
               </div>
             </li>

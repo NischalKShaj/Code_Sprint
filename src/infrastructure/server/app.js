@@ -7,6 +7,7 @@ const cors = require("cors");
 const userRouter = require("../routes/user/userRoutes");
 const adminRouter = require("../routes/admin/adminRoutes");
 const cookieParser = require("cookie-parser");
+const path = require("path");
 dotenv.config();
 
 // configuring the app
@@ -14,6 +15,9 @@ const app = express();
 
 // setting the port for the server
 const port = process.env.PORT;
+
+// Serve static files from the uploads directory
+app.use("/uploads", express.static("src/infrastructure/storage/uploads"));
 
 // configuring the cookie-parser
 app.use(cookieParser());

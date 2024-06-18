@@ -1,20 +1,15 @@
-// file to configure the multer
-
-// importing the required modules
+// src/adapter/middleware/uploadMiddleware.js
 const multer = require("multer");
 const path = require("path");
 
-// configuring multer
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    // Specify the directory where uploaded files will be stored
     cb(
       null,
       path.join(__dirname, "../../infrastructure/storage/uploads/image")
     );
   },
   filename: (req, file, cb) => {
-    // Define the filename for the uploaded file
     cb(null, Date.now() + "-" + file.originalname);
   },
 });

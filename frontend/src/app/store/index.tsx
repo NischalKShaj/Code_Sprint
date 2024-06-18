@@ -73,24 +73,6 @@ interface State {
   // function to block and unblock the user
   blockUnblock: (id: string, status: boolean) => void;
   block_unblock: (id: string, status: boolean) => void;
-
-  // for editing and updating the user status
-  editUserDetails: {
-    id: string;
-    username: string;
-    email: string;
-    profileImage: string;
-    phone: string;
-  } | null;
-
-  // function for editing the user
-  setEditUser: (user: {
-    id: string;
-    username: string;
-    email: string;
-    profileImage: string;
-    phone: string;
-  }) => void;
 }
 
 export const AppState = create<State>((set, get) => {
@@ -177,15 +159,6 @@ export const AppState = create<State>((set, get) => {
         );
         return { ...state, allUser: updatedUser };
       });
-    },
-    setEditUser(user) {
-      set({ editUserDetails: user });
-      if (typeof window !== "undefined") {
-        localStorage.setItem(
-          "appState",
-          JSON.stringify({ ...get(), editUserDetails: user })
-        );
-      }
     },
   };
 });
