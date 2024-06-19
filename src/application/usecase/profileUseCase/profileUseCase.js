@@ -34,6 +34,21 @@ const profileUseCase = {
       return { success: false, data: "internal server error" };
     }
   },
+
+  // graphs for tutor to show the subscribers graphs
+  getGraphs: async (tutorId) => {
+    try {
+      const response = await profileRepository.getGraphs(tutorId);
+      if (response) {
+        return { success: true, data: response };
+      } else {
+        return { success: false, data: response };
+      }
+    } catch (error) {
+      console.error("error", error);
+      return { success: false, data: error.message };
+    }
+  },
 };
 
 module.exports = profileUseCase;

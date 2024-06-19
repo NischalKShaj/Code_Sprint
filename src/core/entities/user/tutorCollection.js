@@ -63,6 +63,22 @@ const tutorSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    subscribers: [
+      {
+        userId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "users",
+        },
+        courseId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Course",
+        },
+        subscriptionDate: {
+          type: Date,
+          default: Date.now(),
+        },
+      },
+    ],
   },
   { timestamps: true }
 );

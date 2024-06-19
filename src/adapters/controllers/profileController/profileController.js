@@ -36,6 +36,21 @@ const profileController = {
       res.status(500).json(error.message);
     }
   },
+
+  // controller for getting the graph for showing in the tutor page
+  getGraph: async (req, res) => {
+    const tutorId = req.params.id;
+    try {
+      const response = await profileUseCase.getGraphs(tutorId);
+      if (response.success) {
+        res.status(202).json(response.data);
+      } else {
+        res.status(404).json(response.data);
+      }
+    } catch (error) {
+      res.status(500).json(error.message);
+    }
+  },
 };
 
 module.exports = profileController;

@@ -144,6 +144,7 @@ const userRepository = {
       const courseData = await CourseCollection.findById({ _id: course });
       const userData = await UserCollection.findById({ _id: user });
       if (courseData && userData) {
+        // for updating the user side to show the subscription
         const updatedUser = await UserCollection.findByIdAndUpdate(
           user,
           {
@@ -153,7 +154,26 @@ const userRepository = {
           },
           { new: true }
         );
+
+        //for updating the tutor collection to show the subscribers list
+        const updatedTutor = await TutorCollection.findByIdAndUpdate(
+          {
+            _id: courseData.tutor,
+          },
+          {
+            $push: {
+              subscribers: {
+                userId: userData._id,
+                courseId: courseData._id,
+                subscriptionDate: Date.now(),
+              },
+            },
+          },
+          { new: true }
+        );
+
         console.log("updatedUser", updatedUser);
+        console.log("updated TUtor", updatedTutor);
         return updatedUser;
       } else {
         return null;

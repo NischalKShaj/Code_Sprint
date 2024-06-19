@@ -40,12 +40,52 @@ const profileRepository = {
   tutorProfile: async (tutorId) => {
     try {
       const tutorData = await TutorCollection.findById(tutorId);
-      console.log("tutorData");
+      console.log("tutorData", tutorData);
+
+      // for extracting the user and corresponding subscribed course
+      const subscribers = await Promise.all(
+        tutorData.subscribers.map(async (sub) => {
+          const user = await UserCollection.findById(sub.userId);
+          const course = await CourseCollection.findById(sub.courseId);
+
+          return {
+            userId: sub.userId.toString(),
+            username: user ? user.username : "User not found",
+            email: user ? user.email : "Email not found",
+            courseId: sub.courseId.toString(),
+            courseTitle: course ? course.course_name : "Course not found",
+          };
+        })
+      );
+
+      console.log("subscribers", subscribers);
+
       if (tutorData) {
-        return tutorData;
+        return { tutorData, subscribers };
       } else {
         return null;
       }
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  // methods for showing the subscribers chart
+  getGraphs: async (tutorId) => {
+    try {
+      const tutorData = await TutorCollection.findOne({ _id: tutorId });
+      console.log("tutorData", tutorData);
+
+      // for filtering the monthly and yearly data
+      const subscriptionDates = tutorData.subscribers.map((subscriber) => {
+        const subscriptionDate = new Date(subscriber.subscriptionDate);
+        const month = subscriptionDate.getMonth() + 1; // +1 because getMonth() returns 0-based index
+        const year = subscriptionDate.getFullYear();
+        return { month, year };
+      });
+
+      console.log("subscription date", subscriptionDates);
+      return subscriptionDates;
     } catch (error) {
       throw error;
     }

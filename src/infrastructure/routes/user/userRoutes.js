@@ -79,5 +79,8 @@ router.get(
   profileController.postTutorProfile
 );
 
+// router for showing the tutor graph
+router.get("/user/graph/:id", authenticateUserJwt, profileController.getGraph);
+
 // exporting the module
 module.exports = router;
