@@ -51,6 +51,30 @@ const profileController = {
       res.status(500).json(error.message);
     }
   },
+
+  // controller for editing the tutor data
+  editTutor: async (req, res) => {
+    try {
+      const tutorId = req.params.id;
+      const tutorData = req.body;
+      const profileImage = req.file
+        ? `http://localhost:4000/uploads/image/${req.file.filename}`
+        : null;
+
+      const response = await profileUseCase.editTutor(
+        tutorData,
+        profileImage,
+        tutorId
+      );
+      if (response.success) {
+        res.status(202).json(response.data);
+      } else {
+        res.status(404).json(response.data);
+      }
+    } catch (error) {
+      res.status(500).json(error.message);
+    }
+  },
 };
 
 module.exports = profileController;

@@ -49,6 +49,25 @@ const profileUseCase = {
       return { success: false, data: error.message };
     }
   },
+
+  // for editing the tutor data
+  editTutor: async (tutorData, profileImage, tutorId) => {
+    try {
+      const result = await profileRepository.editTutor(
+        tutorData,
+        profileImage,
+        tutorId
+      );
+      if (result) {
+        return { success: true, data: result };
+      } else {
+        return { success: false, data: result };
+      }
+    } catch (error) {
+      console.error("error", error);
+      return { success: false, data: error.message };
+    }
+  },
 };
 
 module.exports = profileUseCase;

@@ -43,6 +43,7 @@ const TutorProfilePage = () => {
 
         if (response.status === 202) {
           console.log("response", response.data.subscribers);
+
           setTotalSub((prev) => [...response.data.subscribers]);
         } else {
           router.push("/login");
@@ -64,6 +65,7 @@ const TutorProfilePage = () => {
     return <div>Loading...</div>;
   }
 
+  // implement pagination for the total subscribed user
   // Calculate index of videos to display based on current page
   //   const indexOfLastCourse = currentPage * coursesPerPage;
   //   const indexOfFirstCourse = indexOfLastCourse - coursesPerPage;
@@ -122,9 +124,11 @@ const TutorProfilePage = () => {
             </div>
           </section>
         </div>
-        <section className="bg-[#D9D9D9] p-8 ml-[500px] mt-[-60px] mb-5 w-[950px] rounded-lg shadow-lg">
-          <h1 className="text-left text-xl font-semibold">Total Subscribers</h1>
-          <div className="mt-[20px] flex items-center">
+        <section className="bg-[#D9D9D9] p-8 ml-[500px] mt-[-90px] mb-5 w-[950px] rounded-lg shadow-lg">
+          <h1 className="text-left text-xl font-semibold">
+            Total Subscribers: {totalSub.length}
+          </h1>
+          <div className="mt-[0px] flex items-center">
             <TotalSubscriber />
           </div>
         </section>

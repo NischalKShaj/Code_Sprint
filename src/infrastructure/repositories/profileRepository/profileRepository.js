@@ -90,6 +90,33 @@ const profileRepository = {
       throw error;
     }
   },
+
+  // method for editing the tutor data
+  editTutor: async (tutorData, profileImage, tutorId) => {
+    try {
+      const tutor = {
+        username: tutorData.username,
+        email: tutorData.email,
+        phone: tutorData.phone,
+      };
+
+      if (profileImage) {
+        tutor.profileImage = profileImage;
+      }
+      const tutorDetails = await TutorCollection.findByIdAndUpdate(
+        tutorId,
+        tutor,
+        { new: true }
+      );
+      if (tutorDetails) {
+        return tutorDetails;
+      } else {
+        return null;
+      }
+    } catch (error) {
+      throw error;
+    }
+  },
 };
 
 module.exports = profileRepository;

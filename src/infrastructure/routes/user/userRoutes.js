@@ -82,5 +82,13 @@ router.get(
 // router for showing the tutor graph
 router.get("/user/graph/:id", authenticateUserJwt, profileController.getGraph);
 
+// router for editing the tutor
+router.put(
+  "/profile/tutor/edit/:id",
+  upload.single("profileImage"),
+  authenticateUserJwt,
+  profileController.editTutor
+);
+
 // exporting the module
 module.exports = router;
