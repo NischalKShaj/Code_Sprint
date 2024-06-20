@@ -84,6 +84,20 @@ const tutorUseCase = {
       return { success: false, data: "internal server error" };
     }
   },
+
+  // for showing the specific course
+  getMyCourse: async (courseId) => {
+    try {
+      const result = await courseRepository.getMyCourse(courseId);
+      if (result) {
+        return { success: true, data: result };
+      } else {
+        return { success: false, data: result };
+      }
+    } catch (error) {
+      return { success: false, data: "internal server error" };
+    }
+  },
 };
 
 module.exports = tutorUseCase;

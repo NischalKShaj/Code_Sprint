@@ -68,6 +68,21 @@ const tutorController = {
       }
     });
   },
+
+  // show the specific course of the tutor
+  getMyCourse: async (req, res) => {
+    try {
+      const courseId = req.params.id;
+      const response = await tutorUseCase.getMyCourse(courseId);
+      if (response.success) {
+        res.status(202).json(response.data);
+      } else {
+        res.status(404).json(response.data);
+      }
+    } catch (error) {
+      res.status(500).json(error.message);
+    }
+  },
 };
 
 module.exports = tutorController;

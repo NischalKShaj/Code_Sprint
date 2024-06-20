@@ -8,6 +8,7 @@ import axios from "axios";
 import dotenv from "dotenv";
 import { useRouter } from "next/navigation";
 import SpinnerWrapper from "@/components/partials/SpinnerWrapper";
+import TutorSideBar from "@/components/partials/TutorSideBar";
 
 dotenv.config();
 
@@ -117,7 +118,8 @@ const MyCourse: React.FC = () => {
   return (
     <div className="flex flex-col items-center mb-36 bg-white mt-16">
       <SpinnerWrapper>
-        <h1 className="text-3xl mr-[750px] font-bold mb-6">My Courses</h1>
+        <TutorSideBar />
+        {/* <h1 className="text-3xl mr-[750px] font-bold mb-6">My Courses</h1> */}
         <section className="bg-[#D9D9D9] p-8 w-[1000px] rounded-lg shadow-md">
           {currentVideos.map((video, index) => (
             <div key={index} style={{ margin: "20px 0" }}>
@@ -125,7 +127,7 @@ const MyCourse: React.FC = () => {
                 {video.courseTitle}
               </h3>
               <div className="mb-6">
-                <p className="text-md text-center mb-4">{video.description}</p>
+                <p className="text-md text-left mb-4">{video.description}</p>
                 <div className="flex justify-center">
                   <video className="rounded-lg" width="600" controls>
                     <source

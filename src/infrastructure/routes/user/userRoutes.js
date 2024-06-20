@@ -48,7 +48,12 @@ router.get("/logout", userController.logoutUser);
 // router for getting the courses for the tutor
 router.get("/mycourse/:id", authenticateUserJwt, tutorController.getCourse);
 
-// router for
+// router for getting the single course page for the tutor
+router.get(
+  "/mycourse/course/:id",
+  authenticateUserJwt,
+  tutorController.getMyCourse
+);
 
 // router to add new courses
 router.post("/uploads", authenticateUserJwt, tutorController.addCourse);

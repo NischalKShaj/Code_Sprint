@@ -62,6 +62,24 @@ interface State {
   ) => void;
   completedVideos: Record<string, Record<string, boolean>>;
   toggleVideoCompletion: (courseId: string, videoUrl: string) => void;
+
+  myCourse: {
+    id: string;
+    course_name: string;
+    course_category: string;
+    description: string;
+    videos: string[];
+    price: number;
+  } | null;
+
+  setMyCourse: (myCourse: {
+    id: string;
+    course_name: string;
+    course_category: string;
+    description: string;
+    videos: string[];
+    price: number;
+  }) => void;
 }
 
 // creating the store
@@ -71,6 +89,7 @@ export const CourseState = create<State>((set, get) => {
     allCourse: [],
     isSubscribed: [],
     completedVideos: {},
+    myCourse: null,
   };
   if (typeof window !== "undefined") {
     const savedState = localStorage.getItem("courseState");
@@ -142,6 +161,16 @@ export const CourseState = create<State>((set, get) => {
               [courseId]: courseCompletion,
             },
           })
+        );
+      }
+    },
+
+    setMyCourse(myCourse) {
+      set({ myCourse });
+      if (typeof window !== "undefined") {
+        localStorage.setItem(
+          "courseState",
+          JSON.stringify({ ...get(), myCourse })
         );
       }
     },

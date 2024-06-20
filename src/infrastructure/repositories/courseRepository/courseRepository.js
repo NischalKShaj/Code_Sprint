@@ -62,6 +62,21 @@ const courseRepository = {
       throw error;
     }
   },
+
+  // method for showing the specific course for the editing purpose and all
+  getMyCourse: async (courseId) => {
+    try {
+      const courseData = await CourseCollection.findById({ _id: courseId });
+      console.log("courseData", courseData);
+      if (courseData) {
+        return courseData;
+      } else {
+        return null;
+      }
+    } catch (error) {
+      throw error;
+    }
+  },
 };
 
 module.exports = courseRepository;

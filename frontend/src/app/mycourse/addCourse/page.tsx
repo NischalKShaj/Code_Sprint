@@ -7,6 +7,7 @@ import dotenv from "dotenv";
 import { AppState } from "../../store";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
+import TutorSideBar from "@/components/partials/TutorSideBar";
 
 dotenv.config();
 
@@ -110,11 +111,12 @@ const AddCourse = () => {
   };
 
   return (
-    <div className="flex flex-col items-center mb-24 bg-white mt-16">
+    <div className="flex flex-col items-center mb-24 bg-white mt-8">
+      <TutorSideBar />
       <h3 className="text-2xl font-bold mb-6 text-center items-center">
         Add New Course
       </h3>
-      <section className="bg-[#D9D9D9] p-8 h-[520px] w-[370px] rounded-lg shadow-md">
+      <section className="bg-[#D9D9D9] p-8 h-[520px] w-[570px] rounded-lg shadow-md">
         <form
           onSubmit={handleSubmit}
           encType="multipart/form-data"
