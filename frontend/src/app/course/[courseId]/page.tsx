@@ -279,7 +279,7 @@ const CourseId = () => {
                       >
                         Subscribe
                       </button>
-                      <p>Price: ${course.price} USD</p>
+                      <p>Price: &#8377; {course.price}</p>
                     </>
                   )}
                 </div>

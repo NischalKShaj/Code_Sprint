@@ -58,10 +58,12 @@ const profileRepository = {
         })
       );
 
+      const wallet = tutorData.wallet;
+
       console.log("subscribers", subscribers);
 
       if (tutorData) {
-        return { tutorData, subscribers };
+        return { tutorData, subscribers, wallet };
       } else {
         return null;
       }

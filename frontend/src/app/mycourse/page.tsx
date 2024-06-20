@@ -22,26 +22,28 @@ interface Course {
   description: string;
   url: string[];
   _id: string;
+  courseId: string;
 }
 
 interface FlattenedVideo {
   courseTitle: string;
   videoUrl: string;
+  description: string;
+  courseId: string; // Include courseId here
 }
 
 const MyCourse: React.FC = () => {
   const router = useRouter();
-  const [currentPage, setCurrentPage] = useState(1);
-  const [videosPerPage] = useState(5);
   const [courses, setCourses] = useState<Course[]>([]);
   const [flattenedVideos, setFlattenedVideos] = useState<FlattenedVideo[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const videosPerPage = 5; // Number of videos per page
   const tutorId = AppState((state) => state.user?.id);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const token = localStorage.getItem("access_token");
-        console.log("token");
         const response = await axios.get(
           `${process.env.NEXT_PUBLIC_BASE_URL}/mycourse/${tutorId}`,
           {
@@ -53,14 +55,20 @@ const MyCourse: React.FC = () => {
         );
         if (response.status === 200) {
           setCourses(response.data);
-          // Flatten the video URLs into a single list
-          const flattened = response.data.flatMap((course: Course) =>
-            course.url.map((videoUrl) => ({
-              courseTitle: course.title,
-              videoUrl,
-            }))
-          );
-          setFlattenedVideos(flattened);
+          // Flatten the video URLs into a single list, but only the first video of each course
+          const flattened = response.data
+            .map((course: Course) => {
+              return course.url.length > 0
+                ? {
+                    courseTitle: course.title,
+                    videoUrl: course.url[0],
+                    description: course.description,
+                    courseId: course.courseId, // Include the courseId here
+                  }
+                : null;
+            })
+            .filter(Boolean); // Filter out any null values
+          setFlattenedVideos(flattened as FlattenedVideo[]);
         } else {
           router.push("/login");
         }
@@ -77,6 +85,12 @@ const MyCourse: React.FC = () => {
     fetchData();
   }, [router, tutorId]);
 
+  // const showCoursePage = (courseId: string) => {
+  //   // Handle showing the course page with the given courseId
+  //   console.log(`Show course with ID: ${courseId}`);
+  //   // You can navigate to another page or perform any action with the courseId here
+  // };
+
   const getMimeType = (url: string): string => {
     const extension = url.split(".").pop();
     switch (extension) {
@@ -89,17 +103,7 @@ const MyCourse: React.FC = () => {
     }
   };
 
-  const getVideoName = (url: string | null | undefined): string => {
-    if (!url) {
-      console.error("Invalid URL:", url);
-      return "Unknown Video";
-    }
-
-    const parts = url.split("/");
-    const filename = parts[parts.length - 1];
-    return filename.split(".")[1];
-  };
-
+  // Get current videos for pagination
   const indexOfLastVideo = currentPage * videosPerPage;
   const indexOfFirstVideo = indexOfLastVideo - videosPerPage;
   const currentVideos = flattenedVideos.slice(
@@ -107,6 +111,7 @@ const MyCourse: React.FC = () => {
     indexOfLastVideo
   );
 
+  // Change page
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
   return (
@@ -117,25 +122,32 @@ const MyCourse: React.FC = () => {
           {currentVideos.map((video, index) => (
             <div key={index} style={{ margin: "20px 0" }}>
               <h3 className="text-2xl text-center font-bold mb-6">
-                Course Name: {video.courseTitle}
+                {video.courseTitle}
               </h3>
-              <div className="justify-center" style={{ margin: "30px 0" }}>
-                <h3 className="text-md text-right mr-[250px] top-[100px] items-center relative">
-                  {getVideoName(video.videoUrl)}
-                </h3>
-                <video className="rounded-lg ml-5" width="300" controls>
-                  <source
-                    src={video.videoUrl}
-                    type={getMimeType(video.videoUrl)}
-                    onError={(e) =>
-                      console.error(
-                        `Error loading video at ${video.videoUrl}:`,
-                        e
-                      )
-                    }
-                  />
-                  Your browser does not support the video tag.
-                </video>
+              <div className="mb-6">
+                <p className="text-md text-center mb-4">{video.description}</p>
+                <div className="flex justify-center">
+                  <video className="rounded-lg" width="600" controls>
+                    <source
+                      src={video.videoUrl}
+                      type={getMimeType(video.videoUrl)}
+                      onError={(e) =>
+                        console.error(
+                          `Error loading video at ${video.videoUrl}:`,
+                          e
+                        )
+                      }
+                    />
+                    Your browser does not support the video tag.
+                  </video>
+                </div>
+                <div className="flex justify-end mt-4">
+                  <Link href={`/mycourse/${video.courseId}`}>
+                    <button className="bg-[#686DE0] text-white font-bold py-2 px-4 rounded-xl">
+                      Show
+                    </button>
+                  </Link>
+                </div>
               </div>
             </div>
           ))}

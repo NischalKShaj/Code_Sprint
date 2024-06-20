@@ -168,6 +168,9 @@ const userRepository = {
                 subscriptionDate: Date.now(),
               },
             },
+            $inc: {
+              wallet: courseData.price,
+            },
           },
           { new: true }
         );

@@ -108,6 +108,7 @@ const tutorRepository = {
         });
 
         const course_Data = {
+          courseId: course.course._id,
           title: course.course_name,
           description: course.description,
           category: course.course_category,

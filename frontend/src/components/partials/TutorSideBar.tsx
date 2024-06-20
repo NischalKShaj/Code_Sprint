@@ -7,10 +7,43 @@ import Image from "next/image";
 import Link from "next/link";
 import dotenv from "dotenv";
 dotenv.config();
-import React from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { useRouter } from "next/navigation";
 
 const TutorSideBar = () => {
+  const [wallet, setWallet] = useState(0);
   const user = AppState((state) => state.user);
+  const id = user?.id;
+  const router = useRouter();
+
+  useEffect(() => {
+    const token = localStorage.getItem("access_token");
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          `${process.env.NEXT_PUBLIC_BASE_URL}/profile/tutor/${id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            withCredentials: true,
+          }
+        );
+        if (response.status === 202) {
+          console.log("response", response.data);
+          setWallet(response.data.wallet);
+        }
+      } catch (error) {
+        console.error("error");
+        router.push("/error");
+      }
+    };
+    if (id) {
+      fetchData();
+    }
+  }, [id, router]);
+
   return (
     <div>
       <button
@@ -98,6 +131,18 @@ const TutorSideBar = () => {
                   <path d="M14 2a3.963 3.963 0 0 0-1.4.267 6.439 6.439 0 0 1-1.331 6.638A4 4 0 1 0 14 2Zm1 9h-1.264A6.957 6.957 0 0 1 15 15v2a2.97 2.97 0 0 1-.184 1H19a1 1 0 0 0 1-1v-1a5.006 5.006 0 0 0-5-5ZM6.5 9a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9ZM8 10H5a5.006 5.006 0 0 0-5 5v2a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-2a5.006 5.006 0 0 0-5-5Z" />
                 </svg>
                 <p>{user?.role}</p>
+              </div>
+              <div className="relative mt-[10px] flex items-center">
+                <svg
+                  className="w-5 h-5 text-gray-500 mr-2"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M19.34 6.01H4.66C3.2 6.01 2 7.21 2 8.67v6.67C2 16.8 3.2 18 4.66 18h14.67c1.47 0 2.67-1.2 2.67-2.67V8.67c0-1.46-1.2-2.66-2.67-2.66zM20 15.34c0 .36-.29.66-.66.66H4.66c-.36 0-.66-.29-.66-.66V8.67c0-.36.29-.66.66-.66h14.67c.36 0 .66.29.66.66v6.67zM7.33 10.67c.37 0 .67.3.67.67s-.3.67-.67.67-.67-.3-.67-.67.3-.67.67-.67zM16 11.34c-.37 0-.67-.3-.67-.67s.3-.67.67-.67.67.3.67.67-.3.67-.67.67z" />
+                </svg>
+                <p>&#8377; {wallet}</p>
               </div>
               <div className="relative mt-[10px] flex items-center">
                 <svg

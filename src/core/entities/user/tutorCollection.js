@@ -2,6 +2,10 @@ const mongoose = require("mongoose");
 
 // defining a module schema for courses within the tutor schema
 const moduleSchema = new mongoose.Schema({
+  courseId: {
+    type: String,
+    required: true,
+  },
   title: {
     type: String,
     required: true,
@@ -79,6 +83,10 @@ const tutorSchema = new mongoose.Schema(
         },
       },
     ],
+    wallet: {
+      type: Number,
+      default: 0,
+    },
   },
   { timestamps: true }
 );
