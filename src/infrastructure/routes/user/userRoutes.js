@@ -97,5 +97,12 @@ router.put(
   profileController.editTutor
 );
 
+// router for editing the courses
+router.put(
+  "/course/edit/:id",
+  authenticateUserJwt,
+  courseController.editCourse
+);
+
 // exporting the module
 module.exports = router;
