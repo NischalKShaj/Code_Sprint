@@ -1,4 +1,3 @@
-// file for performing editing and deleting the course
 "use client";
 
 // importing the required modules
@@ -9,10 +8,12 @@ import axios from "axios";
 import dotenv from "dotenv";
 import Swal from "sweetalert2";
 import { AppState } from "@/app/store";
+import { useRouter } from "next/navigation";
 dotenv.config();
 
 const EditCoursePage = () => {
   const myCourse = CourseState((state) => state.myCourse);
+  const router = useRouter();
   const setMyCourse = CourseState((state) => state.setMyCourse);
   const user = AppState((state) => state.user);
   const id = user?.id;
@@ -25,6 +26,7 @@ const EditCoursePage = () => {
     videos: myCourse?.videos || [],
   });
 
+  const [newVideos, setNewVideos] = useState<File[]>([]);
   const [newVideoPreviews, setNewVideoPreviews] = useState<string[]>([]);
 
   useEffect(() => {
@@ -39,10 +41,7 @@ const EditCoursePage = () => {
       const files = Array.from(e.target.files);
       const previews = files.map((file) => URL.createObjectURL(file));
       setNewVideoPreviews(previews);
-      setFormData({
-        ...formData,
-        videos: previews,
-      });
+      setNewVideos(files);
     }
   };
 
@@ -64,14 +63,23 @@ const EditCoursePage = () => {
     data.append("course_category", formData.course_category);
     data.append("description", formData.description);
     data.append("price", formData.price.toString());
-    if (newVideoPreviews) {
-      formData.videos.forEach((video, index) => {
-        data.append(`videos[${index}]`, video);
+
+    if (newVideos.length > 0) {
+      newVideos.forEach((video) => {
+        data.append("courses", video); // Field name should be 'courses'
       });
     }
 
     const token = localStorage.getItem("access_token");
     try {
+      Swal.fire({
+        position: "center",
+        icon: "success",
+        title: "Course updated in progress refresh after few minutes!",
+        showConfirmButton: false,
+        timer: 2500,
+      });
+      router.push(`/mycourse/${myCourse?.id}`);
       const response = await axios.put(
         `${process.env.NEXT_PUBLIC_BASE_URL}/course/edit/${id}`,
         data,
@@ -83,6 +91,7 @@ const EditCoursePage = () => {
           withCredentials: true,
         }
       );
+      console.log("response", response.data);
       if (response.status === 202) {
         setMyCourse({
           id: response.data._id,
@@ -90,14 +99,7 @@ const EditCoursePage = () => {
           course_category: response.data.course_category,
           description: response.data.description,
           price: response.data.price,
-          videos: response.data.videos,
-        });
-        Swal.fire({
-          position: "center",
-          icon: "success",
-          title: "Course updated successfully!",
-          showConfirmButton: false,
-          timer: 1700,
+          videos: response.data.videos, // Update with new videos
         });
       }
     } catch (error) {
@@ -105,7 +107,7 @@ const EditCoursePage = () => {
       Swal.fire({
         position: "center",
         icon: "error",
-        title: "error while updating",
+        title: "Error while updating",
         showConfirmButton: false,
         timer: 1700,
       });

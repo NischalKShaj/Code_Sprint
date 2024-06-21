@@ -107,21 +107,27 @@ const tutorRepository = {
           price: course.amount,
         });
 
+        // Save the courseData first to get the generated ID
+        const savedCourseData = await courseData.save();
+        console.log("Saved course data:", savedCourseData);
+
         const course_Data = {
-          courseId: course.course._id,
-          title: course.course_name,
-          description: course.description,
-          category: course.course_category,
+          courseId: savedCourseData._id.toString(), // Ensure the ID is included here
+          title: savedCourseData.course_name,
+          description: savedCourseData.description,
+          category: savedCourseData.course_category,
           url: urls,
         };
+
+        console.log("course_Data to be pushed:", course_Data);
 
         await TutorCollection.updateOne(
           { _id: tutor._id },
           { $push: { course: course_Data } }
         );
-        await courseData.save();
-        console.log("courseData", courseData);
-        return { success: true, data: courseData };
+
+        console.log("courseData", savedCourseData);
+        return { success: true, data: savedCourseData };
       } else {
         return { success: false, data: "Tutor not found" };
       }

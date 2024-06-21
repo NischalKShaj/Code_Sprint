@@ -18,6 +18,8 @@ const courseUseCase = {
       return { success: false, data: "internal server error" };
     }
   },
+
+  // use case for showing the specific course
   showCourse: async (courseId, id) => {
     try {
       const course = await courseRepository.showCourse(courseId, id);
@@ -28,6 +30,25 @@ const courseUseCase = {
       }
     } catch (error) {
       return { success: false, data: error.message };
+    }
+  },
+
+  // use case for editing the course
+  editCourse: async (courseData, courseVideos, tutorId) => {
+    try {
+      const result = await courseRepository.editCourse(
+        courseData,
+        courseVideos,
+        tutorId
+      );
+      if (result) {
+        return { success: true, data: result };
+      } else {
+        return { success: false, data: result };
+      }
+    } catch (error) {
+      console.error("error", error);
+      return { success: false, data: "internal server error" };
     }
   },
 };

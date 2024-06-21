@@ -48,34 +48,38 @@ const courseController = {
   editCourse: async (req, res) => {
     try {
       const tutorId = req.params.id;
+      console.log("first", tutorId);
 
       upload(req, res, async (err) => {
         if (err) {
           console.error("error", err);
-          res.status(500).json({ success: false, data: err.message });
+          return res.status(500).json({ success: false, data: err.message });
         }
-        const courseVideos = req.files;
-        console.log("videos", courseVideos);
 
+        const courseVideos = req.files;
         const courseData = req.body;
-        if (!courseVideos || courseVideos.length === 0) {
-          return res
-            .status(500)
-            .json({ success: false, data: "no files uploaded" });
-        }
+        console.log("courseVideos", courseVideos);
+        console.log("courseData", courseData);
+
+        // Proceed with updating course data
         const response = await courseUseCase.editCourse(
           courseData,
           courseVideos,
           tutorId
         );
+
         if (response.success) {
-          await sendMessageToQueue({ courseData, courseVideos, tutorId });
-          res.status(202).json(response.data);
+          // Only send message to queue if videos are uploaded
+          if (courseVideos && courseVideos.length > 0) {
+            await sendMessageToQueue({ courseData, courseVideos, tutorId });
+          }
+          return res.status(202).json(response.data);
         } else {
-          res.status(400).json(response.data);
+          return res.status(400).json(response.data);
         }
       });
     } catch (error) {
+      console.error("error", error);
       res.status(500).json("internal server error");
     }
   },

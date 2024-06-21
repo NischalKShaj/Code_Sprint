@@ -77,6 +77,49 @@ const courseRepository = {
       throw error;
     }
   },
+
+  // method for editing the course
+  editCourse: async (courseData, courseVideos, tutorId) => {
+    try {
+      const id = courseData.courseId;
+      const courseDetails = await CourseCollection.findById({ _id: id });
+      const tutor = await TutorCollection.findById({ _id: tutorId });
+
+      if (tutor && courseDetails) {
+        // Merge existing videos with new ones
+        const existingVideos = courseDetails.videos;
+        const newVideos = courseVideos.map((video) => video.location);
+        const updatedVideos = [...existingVideos, ...newVideos];
+
+        // Update course details
+        courseDetails.course_name = courseData.course_name;
+        courseDetails.course_category = courseData.course_category;
+        courseDetails.description = courseData.description;
+        courseDetails.price = parseInt(courseData.price, 10);
+        courseDetails.videos = updatedVideos;
+
+        await courseDetails.save();
+
+        // Update tutor's course videos
+        const courseIndex = tutor.course.findIndex(
+          (course) => course.courseId.toString() === id.toString()
+        );
+        if (courseIndex !== -1) {
+          const existingTutorVideos = tutor.course[courseIndex].url;
+          const updatedTutorVideos = [...existingTutorVideos, ...newVideos];
+          tutor.course[courseIndex].url = updatedTutorVideos;
+        }
+
+        await tutor.save();
+
+        return courseDetails;
+      } else {
+        return null;
+      }
+    } catch (error) {
+      throw error;
+    }
+  },
 };
 
 module.exports = courseRepository;

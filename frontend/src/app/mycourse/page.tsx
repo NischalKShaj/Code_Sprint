@@ -56,6 +56,7 @@ const MyCourse: React.FC = () => {
         );
         if (response.status === 200) {
           setCourses(response.data);
+          console.log("response", response.data);
           // Flatten the video URLs into a single list, but only the first video of each course
           const flattened = response.data
             .map((course: Course) => {
@@ -118,7 +119,7 @@ const MyCourse: React.FC = () => {
   return (
     <div className="flex flex-col items-center mb-36 bg-white mt-16">
       <SpinnerWrapper>
-        <TutorSideBar />
+        {/* <TutorSideBar /> */}
         {/* <h1 className="text-3xl mr-[750px] font-bold mb-6">My Courses</h1> */}
         <section className="bg-[#D9D9D9] p-8 w-[1000px] rounded-lg shadow-md">
           {currentVideos.map((video, index) => (
