@@ -20,6 +20,7 @@ const profileUseCase = {
       return { success: false, data: "internal server error" };
     }
   },
+
   // use case for the tutor profile
   tutorProfile: async (tutorId) => {
     try {

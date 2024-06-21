@@ -87,12 +87,6 @@ const MyCourse: React.FC = () => {
     fetchData();
   }, [router, tutorId]);
 
-  // const showCoursePage = (courseId: string) => {
-  //   // Handle showing the course page with the given courseId
-  //   console.log(`Show course with ID: ${courseId}`);
-  //   // You can navigate to another page or perform any action with the courseId here
-  // };
-
   const getMimeType = (url: string): string => {
     const extension = url.split(".").pop();
     switch (extension) {
@@ -119,8 +113,7 @@ const MyCourse: React.FC = () => {
   return (
     <div className="flex flex-col items-center mb-36 bg-white mt-16">
       <SpinnerWrapper>
-        {/* <TutorSideBar /> */}
-        {/* <h1 className="text-3xl mr-[750px] font-bold mb-6">My Courses</h1> */}
+        <TutorSideBar />
         <section className="bg-[#D9D9D9] p-8 w-[1000px] rounded-lg shadow-md">
           {currentVideos.map((video, index) => (
             <div key={index} style={{ margin: "20px 0" }}>

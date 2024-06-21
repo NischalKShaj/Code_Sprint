@@ -107,7 +107,7 @@ const CourseId = () => {
       ? completedVideos[courseId]
       : {};
   const completedCount = Object.values(courseCompletion).filter(Boolean).length;
-  const totalTutorials = parseInt(course?.number_of_tutorials || "0", 10);
+  const totalTutorials = course?.videos.length || 0;
   const completionPercentage = Math.round(
     (completedCount / totalTutorials) * 100
   );
@@ -289,33 +289,37 @@ const CourseId = () => {
                   <h1 className="text-center text-3xl font-semibold">
                     {course.course_name}
                   </h1>
-                  <div className="flex flex-col mt-[30px] grid-cols-2 gap-4">
-                    {currentVideos?.map(
-                      (video: { url: string }, index: number) => (
-                        <div className="flex relative" key={index}>
-                          <p className="video-name absolute top-0 left-[50px] bg-black bg-opacity-50 text-white px-2 py-1 rounded">
-                            {getVideoName(video.url)}
-                          </p>
-                          <video
-                            src={video.url}
-                            className="rounded-lg ml-9"
-                            width="300"
-                            height="200"
-                            controls
-                          />
-                          <div className="ml-5">
-                            <input
-                              type="checkbox"
-                              className="ml-14 mt-[80px] w-6 h-6"
-                              checked={!!courseCompletion[video.url]}
-                              onChange={() => handleCheckboxChange(video)}
+                  {courseSubscribed ? (
+                    <div className="flex flex-col mt-[30px] grid-cols-2 gap-4">
+                      {currentVideos?.map(
+                        (video: { url: string }, index: number) => (
+                          <div className="flex relative" key={index}>
+                            <p className="video-name absolute top-0 left-[50px] bg-black bg-opacity-50 text-white px-2 py-1 rounded">
+                              {getVideoName(video.url)}
+                            </p>
+                            <video
+                              src={video.url}
+                              className="rounded-lg ml-9"
+                              width="300"
+                              height="200"
+                              controls
                             />
+                            <div className="ml-5">
+                              <input
+                                type="checkbox"
+                                className="ml-14 mt-[80px] w-6 h-6"
+                                checked={!!courseCompletion[video.url]}
+                                onChange={() => handleCheckboxChange(video)}
+                              />
+                            </div>
                           </div>
-                        </div>
-                      )
-                    )}
-                  </div>
-                  {renderPagination()}
+                        )
+                      )}
+                      {renderPagination()}
+                    </div>
+                  ) : (
+                    <p>subscribe to watch the videos</p>
+                  )}
                 </section>
 
                 <section className="bg-[#D9D9D9] p-8 ml-[300px] mt-5 mb-5 w-[500px] h-[300px] rounded-lg shadow-lg">
