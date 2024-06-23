@@ -37,7 +37,7 @@ const UserBanner = () => {
         showStatus={false}
         infiniteLoop={true}
         autoPlay={true}
-        dynamicHeight={false} // Ensure dynamic height is disabled
+        dynamicHeight={false}
       >
         {bannerImages.map((image, index) => (
           <div key={index} className="h-96">

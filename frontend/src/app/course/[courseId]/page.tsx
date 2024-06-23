@@ -252,6 +252,22 @@ const CourseId = () => {
     }
   };
 
+  // function to handle unsubscribing
+  const handleUnsubscribe = async () => {
+    const result = await Swal.fire({
+      position: "center",
+      icon: "warning",
+      text: "Amount will not be refunded if unsubscribed",
+      showConfirmButton: true,
+      showCancelButton: true,
+      confirmButtonText: "Yes, Unsubscribe",
+      denyButtonText: "Cancel",
+    });
+    if (result.isConfirmed) {
+      const response = await axios.get("");
+    }
+  };
+
   function getVideoName(url: string) {
     const parts = url.split("/");
     const fileName = parts[parts.length - 1];
@@ -271,7 +287,7 @@ const CourseId = () => {
                 </Link>
                 <div className="mr-[300px] text-left ml-[1000px] mt-[100px] mb-5 p-3 bg-gradient-to-r from-purple-500 to-indigo-500 shadow-lg rounded-lg">
                   {course.description}
-                  {!courseSubscribed && (
+                  {!courseSubscribed ? (
                     <>
                       <button
                         className="bg-[#2a31f8] mt-5 text-white font-bold py-2 px-4 rounded-xl"
@@ -280,6 +296,15 @@ const CourseId = () => {
                         Subscribe
                       </button>
                       <p>Price: &#8377; {course.price}</p>
+                    </>
+                  ) : (
+                    <>
+                      <button
+                        className="bg-[#f82a2a] mt-5 text-white font-bold py-2 px-4 rounded-xl"
+                        onClick={handleUnsubscribe}
+                      >
+                        Unsubscribe
+                      </button>
                     </>
                   )}
                 </div>
