@@ -30,6 +30,8 @@ const Course = () => {
   const [coursesPerPage] = useState(5);
   const user = AppState((state) => state.user);
   const role = user?.role === "student" ? "student" : "";
+  const findAllCourse = CourseState((state) => state.findAllCourse);
+  const allCourse = CourseState((state) => state.allCourse);
   const [courses, setCourses] = useState<Course[]>([]);
   const router = useRouter();
   const { isSubscribed } = CourseState();
@@ -52,6 +54,14 @@ const Course = () => {
           }
         );
         if (response.status === 200) {
+          const transformedCourses = response.data.map((course: any) => ({
+            _id: course._id,
+            course_name: course.course_name,
+            description: course.description,
+            course_category: course.course_category,
+            videos: course.videos,
+          }));
+          findAllCourse(transformedCourses);
           setCourses(response.data);
         } else if (response.status === 500) {
           router.push("/error");
@@ -130,7 +140,7 @@ const Course = () => {
   // Get current courses
   const indexOfLastCourse = currentPage * coursesPerPage;
   const indexOfFirstCourse = indexOfLastCourse - coursesPerPage;
-  const currentCourses = courses.slice(indexOfFirstCourse, indexOfLastCourse);
+  const currentCourses = allCourse.slice(indexOfFirstCourse, indexOfLastCourse);
 
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 

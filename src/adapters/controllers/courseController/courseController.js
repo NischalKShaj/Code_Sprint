@@ -11,7 +11,13 @@ const courseController = {
   // controller for finding all the courses
   findAllCourses: async (req, res) => {
     try {
-      const result = await courseUseCase.findAllCourses();
+      const queryParams = req.query.query;
+      let result;
+      if (queryParams) {
+        result = await courseUseCase.findAllCourses(queryParams);
+      } else {
+        result = await courseUseCase.findAllCourses();
+      }
       console.log("result", result);
       if (result.success) {
         console.log("result", result.data);

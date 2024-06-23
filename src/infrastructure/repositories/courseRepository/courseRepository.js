@@ -24,9 +24,15 @@ const courseRepository = {
   },
 
   // method to find all the courses
-  findAllCourses: async () => {
+  findAllCourses: async (query) => {
     try {
-      const course = await CourseCollection.find();
+      const regexPattern = new RegExp(query, "i");
+      let course;
+      if (query) {
+        course = await CourseCollection.find({ course_name: regexPattern });
+      } else {
+        course = await CourseCollection.find();
+      }
       if (course) {
         return course;
       } else {

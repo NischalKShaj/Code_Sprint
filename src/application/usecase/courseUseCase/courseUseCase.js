@@ -6,9 +6,14 @@ const userRepository = require("../../../infrastructure/repositories/userReposit
 
 const courseUseCase = {
   // use case for finding all the courses
-  findAllCourses: async () => {
+  findAllCourses: async (query) => {
     try {
-      const courses = await courseRepository.findAllCourses();
+      let courses;
+      if (query) {
+        courses = await courseRepository.findAllCourses(query);
+      } else {
+        courses = await courseRepository.findAllCourses();
+      }
       if (courses) {
         return { success: true, data: courses };
       } else {

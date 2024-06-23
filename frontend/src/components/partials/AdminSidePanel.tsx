@@ -6,10 +6,13 @@ import React from "react";
 import dotenv from "dotenv";
 import { useRouter } from "next/navigation";
 import { AppState } from "@/app/store";
+import Swal from "sweetalert2";
 dotenv.config();
 
 const AdminSidePanel = () => {
   const router = useRouter();
+  const admin = AppState((state) => state.isAdmin);
+  const logout = AppState((state) => state.isAdminLoggedOut);
   const findUsers = AppState((state) => state.findAllUsers);
   const findTutors = AppState((state) => state.findAllTutor);
 
@@ -93,6 +96,38 @@ const AdminSidePanel = () => {
       }
     } catch (error) {
       console.error("error", error);
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      const result = await Swal.fire({
+        position: "center",
+        icon: "warning",
+        title: "Are you sure you want to logout",
+        showConfirmButton: true,
+        showCancelButton: true,
+        confirmButtonText: "Yes, Logout",
+        denyButtonText: "Cancel",
+
+        customClass: {
+          confirmButton: "btn-confirm",
+          denyButton: "btn-deny",
+        },
+      });
+
+      if (result.isConfirmed) {
+        const response = await axios.get(
+          `${process.env.NEXT_PUBLIC_BASE_URL}/admin/logout`
+        );
+        if (response.status === 200) {
+          logout();
+          localStorage.removeItem("admin_access_token");
+          router.push("/admin");
+        }
+      }
+    } catch (error) {
+      console.error("error");
     }
   };
 
@@ -196,6 +231,16 @@ const AdminSidePanel = () => {
 
                 <span className="flex-1 ms-3 whitespace-nowrap">Courses</span>
               </button>
+            </li>
+            <li>
+              {admin && (
+                <button
+                  onClick={handleLogout}
+                  className="bg-[#686DE0] text-white font-bold py-2 px-4 rounded-xl"
+                >
+                  logout
+                </button>
+              )}
             </li>
           </ul>
         </div>
