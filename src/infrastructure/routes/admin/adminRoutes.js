@@ -3,10 +3,12 @@
 // importing the required modules for the admin side
 const express = require("express");
 const router = express.Router();
+const upload = require("../../../adapters/middleware/multer");
 const adminController = require("../../../adapters/controllers/adminControllers/adminController");
 const {
   authenticateAdminJwt,
 } = require("../../../adapters/middleware/adminAuth");
+const bannerController = require("../../../adapters/controllers/bannerController/bannerController");
 
 // defining all the required routes
 
@@ -35,6 +37,28 @@ router.patch(
 
 // router for getting the details for the graph
 router.get("/graphs", authenticateAdminJwt, adminController.adminGraphs);
+
+// router for getting the banner
+router.get("/banner", authenticateAdminJwt, bannerController.showBanners);
+
+// router for posting the values in the banner
+router.post(
+  "/add_banner",
+  upload.single("banner"),
+  authenticateAdminJwt,
+  bannerController.addBanner
+);
+
+// router for getting the banner for editing
+router.get("/banner/:id", authenticateAdminJwt, bannerController.showBanner);
+
+// router for editing the banner
+router.put(
+  "/banner/:id",
+  upload.single("bannerImage"),
+  authenticateAdminJwt,
+  bannerController.editBanner
+);
 
 // router for logging out
 router.get("/logout", adminController.adminLogout);

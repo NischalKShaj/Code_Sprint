@@ -92,4 +92,4 @@ const tutorSchema = new mongoose.Schema(
 );
 
 // exporting the collection
-module.exports = mongoose.model("Tutor", tutorSchema);
+module.exports = new mongoose.model("Tutor", tutorSchema);

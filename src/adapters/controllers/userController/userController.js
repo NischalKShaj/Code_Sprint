@@ -14,8 +14,16 @@ const generateOTP = () => {
 const userController = {
   // creating the controller for the initial landing page
   getHome: async (req, res) => {
-    await userUseCase.getHome();
-    res.status(200).json("home page");
+    try {
+      const response = await userUseCase.getHome();
+      if (response.success) {
+        res.status(202).json(response.data);
+      } else {
+        res.status(404).json(response.data);
+      }
+    } catch (error) {
+      res.status(500).json(response.data);
+    }
   },
 
   //controller for getting the login page

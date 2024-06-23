@@ -6,13 +6,22 @@ const UserCollection = require("../../../core/entities/user/userCollection");
 const TutorCollection = require("../../../core/entities/user/tutorCollection");
 const bcryptjs = require("bcryptjs");
 const CourseCollection = require("../../../core/entities/course/courseCollection");
+const BannerCollection = require("../../../core/entities/banner/bannerCollection");
 
 // creating userRepository
 const userRepository = {
   // method to get all the users
-  getAllUser: async () => {
-    const users = await UserCollection.find();
-    console.log("users");
+  getHome: async () => {
+    try {
+      const banners = await BannerCollection.find();
+      if (banners) {
+        return banners;
+      } else {
+        return null;
+      }
+    } catch (error) {
+      throw error;
+    }
   },
 
   // method for login

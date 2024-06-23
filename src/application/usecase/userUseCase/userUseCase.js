@@ -9,7 +9,17 @@ const Razorpay = require("razorpay");
 const userUseCase = {
   //creating the user
   getHome: async () => {
-    return await userRepository.getAllUser();
+    try {
+      const response = await userRepository.getHome();
+      if (response) {
+        return { success: true, data: response };
+      } else {
+        return { success: false, data: response };
+      }
+    } catch (error) {
+      console.error("error", error);
+      return { success: false, data: error.message };
+    }
   },
 
   // for login purpose

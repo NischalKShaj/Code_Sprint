@@ -131,6 +131,11 @@ const AdminSidePanel = () => {
     }
   };
 
+  // function to move to the banner page
+  const bannerRoute = () => {
+    router.push("/admin/banner");
+  };
+
   return (
     <div>
       <button
@@ -230,6 +235,28 @@ const AdminSidePanel = () => {
                 </svg>
 
                 <span className="flex-1 ms-3 whitespace-nowrap">Courses</span>
+              </button>
+            </li>
+            <li>
+              <button
+                onClick={bannerRoute}
+                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  {/* Banner */}
+                  <path
+                    fillRule="evenodd"
+                    d="M3 2c0-1.105.895-2 2-2h10c1.105 0 2 .895 2 2v10.586l-3.707-3.707a1 1 0 0 0-1.414 0l-5.586 5.586a1 1 0 0 1-1.414 0L3 12.586V2zM5 4v7.586l5.293 5.293a1 1 0 0 0 1.414 0l5.586-5.586a1 1 0 0 0 0-1.414L15 4H5z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                <span className="flex-1 ms-3 whitespace-nowrap">Banner</span>
+                {/* <span className="inline-flex items-center justify-center w-3 h-3 p-3 ms-3 text-sm font-medium text-blue-800 bg-blue-100 rounded-full dark:bg-blue-900 dark:text-blue-300"></span> */}
               </button>
             </li>
             <li>

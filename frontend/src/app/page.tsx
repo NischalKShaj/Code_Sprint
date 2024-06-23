@@ -5,6 +5,7 @@
 import Image from "next/image";
 import { useEffect } from "react";
 import { AppState } from "./store";
+import UserBanner from "@/components/partials/UserBanner";
 
 const Home = () => {
   const isLoggedOut = AppState((state) => state.isLoggedOut);
@@ -18,8 +19,8 @@ const Home = () => {
 
   return (
     <div>
-      <section className="flex justify-center mt-7 mb-7 space-x-10">
-        {user?.role === "tutor" ? (
+      {user?.role === "tutor" ? (
+        <section className="flex justify-center mt-7 mb-7 space-x-10">
           <div>
             <div className="flex items-center space-x-[300px] text-left">
               <q className="text-3xl mt-9">
@@ -112,24 +113,12 @@ const Home = () => {
               support team.
             </p>
           </div>
-        ) : (
-          <div className="flex items-center space-x-[90px] text-left">
-            <q className="text-3xl mt-9">
-              Code with determination,
-              <br /> debug with patience,
-              <br /> and celebrate every step forward.
-              <br /> Keep going—greatness awaits <br />
-              those who persist.
-            </q>
-            <Image
-              src="/image/landing.webp"
-              alt="image for the landing page"
-              width={550}
-              height={550}
-            />
-          </div>
-        )}
-      </section>
+        </section>
+      ) : (
+        <div>
+          <UserBanner />
+        </div>
+      )}
     </div>
   );
 };
