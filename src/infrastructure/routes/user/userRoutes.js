@@ -97,6 +97,13 @@ router.put(
   profileController.editTutor
 );
 
+// router for unsubscribing the course
+router.post(
+  "/course/unsubscribe/:id",
+  authenticateUserJwt,
+  userController.unSubscribe
+);
+
 // router for editing the courses
 router.put(
   "/course/edit/:id",

@@ -35,7 +35,7 @@ const Course = () => {
   const [courses, setCourses] = useState<Course[]>([]);
   const router = useRouter();
   const { isSubscribed } = CourseState();
-  isSubscribed.forEach((sub) =>
+  isSubscribed?.forEach((sub) =>
     console.log("Subscribed course_id", sub.course_id)
   );
 
@@ -152,7 +152,7 @@ const Course = () => {
         </h1>
         <section className="bg-[#D9D9D9] p-8 w-[1300px] rounded-lg shadow-md">
           {currentCourses.map((course) => {
-            const isCourseSubscribed = isSubscribed.some(
+            const isCourseSubscribed = isSubscribed?.some(
               (sub) => sub.course_id === course._id
             );
             return (

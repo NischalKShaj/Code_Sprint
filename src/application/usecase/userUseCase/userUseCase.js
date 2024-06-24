@@ -144,6 +144,21 @@ const userUseCase = {
       return { success: false, data: error.message };
     }
   },
+
+  // use case for unsubscribing the course
+  unSubscribe: async (courseId, userId) => {
+    try {
+      const result = await userRepository.unSubscribe(courseId, userId);
+      if (result) {
+        return { success: true, data: result };
+      } else {
+        return { success: false, data: result };
+      }
+    } catch (error) {
+      console.error("error", error);
+      return { success: false, data: error.message };
+    }
+  },
 };
 
 module.exports = userUseCase;

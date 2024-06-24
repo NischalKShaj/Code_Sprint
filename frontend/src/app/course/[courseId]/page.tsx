@@ -26,11 +26,13 @@ const CourseId = () => {
   const toggleVideoCompletion = CourseState(
     (state) => state.toggleVideoCompletion
   );
+  const id = courseId;
   const router = useRouter();
   const subscribe = CourseState((state) => state.subscribe);
+  const unsubscribe = CourseState((state) => state.unsubscribe);
   const subCourses = CourseState((state) => state.isSubscribed);
 
-  const courseSubscribed = subCourses.some(
+  const courseSubscribed = subCourses?.some(
     (sub) => sub.course_id === course?.course_id
   );
 
@@ -152,6 +154,7 @@ const CourseId = () => {
   if (isLoading) {
     return <div>Loading...</div>;
   }
+
   // function to initiate the online payment
   const handleSubscribe = async () => {
     try {
@@ -221,7 +224,7 @@ const CourseId = () => {
             } else {
               Swal.fire({
                 title: "Payment Failed!",
-                text: "Your payment has be rejected!",
+                text: "Your payment has been rejected!",
                 icon: "warning",
                 confirmButtonText: "OK",
               });
@@ -229,7 +232,7 @@ const CourseId = () => {
           } catch (error) {
             Swal.fire({
               title: "Payment Failed!",
-              text: "Your payment has be rejected!",
+              text: "Your payment has been rejected!",
               icon: "warning",
               confirmButtonText: "OK",
             });
@@ -261,17 +264,69 @@ const CourseId = () => {
       showConfirmButton: true,
       showCancelButton: true,
       confirmButtonText: "Yes, Unsubscribe",
-      denyButtonText: "Cancel",
+      cancelButtonText: "Cancel",
     });
+
     if (result.isConfirmed) {
-      const response = await axios.get("");
+      try {
+        const token = localStorage.getItem("access_token");
+        const response = await axios.post(
+          `${process.env.NEXT_PUBLIC_BASE_URL}/course/unsubscribe/${id}`,
+          {
+            id: userData?.id,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            withCredentials: true,
+          }
+        );
+
+        if (response.status === 202) {
+          Swal.fire({
+            title: "Unsubscribed!",
+            text: "You have been unsubscribed from the course.",
+            icon: "success",
+            confirmButtonText: "OK",
+          });
+
+          // Update state to reflect un-subscription
+          unsubscribe(course?.course_id);
+
+          // Remove from local storage
+          const courseStates = localStorage.getItem("courseState");
+          if (courseStates) {
+            const parsedState = JSON.parse(courseStates);
+
+            delete parsedState.isSubscribed;
+            const updatedCourse = JSON.stringify(parsedState);
+            localStorage.setItem("courseState", updatedCourse);
+          }
+        } else {
+          Swal.fire({
+            title: "Unsubscription Failed!",
+            text: "An error occurred while unsubscribing.",
+            icon: "error",
+            confirmButtonText: "OK",
+          });
+        }
+      } catch (error) {
+        Swal.fire({
+          title: "Unsubscription Failed!",
+          text: "An error occurred while unsubscribing.",
+          icon: "error",
+          confirmButtonText: "OK",
+        });
+        console.error("Error unsubscribing: ", error);
+      }
     }
   };
 
   function getVideoName(url: string) {
     const parts = url.split("/");
     const fileName = parts[parts.length - 1];
-    const nameWithoutExtension = fileName.split(".")[1];
+    const nameWithoutExtension = fileName.split(".")[0];
     return nameWithoutExtension;
   }
 

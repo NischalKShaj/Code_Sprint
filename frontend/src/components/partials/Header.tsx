@@ -87,33 +87,10 @@ const Header = () => {
             alt="logo"
           />
         </Link>
-
-        <ul className="flex space-x-20 items-center justify-center text-lg mx-5">
-          <li>
-            <Link href="/course">Course</Link>
-          </li>
-          <li>
-            {currentUser.role === "student" ? (
-              <Link href="/contest">Contest</Link>
-            ) : currentUser.role === "tutor" ? (
-              <Link href="/mycourse">My Course</Link>
-            ) : null}
-          </li>
-          <li>
-            {currentUser.role === "student" ? (
-              <Link href="/problems">Problems</Link>
-            ) : (
-              <Link href="/mycourse/addCourse">Add Course</Link>
-            )}
-          </li>
-          <li>
-            <Link href="/discuss">Discuss</Link>
-          </li>
-        </ul>
         {pathname === "/course" && (
           <div className="flex flex-row">
             <button
-              className="button bg-gray-50 text-white font-bold py-2 px-4 rounded-3xl absolute left-[820px] mr-3 mt-[65px]"
+              className="button bg-gray-50 text-white font-bold py-2 px-4 rounded-3xl absolute left-[250px] mr-3 mt-[65px]"
               onClick={handleSearch}
             >
               <span>
@@ -137,6 +114,29 @@ const Header = () => {
             />
           </div>
         )}
+
+        <ul className="flex space-x-20 items-center justify-center text-lg mx-5">
+          <li>
+            <Link href="/course">Course</Link>
+          </li>
+          <li>
+            {currentUser.role === "student" ? (
+              <Link href="/contest">Contest</Link>
+            ) : currentUser.role === "tutor" ? (
+              <Link href="/mycourse">My Course</Link>
+            ) : null}
+          </li>
+          <li>
+            {currentUser.role === "student" ? (
+              <Link href="/problems">Problems</Link>
+            ) : (
+              <Link href="/mycourse/addCourse">Add Course</Link>
+            )}
+          </li>
+          <li>
+            <Link href="/discuss">Discuss</Link>
+          </li>
+        </ul>
         <div>
           {authorized || session ? (
             <div className="flex">

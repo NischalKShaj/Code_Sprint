@@ -1,7 +1,6 @@
-// importing the required modules
 import { create } from "zustand";
 
-// creating the interface for the state
+// Creating the interface for the state
 interface State {
   course: {
     course_name: string;
@@ -60,6 +59,7 @@ interface State {
       course_id: string;
     }[]
   ) => void;
+  unsubscribe: (courseId: string | undefined) => void; // Add this line
   completedVideos: Record<string, Record<string, boolean>>;
   toggleVideoCompletion: (courseId: string, videoUrl: string) => void;
 
@@ -82,7 +82,7 @@ interface State {
   }) => void;
 }
 
-// creating the store
+// Creating the store
 export const CourseState = create<State>((set, get) => {
   let initialState = {
     course: null,
@@ -127,6 +127,18 @@ export const CourseState = create<State>((set, get) => {
         localStorage.setItem(
           "courseState",
           JSON.stringify({ ...get(), isSubscribed })
+        );
+      }
+    },
+    unsubscribe(courseId) {
+      const updatedSubscribed = get().isSubscribed.filter(
+        (course) => course.course_id !== courseId
+      );
+      set({ isSubscribed: updatedSubscribed });
+      if (typeof window !== "undefined") {
+        localStorage.setItem(
+          "courseState",
+          JSON.stringify({ ...get(), isSubscribed: updatedSubscribed })
         );
       }
     },

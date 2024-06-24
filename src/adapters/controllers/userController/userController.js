@@ -197,6 +197,23 @@ const userController = {
     }
   },
 
+  // controller for unsubscribing the course
+  unSubscribe: async (req, res) => {
+    try {
+      const courseId = req.params.id;
+      const userId = req.body.id;
+      console.log(`${courseId}, ${userId}`);
+      const response = await userUseCase.unSubscribe(courseId, userId);
+      if (response.success) {
+        res.status(202).json(response.data);
+      } else {
+        res.status(404).json(response.data);
+      }
+    } catch (error) {
+      res.status(500).json(error);
+    }
+  },
+
   // controller for log-out
   logoutUser: (req, res) => {
     try {

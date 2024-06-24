@@ -222,6 +222,44 @@ const userRepository = {
       throw error;
     }
   },
+
+  // method for unsubscribing the course
+  unSubscribe: async (courseId, userId) => {
+    try {
+      const course = await CourseCollection.findById({ _id: courseId });
+      const user = await UserCollection.findById({ _id: userId });
+      if (course && user) {
+        // for removing the subscribed course from the user side
+        const updatedUser = await UserCollection.findByIdAndUpdate(
+          user,
+          {
+            $pull: { courses: { courseId: course._id, tutorId: course.tutor } },
+          },
+          { new: true }
+        );
+        console.log("updated", updatedUser);
+
+        // for removing the subscribed user from the tutor
+        const updatedTutor = await TutorCollection.findByIdAndUpdate(
+          {
+            _id: course.tutor,
+          },
+          {
+            $pull: {
+              subscribers: {
+                userId: user._id,
+                courseId: course._id,
+              },
+            },
+          },
+          { new: true }
+        );
+        return user;
+      }
+    } catch (error) {
+      throw error;
+    }
+  },
 };
 
 module.exports = userRepository;
