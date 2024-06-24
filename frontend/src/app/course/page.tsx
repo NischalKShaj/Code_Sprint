@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { CourseState } from "../store/courseStore";
 import { AppState } from "../store";
 import SpinnerWrapper from "@/components/partials/SpinnerWrapper";
+import FilterCourse from "@/components/partials/FilterCourse";
 dotenv.config();
 
 interface VideoDetails {
@@ -150,78 +151,81 @@ const Course = () => {
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
   return (
-    <div className="flex flex-col items-center mb-36 bg-white mt-16">
+    <div>
       <SpinnerWrapper>
-        <h1 className="text-3xl mr-[500px] font-bold mb-6">
-          Explore, Learn, Achieve, Master
-        </h1>
-        <section className="bg-[#D9D9D9] p-8 w-[1300px] rounded-lg shadow-md">
-          {currentCourses.map((course) => {
-            const isCourseSubscribed = isSubscribed.some(
-              (sub) => sub.course_id === course._id
-            );
-            return (
-              <div
-                key={course._id}
-                className="flex items-start border border-black p-4 mb-4 rounded-lg relative"
-              >
-                {course.videos && course.videos.length > 0 && (
-                  <video className="rounded-lg w-72 mr-4" controls>
-                    <source
-                      src={course.videos[0]}
-                      type={getMimeType(course.videos[0])}
-                    />
-                    Your browser does not support the video tag.
-                  </video>
-                )}
-                <div className="ml-[100px] mt-[50px] flex-grow">
-                  <h2 className="text-xl font-bold mb-2">
-                    {course.course_name}
-                  </h2>
-                  <p className="text-sm mb-1">
-                    Course Category: {course.course_category}
-                  </p>
-                  <p className="text-sm">{course.description}</p>
-                </div>
-                {role && (
-                  <div className="flex items-center mt-[100px]">
-                    {!isCourseSubscribed ? (
-                      <button
-                        onClick={() => handleSubscribe(course._id)}
-                        className="bg-[#686DE0] text-white font-bold py-2 px-4 rounded-xl"
-                      >
-                        Subscribe
-                      </button>
-                    ) : (
-                      <button
-                        onClick={() => handleSubscribe(course._id)}
-                        className="bg-[#686DE0] text-white font-bold py-2 px-4 rounded-xl"
-                      >
-                        Show
-                      </button>
-                    )}
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </section>
-        <nav className="mt-4" aria-label="Pagination">
-          <ul className="flex justify-center">
-            {Array.from({
-              length: Math.ceil(courses.length / coursesPerPage),
-            }).map((_, index) => (
-              <li key={index}>
-                <button
-                  className="px-4 py-2 mx-1 bg-gray-200 rounded-md"
-                  onClick={() => paginate(index + 1)}
+        <FilterCourse />
+        <div className="flex flex-col items-center mb-36 bg-white mt-16">
+          <h1 className="text-3xl mr-[500px] font-bold mb-6">
+            Explore, Learn, Achieve, Master
+          </h1>
+          <section className="bg-[#D9D9D9] p-8 w-[1300px] rounded-lg shadow-md">
+            {currentCourses.map((course) => {
+              const isCourseSubscribed = isSubscribed.some(
+                (sub) => sub.course_id === course._id
+              );
+              return (
+                <div
+                  key={course._id}
+                  className="flex items-start border border-black p-4 mb-4 rounded-lg relative"
                 >
-                  {index + 1}
-                </button>
-              </li>
-            ))}
-          </ul>
-        </nav>
+                  {course.videos && course.videos.length > 0 && (
+                    <video className="rounded-lg w-72 mr-4" controls>
+                      <source
+                        src={course.videos[0]}
+                        type={getMimeType(course.videos[0])}
+                      />
+                      Your browser does not support the video tag.
+                    </video>
+                  )}
+                  <div className="ml-[100px] mt-[50px] flex-grow">
+                    <h2 className="text-xl font-bold mb-2">
+                      {course.course_name}
+                    </h2>
+                    <p className="text-sm mb-1">
+                      Course Category: {course.course_category}
+                    </p>
+                    <p className="text-sm">{course.description}</p>
+                  </div>
+                  {role && (
+                    <div className="flex items-center mt-[100px]">
+                      {!isCourseSubscribed ? (
+                        <button
+                          onClick={() => handleSubscribe(course._id)}
+                          className="bg-[#686DE0] text-white font-bold py-2 px-4 rounded-xl"
+                        >
+                          Subscribe
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => handleSubscribe(course._id)}
+                          className="bg-[#686DE0] text-white font-bold py-2 px-4 rounded-xl"
+                        >
+                          Show
+                        </button>
+                      )}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </section>
+          <nav className="mt-4" aria-label="Pagination">
+            <ul className="flex justify-center">
+              {Array.from({
+                length: Math.ceil(courses.length / coursesPerPage),
+              }).map((_, index) => (
+                <li key={index}>
+                  <button
+                    className="px-4 py-2 mx-1 bg-gray-200 rounded-md"
+                    onClick={() => paginate(index + 1)}
+                  >
+                    {index + 1}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </div>
       </SpinnerWrapper>
     </div>
   );

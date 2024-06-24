@@ -23,23 +23,40 @@ const courseRepository = {
     }
   },
 
-  // method to find all the courses
-  findAllCourses: async (query) => {
+  // Method in course repository to find all courses
+  findAllCourses: async () => {
+    try {
+      const courses = await CourseCollection.find();
+      return courses;
+    } catch (error) {
+      console.error("Error in findAllCourses repository:", error);
+      throw error;
+    }
+  },
+
+  // Method in course repository to search courses by query
+  searchCourses: async (query) => {
     try {
       const regexPattern = new RegExp(query, "i");
-      let course;
-      if (query) {
-        course = await CourseCollection.find({ course_name: regexPattern });
-      } else {
-        course = await CourseCollection.find();
-      }
-      if (course) {
-        return course;
-      } else {
-        return null;
-      }
+      const courses = await CourseCollection.find({
+        course_name: regexPattern,
+      });
+      return courses;
     } catch (error) {
-      console.error(error);
+      console.error("Error in searchCourses repository:", error);
+      throw error;
+    }
+  },
+
+  // Method in course repository to filter courses by price range
+  findCoursesByPriceRange: async (minPrice, maxPrice) => {
+    try {
+      const courses = await CourseCollection.find({
+        price: { $gte: minPrice, $lte: maxPrice },
+      });
+      return courses;
+    } catch (error) {
+      console.error("Error in findCoursesByPriceRange repository:", error);
       throw error;
     }
   },

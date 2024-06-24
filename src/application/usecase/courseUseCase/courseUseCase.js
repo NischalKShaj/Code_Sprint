@@ -6,21 +6,53 @@ const userRepository = require("../../../infrastructure/repositories/userReposit
 
 const courseUseCase = {
   // use case for finding all the courses
-  findAllCourses: async (query) => {
+  findAllCourses: async () => {
     try {
-      let courses;
-      if (query) {
-        courses = await courseRepository.findAllCourses(query);
-      } else {
-        courses = await courseRepository.findAllCourses();
-      }
-      if (courses) {
+      const courses = await courseRepository.findAllCourses();
+      if (courses.length > 0) {
         return { success: true, data: courses };
       } else {
-        return { success: false, data: null };
+        return { success: false, data: "No courses found" };
       }
     } catch (error) {
-      return { success: false, data: "internal server error" };
+      console.error("Error in findAllCourses use case:", error);
+      return { success: false, data: "Internal server error" };
+    }
+  },
+
+  // Use case for searching courses by query
+  searchCourses: async (query) => {
+    try {
+      const courses = await courseRepository.searchCourses(query);
+      if (courses.length > 0) {
+        return { success: true, data: courses };
+      } else {
+        return { success: false, data: "No courses found" };
+      }
+    } catch (error) {
+      console.error("Error in searchCourses use case:", error);
+      return { success: false, data: "Internal server error" };
+    }
+  },
+
+  // Use case for filtering courses by price range
+  filterCoursesByPriceRange: async (minPrice, maxPrice) => {
+    try {
+      const courses = await courseRepository.findCoursesByPriceRange(
+        minPrice,
+        maxPrice
+      );
+      if (courses.length > 0) {
+        return { success: true, data: courses };
+      } else {
+        return {
+          success: false,
+          data: "No courses found in the specified price range",
+        };
+      }
+    } catch (error) {
+      console.error("Error in filterCoursesByPriceRange use case:", error);
+      return { success: false, data: "Internal server error" };
     }
   },
 

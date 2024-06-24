@@ -8,25 +8,35 @@ const {
 } = require("../../../infrastructure/services/aws/s3bucket");
 
 const courseController = {
-  // controller for finding all the courses
+  // Controller for finding all the courses
   findAllCourses: async (req, res) => {
     try {
-      const queryParams = req.query.query;
+      const query = req.query.query; // Search query
+      const maxPrice = req.query.maxPrice; // Maximum price filter
+      const minPrice = req.query.minPrice; // Minimum price filter
+      console.log("queryParams", query, maxPrice, minPrice);
+
       let result;
-      if (queryParams) {
-        result = await courseUseCase.findAllCourses(queryParams);
+
+      if (query) {
+        result = await courseUseCase.searchCourses(query);
+      } else if (maxPrice && minPrice) {
+        result = await courseUseCase.filterCoursesByPriceRange(
+          minPrice,
+          maxPrice
+        );
       } else {
         result = await courseUseCase.findAllCourses();
       }
-      console.log("result", result);
+
       if (result.success) {
-        console.log("result", result.data);
-        res.status(200).json(result.data);
+        res.status(200).json(result.data); // Send back the data to the client
       } else {
-        res.status(401).json(result.data);
+        res.status(404).json({ error: "No courses found" });
       }
     } catch (error) {
-      res.status(500).json("internal server error");
+      console.error("Error in findAllCourses controller:", error);
+      res.status(500).json({ error: "Internal server error" });
     }
   },
 
