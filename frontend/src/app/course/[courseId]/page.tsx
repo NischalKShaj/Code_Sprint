@@ -55,14 +55,18 @@ const CourseId = () => {
         );
         console.log("response", response.data);
         if (response.status === 202) {
+          const transformedVideos = response.data.courses.videos.map(
+            (video: string) => ({
+              url: video.slice(0, -1), // Remove the last character from the URL
+            })
+          );
+
           showCourse({
             course_name: response.data.courses.course_name,
             course_category: response.data.courses.course_category,
             description: response.data.courses.description,
             number_of_tutorials: response.data.courses.number_of_videos,
-            videos: response.data.courses.videos.map((video: string) => ({
-              url: video,
-            })),
+            videos: transformedVideos,
             course_id: response.data.courses._id,
             tutor_id: response.data.courses.tutor,
             price: response.data.courses.price,

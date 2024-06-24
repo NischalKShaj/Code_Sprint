@@ -43,13 +43,17 @@ const CourseView = () => {
           }
         );
         if (response.status === 202) {
+          const modifiedVideos = response.data.videos.map((videoUrl: string) =>
+            videoUrl.slice(0, -1)
+          );
+
           setCourse({
             id: response.data._id,
             course_name: response.data.course_name,
             course_category: response.data.course_category,
             description: response.data.description,
             price: response.data.price,
-            videos: response.data.videos,
+            videos: modifiedVideos,
           });
 
           setMyCourse({
@@ -58,7 +62,7 @@ const CourseView = () => {
             course_category: response.data.course_category,
             description: response.data.description,
             price: response.data.price,
-            videos: response.data.videos,
+            videos: modifiedVideos,
           });
         }
       } catch (error) {

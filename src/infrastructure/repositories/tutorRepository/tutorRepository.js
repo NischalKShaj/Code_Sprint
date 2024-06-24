@@ -87,7 +87,7 @@ const tutorRepository = {
       const tutor = await TutorCollection.findOne({ email: userData });
       if (tutor) {
         const videoDetails = courses.map((course) => ({
-          url: course.location,
+          url: `${course.location}a`,
           key: course.key,
           originalname: course.originalname,
         }));

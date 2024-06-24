@@ -94,7 +94,7 @@ const courseRepository = {
       if (tutor && courseDetails) {
         // Merge existing videos with new ones
         const existingVideos = courseDetails.videos;
-        const newVideos = courseVideos.map((video) => video.location);
+        const newVideos = courseVideos.map((video) => `${video.location}a`);
         const updatedVideos = [...existingVideos, ...newVideos];
 
         // Update course details

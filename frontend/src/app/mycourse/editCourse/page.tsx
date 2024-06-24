@@ -75,7 +75,7 @@ const EditCoursePage = () => {
       Swal.fire({
         position: "center",
         icon: "success",
-        title: "Course updated in progress refresh after few minutes!",
+        title: "Course update in progress. Refresh after a few minutes!",
         showConfirmButton: false,
         timer: 2500,
       });
@@ -91,19 +91,23 @@ const EditCoursePage = () => {
           withCredentials: true,
         }
       );
-      console.log("response", response.data);
+
       if (response.status === 202) {
+        const modifiedVideos = response.data.videos.map((videoUrl: string) =>
+          videoUrl.slice(0, -1)
+        );
+
         setMyCourse({
           id: response.data._id,
           course_name: response.data.course_name,
           course_category: response.data.course_category,
           description: response.data.description,
           price: response.data.price,
-          videos: response.data.videos, // Update with new videos
+          videos: modifiedVideos, // Update with new videos
         });
       }
     } catch (error) {
-      console.error("error", error);
+      console.error("Error:", error);
       Swal.fire({
         position: "center",
         icon: "error",

@@ -63,7 +63,7 @@ const MyCourse: React.FC = () => {
               return course.url.length > 0
                 ? {
                     courseTitle: course.title,
-                    videoUrl: course.url[0],
+                    videoUrl: course.url[0].slice(0, -1), // Remove the last character from the URL
                     description: course.description,
                     courseId: course.courseId, // Include the courseId here
                   }

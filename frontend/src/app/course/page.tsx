@@ -59,7 +59,7 @@ const Course = () => {
             course_name: course.course_name,
             description: course.description,
             course_category: course.course_category,
-            videos: course.videos,
+            videos: course.videos.map((video: string) => removeLastChar(video)),
           }));
           findAllCourse(transformedCourses);
           setCourses(response.data);
@@ -79,6 +79,11 @@ const Course = () => {
     };
     fetchData();
   }, [router]);
+
+  // Utility function to remove the last character from a URL
+  const removeLastChar = (url: string): string => {
+    return url.slice(0, -1);
+  };
 
   // function to get the videos type
   const getMimeType = (url: string): string => {
@@ -115,7 +120,7 @@ const Course = () => {
           description: response.data.courses.description,
           number_of_tutorials: response.data.courses.number_of_videos,
           videos: response.data.courses.videos.map((video: string) => ({
-            url: video,
+            url: removeLastChar(video),
           })),
           course_id: response.data.courses._id,
           tutor_id: response.data.courses.tutor,
@@ -152,7 +157,7 @@ const Course = () => {
         </h1>
         <section className="bg-[#D9D9D9] p-8 w-[1300px] rounded-lg shadow-md">
           {currentCourses.map((course) => {
-            const isCourseSubscribed = isSubscribed?.some(
+            const isCourseSubscribed = isSubscribed.some(
               (sub) => sub.course_id === course._id
             );
             return (
