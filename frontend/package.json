@@ -18,6 +18,7 @@
     "@jswork/next-local-storage": "^1.0.10",
     "@mui/material": "^5.15.20",
     "@mui/x-charts": "^7.7.0",
+    "@paypal/react-paypal-js": "^8.5.0",
     "@reduxjs/toolkit": "^2.2.5",
     "@types/local-storage": "^2.0.0",
     "axios": "^1.7.2",

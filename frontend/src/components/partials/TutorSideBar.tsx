@@ -10,9 +10,11 @@ dotenv.config();
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import Swal from "sweetalert2";
 
 const TutorSideBar = () => {
   const [wallet, setWallet] = useState(0);
+  const [disable, setDisable] = useState(false);
   const user = AppState((state) => state.user);
   const id = user?.id;
   const router = useRouter();
@@ -43,6 +45,37 @@ const TutorSideBar = () => {
       fetchData();
     }
   }, [id, router]);
+
+  // function to handle the payout request
+  const handlePayoutRequest = async () => {
+    const token = localStorage.getItem("access_token");
+    try {
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/payout-request`,
+        { id: user?.id, wallet: wallet },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
+        }
+      );
+      console.log("response", response);
+      if (response.status === 202) {
+        Swal.fire({
+          position: "center",
+          icon: "success",
+          title: "Request send",
+          text: "Request for payout has been sent to the admin",
+          confirmButtonText: "OK",
+        });
+      }
+      setDisable(true);
+    } catch (error) {
+      console.error("error", error);
+      router.push("/error");
+    }
+  };
 
   return (
     <div>
@@ -140,7 +173,7 @@ const TutorSideBar = () => {
                   fill="currentColor"
                   viewBox="0 0 24 24"
                 >
-                  <path d="M19.34 6.01H4.66C3.2 6.01 2 7.21 2 8.67v6.67C2 16.8 3.2 18 4.66 18h14.67c1.47 0 2.67-1.2 2.67-2.67V8.67c0-1.46-1.2-2.66-2.67-2.66zM20 15.34c0 .36-.29.66-.66.66H4.66c-.36 0-.66-.29-.66-.66V8.67c0-.36.29-.66.66-.66h14.67c.36 0 .66.29.66.66v6.67zM7.33 10.67c.37 0 .67.3.67.67s-.3.67-.67.67-.67-.3-.67-.67.3-.67.67-.67zM16 11.34c-.37 0-.67-.3-.67-.67s.3-.67.67-.67.67.3.67.67-.3.67-.67.67z" />
+                  <path d="M21 8c1.104 0 2 .896 2 2v8c0 1.104-.896 2-2 2H3c-1.104 0-2-.896-2-2V8c0-1.104.896-2 2-2h1V5c0-1.104.896-2 2-2h12c1.104 0 2 .896 2 2v1h1zm-3-3H6v2h12V5zm-3 8h2v2h-2v-2zM3 10v8h18v-8H3z" />
                 </svg>
                 <p>&#8377; {wallet}</p>
               </div>
@@ -159,7 +192,7 @@ const TutorSideBar = () => {
                 </svg>
                 <Link
                   href="/usr/chat"
-                  className="text-gray-500 hover:text-gray-700 ml-2" // Adjust margin left (ml) for spacing
+                  className="text-gray-500 hover:text-gray-700 ml-2"
                 >
                   Chat
                 </Link>
@@ -170,11 +203,22 @@ const TutorSideBar = () => {
             </li>
             <li>
               <Link href={`/profile/tutor/${user?.id}`}>
-                <button className="bg-[#686DE0] text-white font-bold py-2 px-4 rounded-xl mb-[100px]">
+                <button className="bg-[#686DE0] w-48 text-white font-bold py-2 px-4 rounded-xl">
                   Edit Profile
                 </button>
               </Link>
             </li>
+            {wallet > 0 && (
+              <li>
+                <button
+                  onClick={handlePayoutRequest}
+                  className="bg-[#686DE0] w-48 text-white font-bold py-2 px-4 rounded-xl mb-[100px]"
+                  disabled={disable}
+                >
+                  Request Payout
+                </button>
+              </li>
+            )}
           </ul>
         </div>
       </aside>

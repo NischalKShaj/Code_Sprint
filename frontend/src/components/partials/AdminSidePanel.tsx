@@ -7,6 +7,7 @@ import dotenv from "dotenv";
 import { useRouter } from "next/navigation";
 import { AppState } from "@/app/store";
 import Swal from "sweetalert2";
+import Link from "next/link";
 dotenv.config();
 
 const AdminSidePanel = () => {
@@ -201,7 +202,6 @@ const AdminSidePanel = () => {
                   <path d="M14 2a3.963 3.963 0 0 0-1.4.267 6.439 6.439 0 0 1-1.331 6.638A4 4 0 1 0 14 2Zm1 9h-1.264A6.957 6.957 0 0 1 15 15v2a2.97 2.97 0 0 1-.184 1H19a1 1 0 0 0 1-1v-1a5.006 5.006 0 0 0-5-5ZM6.5 9a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9ZM8 10H5a5.006 5.006 0 0 0-5 5v2a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-2a5.006 5.006 0 0 0-5-5Z" />
                 </svg>
                 <span className="flex-1 ms-3 whitespace-nowrap">Users</span>
-                {/* <span className="inline-flex items-center justify-center px-2 ms-3 text-sm font-medium text-gray-800 bg-gray-100 rounded-full dark:bg-gray-700 dark:text-gray-300"></span> */}
               </button>
             </li>
             <li>
@@ -219,7 +219,6 @@ const AdminSidePanel = () => {
                   <path d="M14 2a3.963 3.963 0 0 0-1.4.267 6.439 6.439 0 0 1-1.331 6.638A4 4 0 1 0 14 2Zm1 9h-1.264A6.957 6.957 0 0 1 15 15v2a2.97 2.97 0 0 1-.184 1H19a1 1 0 0 0 1-1v-1a5.006 5.006 0 0 0-5-5ZM6.5 9a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9ZM8 10H5a5.006 5.006 0 0 0-5 5v2a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-2a5.006 5.006 0 0 0-5-5Z" />
                 </svg>
                 <span className="flex-1 ms-3 whitespace-nowrap">Tutor</span>
-                {/* <span className="inline-flex items-center justify-center w-3 h-3 p-3 ms-3 text-sm font-medium text-blue-800 bg-blue-100 rounded-full dark:bg-blue-900 dark:text-blue-300"></span> */}
               </button>
             </li>
             <li>
@@ -248,7 +247,6 @@ const AdminSidePanel = () => {
                   viewBox="0 0 20 20"
                   fill="currentColor"
                 >
-                  {/* Banner */}
                   <path
                     fillRule="evenodd"
                     d="M3 2c0-1.105.895-2 2-2h10c1.105 0 2 .895 2 2v10.586l-3.707-3.707a1 1 0 0 0-1.414 0l-5.586 5.586a1 1 0 0 1-1.414 0L3 12.586V2zM5 4v7.586l5.293 5.293a1 1 0 0 0 1.414 0l5.586-5.586a1 1 0 0 0 0-1.414L15 4H5z"
@@ -256,8 +254,24 @@ const AdminSidePanel = () => {
                   />
                 </svg>
                 <span className="flex-1 ms-3 whitespace-nowrap">Banner</span>
-                {/* <span className="inline-flex items-center justify-center w-3 h-3 p-3 ms-3 text-sm font-medium text-blue-800 bg-blue-100 rounded-full dark:bg-blue-900 dark:text-blue-300"></span> */}
               </button>
+            </li>
+            <li>
+              <Link href="/admin/payout">
+                <button className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                  <svg
+                    className="w-5 h-5 text-gray-500 mr-2"
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M21 8c1.104 0 2 .896 2 2v8c0 1.104-.896 2-2 2H3c-1.104 0-2-.896-2-2V8c0-1.104.896-2 2-2h1V5c0-1.104.896-2 2-2h12c1.104 0 2 .896 2 2v1h1zm-3-3H6v2h12V5zm-3 8h2v2h-2v-2zM3 10v8h18v-8H3z" />
+                  </svg>
+
+                  <span className="flex-1 ms-3 whitespace-nowrap">Payouts</span>
+                </button>
+              </Link>
             </li>
             <li>
               {admin && (

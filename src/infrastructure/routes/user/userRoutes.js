@@ -11,6 +11,7 @@ const tutorController = require("../../../adapters/controllers/tutorController/t
 const oAuthController = require("../../../adapters/controllers/oAuthController/oAuthController");
 const courseController = require("../../../adapters/controllers/courseController/courseController");
 const profileController = require("../../../adapters/controllers/profileController/profileController");
+const payoutController = require("../../../adapters/controllers/payoutController/payoutController");
 const upload = require("../../../adapters/middleware/multer");
 
 // creating the required routes
@@ -109,6 +110,13 @@ router.put(
   "/course/edit/:id",
   authenticateUserJwt,
   courseController.editCourse
+);
+
+// router for sending the payout request for the admin
+router.post(
+  "/payout-request",
+  authenticateUserJwt,
+  payoutController.addPaymentRequest
 );
 
 // exporting the module

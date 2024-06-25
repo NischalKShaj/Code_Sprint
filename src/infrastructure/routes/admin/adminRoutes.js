@@ -9,6 +9,7 @@ const {
   authenticateAdminJwt,
 } = require("../../../adapters/middleware/adminAuth");
 const bannerController = require("../../../adapters/controllers/bannerController/bannerController");
+const payoutController = require("../../../adapters/controllers/payoutController/payoutController");
 
 // defining all the required routes
 
@@ -58,6 +59,20 @@ router.put(
   upload.single("bannerImage"),
   authenticateAdminJwt,
   bannerController.editBanner
+);
+
+// router for getting the payouts
+router.get(
+  "/payout-request",
+  authenticateAdminJwt,
+  payoutController.showPayouts
+);
+
+// router for posting and confirming the payment
+router.post(
+  "/update-payout-status",
+  authenticateAdminJwt,
+  payoutController.confirmPayment
 );
 
 // router for logging out
