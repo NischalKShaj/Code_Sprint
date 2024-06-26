@@ -21,18 +21,23 @@ const temporaryUsers = new mongoose.Schema(
       default:
         "https://i.pinimg.com/736x/c0/27/be/c027bec07c2dc08b9df60921dfd539bd.jpg",
     },
-    course: [
-      {
-        type: String,
-        default: [],
-      },
-    ],
-    tutors: [
-      {
-        type: String,
-        default: [],
-      },
-    ],
+    courses: {
+      type: [
+        {
+          courseId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Course",
+            required: true,
+          },
+          tutorId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Tutor",
+            required: true,
+          },
+        },
+      ],
+      default: [],
+    },
     problems: [
       {
         type: String,
@@ -48,6 +53,12 @@ const temporaryUsers = new mongoose.Schema(
     otp: {
       type: String,
     },
+    interests: [
+      {
+        type: String,
+        default: [],
+      },
+    ],
     phone: {
       type: String,
     },

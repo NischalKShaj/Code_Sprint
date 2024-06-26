@@ -71,6 +71,7 @@ const userRepository = {
           phone: userData.phone,
           password: hashedPassword,
           otp: userData.otp,
+          interests: userData.interests,
         });
         await userDetail.save();
         console.log(userDetail);
@@ -98,6 +99,7 @@ const userRepository = {
           phone: userDetail.phone,
           password: userDetail.password,
           otp: userOtp,
+          interests: userDetail.interests,
         });
         await user.save();
         console.log("user", user);

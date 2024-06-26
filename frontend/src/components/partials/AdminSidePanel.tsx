@@ -274,6 +274,25 @@ const AdminSidePanel = () => {
               </Link>
             </li>
             <li>
+              <Link href="/admin/category">
+                <button className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                  <svg
+                    className="w-5 h-5 text-gray-500 mr-2"
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M4 4h5v5H4V4zm6 0h5v5h-5V4zm6 0h5v5h-5V4zM4 10h5v5H4v-5zm6 0h5v5h-5v-5zm6 0h5v5h-5v-5zM4 16h5v5H4v-5zm6 0h5v5h-5v-5zm6 0h5v5h-5v-5z" />
+                  </svg>
+
+                  <span className="flex-1 ms-3 whitespace-nowrap">
+                    Category
+                  </span>
+                </button>
+              </Link>
+            </li>
+            <li>
               {admin && (
                 <button
                   onClick={handleLogout}

@@ -50,9 +50,8 @@ const userController = {
   postSignup: async (req, res) => {
     try {
       const role = req.body.role;
-      console.log("role", role);
       const userData = req.body;
-      console.log("userData", userData);
+      console.log("userData B4", userData);
 
       const otp = generateOTP();
       userData.otp = otp;

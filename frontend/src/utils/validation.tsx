@@ -16,3 +16,9 @@ export const validPhone = (phone: string): boolean => {
   const phoneRegex = /^\d{10}$/;
   return phoneRegex.test(phone);
 };
+
+// for validating the emptySpaces in other fields
+export const isValid = (fieldName: string) => {
+  const valid = /^[A-Za-z]+(?: [A-Za-z])*$/;
+  return valid.test(fieldName);
+};

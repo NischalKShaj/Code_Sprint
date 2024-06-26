@@ -44,6 +44,15 @@ const AdminHeader = () => {
             </Link>
           </div>
         )}
+        {pathname === "/admin/category" && (
+          <div className="flex items-center mr-[100px]">
+            <Link href="/admin/category/addCategory">
+              <button className="bg-[#686DE0] text-white font-bold py-2 px-4 rounded-xl relative">
+                add category
+              </button>
+            </Link>
+          </div>
+        )}
       </header>
     </>
   );

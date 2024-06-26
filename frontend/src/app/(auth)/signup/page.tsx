@@ -1,4 +1,7 @@
+// file for signup
 "use client";
+
+// importing the required modules
 import dotenv from "dotenv";
 dotenv.config();
 import axios from "axios";
@@ -9,6 +12,7 @@ import {
   isStrongPassword,
   validPhone,
 } from "../../../utils/validation";
+import Modal from "@/components/partials/Modal";
 
 // Define the type for form data
 interface FormData {
@@ -17,11 +21,13 @@ interface FormData {
   role?: string;
   phone?: string;
   password?: string;
+  interests?: string[];
 }
 
 const Signup = () => {
   const [formData, setFormData] = useState<FormData>({});
   const [errors, setErrors] = useState<FormData>({});
+  const [showModal, setShowModal] = useState<boolean>(false);
   const router = useRouter();
   const [message, setMessage] = useState("");
 
@@ -45,6 +51,9 @@ const Signup = () => {
     if (type === "radio") {
       setFormData((prevData) => ({ ...prevData, role: value }));
       localStorage.setItem("selectedRole", value);
+      if (value === "student") {
+        setShowModal(true);
+      }
     } else {
       setFormData((prevData) => ({ ...prevData, [id]: value }));
 
@@ -64,13 +73,19 @@ const Signup = () => {
       return;
     }
 
+    const interests = JSON.parse(
+      localStorage.getItem("selectedInterest") || "[]"
+    );
+    setFormData((prevData) => ({ ...prevData, interests }));
+
     console.log("base url", process.env.NEXT_PUBLIC_BASE_URL);
     try {
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_BASE_URL}/signup`,
-        formData
+        { ...formData, interests }
       );
       if (response.status === 201) {
+        localStorage.removeItem("selectedInterest");
         router.push("/otp");
       } else if (response.status === 409) {
         setMessage("User already exists");
@@ -86,6 +101,10 @@ const Signup = () => {
       }
       console.log("error", error);
     }
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
   };
 
   return (
@@ -169,6 +188,7 @@ const Signup = () => {
           </button>
         </form>
       </section>
+      <Modal showModal={showModal} onClose={closeModal} />
     </div>
   );
 };

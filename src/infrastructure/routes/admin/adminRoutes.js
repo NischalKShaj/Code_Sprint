@@ -10,6 +10,7 @@ const {
 } = require("../../../adapters/middleware/adminAuth");
 const bannerController = require("../../../adapters/controllers/bannerController/bannerController");
 const payoutController = require("../../../adapters/controllers/payoutController/payoutController");
+const categoryController = require("../../../adapters/controllers/categoryController/categoryController");
 
 // defining all the required routes
 
@@ -73,6 +74,16 @@ router.post(
   "/update-payout-status",
   authenticateAdminJwt,
   payoutController.confirmPayment
+);
+
+// router for getting all the categories
+router.get("/category", authenticateAdminJwt, categoryController.showCategory);
+
+// router for adding new categories
+router.post(
+  "/addCategory",
+  authenticateAdminJwt,
+  categoryController.addCategory
 );
 
 // router for logging out

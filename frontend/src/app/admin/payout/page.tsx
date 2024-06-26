@@ -84,9 +84,6 @@ const PayoutPage = () => {
         `${process.env.NEXT_PUBLIC_BASE_URL}/admin/update-payout-status`,
         {
           id: currentPayment?._id,
-          // tutor_name: currentPayment?.tutor_name,
-          // tutor_email: currentPayment?.tutor_email,
-          // status: true,
         },
         {
           headers: {

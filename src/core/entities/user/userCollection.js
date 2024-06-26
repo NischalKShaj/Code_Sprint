@@ -57,6 +57,12 @@ const users = new mongoose.Schema(
       type: String,
       default: "student",
     },
+    interests: [
+      {
+        type: String,
+        default: [],
+      },
+    ],
     phone: {
       type: String,
     },

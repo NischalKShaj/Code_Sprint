@@ -12,6 +12,7 @@ const oAuthController = require("../../../adapters/controllers/oAuthController/o
 const courseController = require("../../../adapters/controllers/courseController/courseController");
 const profileController = require("../../../adapters/controllers/profileController/profileController");
 const payoutController = require("../../../adapters/controllers/payoutController/payoutController");
+const categoryController = require("../../../adapters/controllers/categoryController/categoryController");
 const upload = require("../../../adapters/middleware/multer");
 
 // creating the required routes
@@ -21,6 +22,9 @@ router.get("/", userController.getHome);
 
 // router for posting the login details
 router.post("/login", userController.getLogin);
+
+// router for getting categories during signup
+router.get("/modal/category", categoryController.showCategory);
 
 // router for posting the signup details
 router.post("/signup", userController.postSignup);
