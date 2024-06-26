@@ -7,10 +7,15 @@ import Image from "next/image";
 import Link from "next/link";
 import dotenv from "dotenv";
 dotenv.config();
-import React from "react";
+import React, { useState } from "react";
+import PremiumSubscription from "./PremiumSubscription";
 
 const UserSideBar = () => {
   const user = AppState((state) => state.user);
+  const [isModalOpen, setIsModalOpen] = useState(false); // State for modal
+
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
   return (
     <div>
       <button
@@ -125,10 +130,19 @@ const UserSideBar = () => {
             </li>
             <li>
               <Link href={`/profile/student/${user?.id}`}>
-                <button className="bg-[#686DE0] text-white font-bold py-2 px-4 rounded-xl mb-[100px]">
+                <button className="bg-[#686DE0] w-48 text-white font-bold py-2 px-4 rounded-xl">
                   Edit Profile
                 </button>
               </Link>
+            </li>
+            <li className="text-center">
+              <p className="mt-5">Unlock Exclusive Features!</p>
+
+              <PremiumSubscription
+                isOpen={isModalOpen}
+                openModal={openModal}
+                closeModal={closeModal}
+              />
             </li>
           </ul>
         </div>
