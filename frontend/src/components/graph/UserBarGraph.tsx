@@ -47,7 +47,7 @@ const UserBarGraph = () => {
         }
       } catch (error) {
         console.error("Error fetching data:", error);
-        router.push("/error");
+        router.push("/admin/error");
       }
     };
 

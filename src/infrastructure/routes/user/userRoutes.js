@@ -123,5 +123,15 @@ router.post(
   payoutController.addPaymentRequest
 );
 
+// router for getting the interested courses
+router.get(
+  "/interested-course",
+  authenticateUserJwt,
+  courseController.getInterestedCourse
+);
+
+// router for showing all the course in home page
+router.get("/suggested", courseController.getInterestedCourse);
+
 // exporting the module
 module.exports = router;

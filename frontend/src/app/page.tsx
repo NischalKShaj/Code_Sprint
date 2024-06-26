@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useEffect } from "react";
 import { AppState } from "./store";
 import UserBanner from "@/components/partials/UserBanner";
+import InterestCarousel from "@/components/partials/InterestCarousel";
 
 const Home = () => {
   const isLoggedOut = AppState((state) => state.isLoggedOut);
@@ -117,6 +118,7 @@ const Home = () => {
       ) : (
         <div>
           <UserBanner />
+          <InterestCarousel />
         </div>
       )}
     </div>

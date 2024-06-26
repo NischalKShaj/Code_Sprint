@@ -2,6 +2,7 @@
 const TutorCollection = require("../../../core/entities/user/tutorCollection");
 const CourseCollection = require("../../../core/entities/course/courseCollection");
 const UserCollection = require("../../../core/entities/user/userCollection");
+const CategoryCollection = require("../../../core/entities/category/category");
 
 // creating courses repository
 const courseRepository = {
@@ -139,6 +140,39 @@ const courseRepository = {
       } else {
         return null;
       }
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  // method for extracting the interested courses
+  getInterestedCourse: async (userId) => {
+    try {
+      const userData = await UserCollection.findOne({ _id: userId });
+      console.log("user", userData);
+      if (!userData) {
+        return null;
+      }
+      const interested = userData.interests;
+
+      const courseCategory = await CategoryCollection.find({
+        _id: { $in: interested },
+      });
+
+      const category = courseCategory.map((category) => category.category_name);
+
+      const interestedCourse = await CourseCollection.find({
+        course_category: { $in: category },
+      });
+
+      if (interestedCourse && interestedCourse.length > 0) {
+        return interestedCourse;
+      }
+
+      // if no interested courses are there then return all course
+      const allCourse = await CourseCollection.find();
+      console.log("all course", allCourse);
+      return allCourse;
     } catch (error) {
       throw error;
     }

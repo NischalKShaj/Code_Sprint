@@ -88,6 +88,21 @@ const courseUseCase = {
       return { success: false, data: "internal server error" };
     }
   },
+
+  // use case for finding course according to interest
+  getInterestedCourse: async (userId) => {
+    try {
+      const result = await courseRepository.getInterestedCourse(userId);
+      if (result) {
+        return { success: true, data: result };
+      } else {
+        return { success: false, data: result };
+      }
+    } catch (error) {
+      console.error("error", error);
+      return { success: false, data: error };
+    }
+  },
 };
 
 module.exports = courseUseCase;

@@ -99,6 +99,27 @@ const courseController = {
       res.status(500).json("internal server error");
     }
   },
+
+  // getting the courses based on the interests
+  getInterestedCourse: async (req, res) => {
+    try {
+      const userId = req.query.id;
+      console.log("first", userId);
+      let response;
+      if (userId) {
+        response = await courseUseCase.getInterestedCourse(userId);
+      } else {
+        response = await courseUseCase.findAllCourses();
+      }
+      if (response.success) {
+        res.status(202).json(response.data);
+      } else {
+        res.status(404).json(response.data);
+      }
+    } catch (error) {
+      res.status(500).json(error);
+    }
+  },
 };
 
 module.exports = courseController;

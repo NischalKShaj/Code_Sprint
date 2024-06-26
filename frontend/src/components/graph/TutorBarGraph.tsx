@@ -46,7 +46,7 @@ const TutorBarGraph = () => {
         }
       } catch (error) {
         console.error("error", error);
-        router.push("/error");
+        router.push("/admin/error");
       }
     };
     if (token) {
