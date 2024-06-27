@@ -118,6 +118,49 @@ const EditCoursePage = () => {
     }
   };
 
+  // function to handle the delete operation for the courses
+  const handleDelete = async (id: string) => {
+    const result = await Swal.fire({
+      position: "center",
+      icon: "warning",
+      title: "Are you sure you want to delete",
+      showConfirmButton: true,
+      showCancelButton: true,
+      confirmButtonText: "Yes, Delete",
+      denyButtonText: "Cancel",
+
+      customClass: {
+        confirmButton: "btn-confirm",
+        denyButton: "btn-deny",
+      },
+    });
+    if (result.isConfirmed) {
+      const token = localStorage.getItem("access_token");
+      try {
+        const response = await axios.delete(
+          `${process.env.NEXT_PUBLIC_BASE_URL}/course/delete/${id}?userId=${user?.id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            withCredentials: true,
+          }
+        );
+        if (response.status === 204) {
+          Swal.fire({
+            position: "center",
+            icon: "success",
+            title: "Course Deleted",
+            text: "You have successfully deleted the course",
+          });
+          router.push("/mycourse");
+        }
+      } catch (error) {
+        console.error("error", error);
+      }
+    }
+  };
+
   return (
     <div className="flex min-h-screen pt-4 pb-24 bg-gray-100">
       <TutorSideBar />
@@ -197,6 +240,7 @@ const EditCoursePage = () => {
                 Edit
               </button>
               <button
+                onClick={() => handleDelete(formData.id)}
                 className="bg-[#686DE0] text-white font-bold py-2 px-4 rounded-xl w-[250px]"
                 type="button"
               >

@@ -123,7 +123,7 @@ const MyCourse: React.FC = () => {
               <div className="mb-6">
                 <p className="text-md text-left mb-4">{video.description}</p>
                 <div className="flex justify-center">
-                  <video className="rounded-lg" width="600" controls>
+                  <video className="rounded-lg" width="600">
                     <source
                       src={video.videoUrl}
                       type={getMimeType(video.videoUrl)}

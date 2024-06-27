@@ -7,6 +7,7 @@ const TutorCollection = require("../../../core/entities/user/tutorCollection");
 const bcryptjs = require("bcryptjs");
 const CourseCollection = require("../../../core/entities/course/courseCollection");
 const BannerCollection = require("../../../core/entities/banner/bannerCollection");
+const PayoutCollection = require("../../../core/entities/paymentRequest/paymentRequest");
 
 // creating userRepository
 const userRepository = {
@@ -185,6 +186,19 @@ const userRepository = {
           },
           { new: true }
         );
+
+        // for updating the payout amount
+        const payoutData = await PayoutCollection.findOne({
+          tutor: courseData.tutor.toString(),
+        });
+
+        const updatedPayoutData = await PayoutCollection.findByIdAndUpdate(
+          { _id: payoutData._id },
+          { $inc: { wallet: courseData.price }, status: true },
+          { new: true }
+        );
+
+        console.log("payoutData", updatedPayoutData);
 
         console.log("updatedUser", updatedUser);
         console.log("updated TUtor", updatedTutor);

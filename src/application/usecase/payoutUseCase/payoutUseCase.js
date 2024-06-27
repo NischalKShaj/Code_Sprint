@@ -48,6 +48,21 @@ const payoutUseCase = {
       return { success: false, data: error.message };
     }
   },
+
+  // use case for enabling the premium features
+  premiumSubscription: async (userId) => {
+    try {
+      const response = await payoutRepository.premiumSubscription(userId);
+      if (response) {
+        return { success: true, data: response };
+      } else {
+        return { success: false, data: response };
+      }
+    } catch (error) {
+      console.error("error", error);
+      return { success: false, data: error.message };
+    }
+  },
 };
 
 module.exports = payoutUseCase;

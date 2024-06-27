@@ -60,8 +60,11 @@ router.get(
   tutorController.getMyCourse
 );
 
-// router to add new courses
+// routers to add new courses
 router.post("/uploads", authenticateUserJwt, tutorController.addCourse);
+
+// router for getting the category while adding new course
+router.get("/category", authenticateUserJwt, categoryController.showCategory);
 
 // router for getting the course page
 router.get("/courses", authenticateUserJwt, courseController.findAllCourses);
@@ -116,6 +119,13 @@ router.put(
   courseController.editCourse
 );
 
+// router for deleting the courses
+router.delete(
+  "/course/delete/:id",
+  authenticateUserJwt,
+  courseController.deleteCourse
+);
+
 // router for sending the payout request for the admin
 router.post(
   "/payout-request",
@@ -132,6 +142,13 @@ router.get(
 
 // router for showing all the course in home page
 router.get("/suggested", courseController.getInterestedCourse);
+
+// router for adding premium subscription
+router.post(
+  "/premium-subscription",
+  authenticateUserJwt,
+  payoutController.premiumSubscription
+);
 
 // exporting the module
 module.exports = router;

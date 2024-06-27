@@ -120,6 +120,23 @@ const courseController = {
       res.status(500).json(error);
     }
   },
+
+  // controller for deleting the courses
+  deleteCourse: async (req, res) => {
+    try {
+      const userId = req.query.userId;
+      const courseId = req.params.id;
+      console.log(`1:${userId},2:${courseId}`);
+      const response = await courseUseCase.deleteCourse(userId, courseId);
+      if (response.success) {
+        res.status(204).json(response.data);
+      } else {
+        res.status(404).json(response.data);
+      }
+    } catch (error) {
+      res.status(500).json(error.message);
+    }
+  },
 };
 
 module.exports = courseController;

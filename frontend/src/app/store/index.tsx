@@ -14,6 +14,7 @@ interface State {
     profileImage: string;
     blocked: boolean;
     phone: string;
+    premium: boolean;
   } | null;
   // function for implementing the userLogin
   isLoggedIn: (user: {
@@ -24,6 +25,7 @@ interface State {
     profileImage: string;
     blocked: boolean;
     phone: string;
+    premium: boolean;
   }) => void;
   // function for implementing the user Logout
   isLoggedOut: () => void;

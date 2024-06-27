@@ -346,7 +346,7 @@ const CourseId = () => {
                 </Link>
                 <div className="mr-[300px] text-left ml-[1000px] mt-[100px] mb-5 p-3 bg-gradient-to-r from-purple-500 to-indigo-500 shadow-lg rounded-lg">
                   {course.description}
-                  {!courseSubscribed ? (
+                  {!courseSubscribed && !userData?.premium && (
                     <>
                       <button
                         className="bg-[#2a31f8] mt-5 text-white font-bold py-2 px-4 rounded-xl"
@@ -356,15 +356,14 @@ const CourseId = () => {
                       </button>
                       <p>Price: &#8377; {course.price}</p>
                     </>
-                  ) : (
-                    <>
-                      <button
-                        className="bg-[#f82a2a] mt-5 text-white font-bold py-2 px-4 rounded-xl"
-                        onClick={handleUnsubscribe}
-                      >
-                        Unsubscribe
-                      </button>
-                    </>
+                  )}
+                  {courseSubscribed && !userData?.premium && (
+                    <button
+                      className="bg-[#f82a2a] mt-5 text-white font-bold py-2 px-4 rounded-xl"
+                      onClick={handleUnsubscribe}
+                    >
+                      Unsubscribe
+                    </button>
                   )}
                 </div>
               </div>
@@ -373,7 +372,7 @@ const CourseId = () => {
                   <h1 className="text-center text-3xl font-semibold">
                     {course.course_name}
                   </h1>
-                  {courseSubscribed ? (
+                  {courseSubscribed || userData?.premium ? (
                     <div className="flex flex-col mt-[30px] grid-cols-2 gap-4">
                       {currentVideos?.map(
                         (video: { url: string }, index: number) => (

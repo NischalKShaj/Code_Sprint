@@ -169,7 +169,7 @@ const Course = () => {
                   className="flex items-start border border-black p-4 mb-4 rounded-lg relative"
                 >
                   {course.videos && course.videos.length > 0 && (
-                    <video className="rounded-lg w-72 mr-4" controls>
+                    <video className="rounded-lg w-72 mr-4">
                       <source
                         src={course.videos[0]}
                         type={getMimeType(course.videos[0])}
@@ -188,19 +188,19 @@ const Course = () => {
                   </div>
                   {role && (
                     <div className="flex items-center mt-[100px]">
-                      {!isCourseSubscribed ? (
+                      {isCourseSubscribed || user?.premium ? (
                         <button
                           onClick={() => handleSubscribe(course._id)}
                           className="bg-[#686DE0] text-white font-bold py-2 px-4 rounded-xl"
                         >
-                          Subscribe
+                          Show
                         </button>
                       ) : (
                         <button
                           onClick={() => handleSubscribe(course._id)}
                           className="bg-[#686DE0] text-white font-bold py-2 px-4 rounded-xl"
                         >
-                          Show
+                          Subscribe
                         </button>
                       )}
                     </div>

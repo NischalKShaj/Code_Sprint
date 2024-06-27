@@ -129,9 +129,10 @@ const courseRepository = {
           (course) => course.courseId.toString() === id.toString()
         );
         if (courseIndex !== -1) {
-          const existingTutorVideos = tutor.course[courseIndex].url;
-          const updatedTutorVideos = [...existingTutorVideos, ...newVideos];
-          tutor.course[courseIndex].url = updatedTutorVideos;
+          tutor.course[courseIndex].title = courseData.course_name;
+          tutor.course[courseIndex].category = courseData.course_category;
+          tutor.course[courseIndex].description = courseData.description;
+          tutor.course[courseIndex].url = updatedVideos;
         }
 
         await tutor.save();
@@ -173,6 +174,36 @@ const courseRepository = {
       const allCourse = await CourseCollection.find();
       console.log("all course", allCourse);
       return allCourse;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  // method for deleting the course from the course collection and the tutor collection
+  deleteCourse: async (userId, courseId) => {
+    try {
+      const tutor = await TutorCollection.findById({ _id: userId });
+      console.log("tutor", tutor);
+      if (!tutor) {
+        return null;
+      }
+      // Find the index of the course in the tutor's course array
+      const courseIndex = tutor.course.findIndex(
+        (c) => c.courseId.toString() === courseId.toString()
+      );
+      if (courseIndex === -1) {
+        throw new Error("Course not found in tutor's course array");
+      }
+
+      // Remove the course from the tutor's course array
+      tutor.course.splice(courseIndex, 1);
+
+      // Save the updated tutor document
+      await tutor.save();
+
+      await CourseCollection.findByIdAndDelete(courseId);
+      let message = "course deleted successfully";
+      return message;
     } catch (error) {
       throw error;
     }

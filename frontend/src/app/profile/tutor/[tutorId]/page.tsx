@@ -97,6 +97,7 @@ const StudentId = () => {
           profileImage: response.data.profileImage,
           role: user?.role!,
           blocked: user?.blocked!,
+          premium: user?.premium!,
         });
 
         router.push("/profile/tutor");

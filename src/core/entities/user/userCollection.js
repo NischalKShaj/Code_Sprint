@@ -63,6 +63,10 @@ const users = new mongoose.Schema(
         default: [],
       },
     ],
+    premium: {
+      type: Boolean,
+      default: false,
+    },
     phone: {
       type: String,
     },

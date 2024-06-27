@@ -48,6 +48,21 @@ const payoutController = {
       res.status(500).json(error);
     }
   },
+
+  // controller for adding the premium subscription for the courses
+  premiumSubscription: async (req, res) => {
+    try {
+      const userId = req.body.id;
+      const response = await payoutUseCase.premiumSubscription(userId);
+      if (response.success) {
+        res.status(202).json(response.data);
+      } else {
+        res.status(404).json(response.data);
+      }
+    } catch (error) {
+      res.status(500).json("internal server error");
+    }
+  },
 };
 
 module.exports = payoutController;

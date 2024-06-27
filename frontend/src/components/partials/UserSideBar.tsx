@@ -136,13 +136,18 @@ const UserSideBar = () => {
               </Link>
             </li>
             <li className="text-center">
-              <p className="mt-5">Unlock Exclusive Features!</p>
-
-              <PremiumSubscription
-                isOpen={isModalOpen}
-                openModal={openModal}
-                closeModal={closeModal}
-              />
+              {user?.premium ? (
+                <p className="mt-5">Enjoy the premium features!</p>
+              ) : (
+                <>
+                  <p className="mt-5">Unlock Exclusive Features!</p>
+                  <PremiumSubscription
+                    isOpen={isModalOpen}
+                    openModal={openModal}
+                    closeModal={closeModal}
+                  />
+                </>
+              )}
             </li>
           </ul>
         </div>

@@ -103,6 +103,21 @@ const courseUseCase = {
       return { success: false, data: error };
     }
   },
+
+  // use case for deleting the courses
+  deleteCourse: async (userId, courseId) => {
+    try {
+      const result = await courseRepository.deleteCourse(userId, courseId);
+      if (result) {
+        return { success: true, data: result };
+      } else {
+        return { success: false, data: result };
+      }
+    } catch (error) {
+      console.error("error", error);
+      return { success: false, data: error.message };
+    }
+  },
 };
 
 module.exports = courseUseCase;

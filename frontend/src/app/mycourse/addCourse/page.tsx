@@ -2,7 +2,7 @@
 
 // Importing required modules
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import dotenv from "dotenv";
 import { AppState } from "../../store";
 import { useRouter } from "next/navigation";
@@ -10,6 +10,10 @@ import Swal from "sweetalert2";
 import TutorSideBar from "@/components/partials/TutorSideBar";
 
 dotenv.config();
+
+interface Category {
+  category_name: string;
+}
 
 const AddCourse = () => {
   const email = AppState((state) => state.user?.email);
@@ -21,6 +25,31 @@ const AddCourse = () => {
     description: "",
     amount: "",
   });
+  const [category, setCategory] = useState<Category[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const token = localStorage.getItem("access_token");
+      try {
+        const response = await axios.get(
+          `${process.env.NEXT_PUBLIC_BASE_URL}/category`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            withCredentials: true,
+          }
+        );
+        if (response.status === 202) {
+          console.log("response.data", response.data);
+          setCategory(response.data);
+        }
+      } catch (error) {
+        console.error("error", error);
+      }
+    };
+    fetchData();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -102,7 +131,9 @@ const AddCourse = () => {
     }
   };
 
-  const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+  const handleChange: React.ChangeEventHandler<
+    HTMLInputElement | HTMLSelectElement
+  > = (e) => {
     const { id, value } = e.target;
     setForm((prevForm) => ({
       ...prevForm,
@@ -131,15 +162,20 @@ const AddCourse = () => {
             placeholder="Enter the course name"
             onChange={handleChange}
           />
-          <input
+          <select
             className="p-4 bg-gray-50 border border-gray-300 rounded-lg  w-full mt-3"
-            type="text"
             name="course_category"
             required
             id="course_category"
-            placeholder="Enter the course category"
             onChange={handleChange}
-          />
+          >
+            <option value="">Select a category</option>
+            {category.map((cat) => (
+              <option key={cat.category_name} value={cat.category_name}>
+                {cat.category_name}
+              </option>
+            ))}
+          </select>
           <input
             className="p-4 bg-gray-50 border border-gray-300 rounded-lg  w-full mt-3"
             type="text"

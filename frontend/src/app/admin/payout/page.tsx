@@ -1,8 +1,7 @@
 "use client";
 
-// Importing the required modules
-import axios from "axios";
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 import dotenv from "dotenv";
 import AdminSidePanel from "@/components/partials/AdminSidePanel";
 import SpinnerWrapper from "@/components/partials/SpinnerWrapper";
@@ -38,7 +37,6 @@ const PayoutPage = () => {
           }
         );
         if (response.status === 202) {
-          console.log("first", response.data);
           const combinedData: Payment[] = response.data.payouts.map(
             (payout: any) => {
               const tutor = response.data.tutorData.find(
@@ -56,7 +54,7 @@ const PayoutPage = () => {
           setPayoutData(combinedData);
         }
       } catch (error) {
-        console.error("error");
+        console.error("Error fetching data:", error);
       }
     };
     fetchData();
@@ -79,7 +77,6 @@ const PayoutPage = () => {
   const handlePaymentSuccess = async (details: any) => {
     try {
       const token = localStorage.getItem("admin_access_token");
-      console.log("details", details);
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_BASE_URL}/admin/update-payout-status`,
         {
@@ -102,12 +99,12 @@ const PayoutPage = () => {
           confirmButtonText: "OK",
         });
 
-        // Update the payment status in the state
+        // Update the payment status and amount in the state
         setPayoutData((prevData) => {
           if (!prevData) return prevData;
           return prevData.map((payment) =>
-            payment.tutor_email === currentPayment?.tutor_email
-              ? { ...payment, status: true }
+            payment._id === currentPayment?._id
+              ? { ...payment, status: true, wallet: "0" }
               : payment
           );
         });
@@ -175,7 +172,7 @@ const PayoutPage = () => {
                         {payment.wallet}
                       </td>
                       <td className="px-6 py-4 text-base font-semibold text-center">
-                        {!payment.status ? (
+                        {payment.wallet !== "0" ? (
                           <button
                             onClick={() => handlePay(payment)}
                             className="bg-[#686DE0] text-white font-bold py-2 px-4 rounded-xl"

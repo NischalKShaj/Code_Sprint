@@ -3,6 +3,7 @@
 // importing the required modules
 const PayoutCollection = require("../../../core/entities/paymentRequest/paymentRequest");
 const TutorCollection = require("../../../core/entities/user/tutorCollection");
+const UserCollection = require("../../../core/entities/user/userCollection");
 
 // creating the repository for creating the payout repository
 const payoutRepository = {
@@ -64,7 +65,7 @@ const payoutRepository = {
         id,
         {
           wallet: 0,
-          status: true,
+          status: false,
         },
         { new: true }
       );
@@ -82,6 +83,33 @@ const payoutRepository = {
       } else {
         return null;
       }
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  // enabling the premium subscription for the user
+  premiumSubscription: async (userId) => {
+    try {
+      const userData = await UserCollection.findOne({ _id: userId });
+      if (!userData) {
+        return null;
+      }
+
+      // after successful payment enable premium feature
+      const premiumUser = await UserCollection.findByIdAndUpdate(
+        userId,
+        {
+          premium: true,
+        },
+        { new: true }
+      );
+      if (!premiumUser) {
+        return null;
+      }
+
+      console.log("premium", premiumUser);
+      return premiumUser;
     } catch (error) {
       throw error;
     }
