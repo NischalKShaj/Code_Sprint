@@ -1,4 +1,3 @@
-// file to show the tutor details
 "use client";
 
 // importing all the required modules for the file
@@ -12,6 +11,8 @@ import React, { useEffect, useState } from "react";
 
 const TutorPage = () => {
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const tutorsPerPage = 5;
   const allTutors = AppState((state) => state.allTutor);
 
   useEffect(() => {
@@ -19,7 +20,7 @@ const TutorPage = () => {
   }, []);
 
   if (loading) {
-    return <div>loading...</div>;
+    return <div>Loading...</div>;
   }
 
   // function to handle tutor block and unblock
@@ -37,7 +38,6 @@ const TutorPage = () => {
         }
       );
       if (response.status === 200) {
-        console.log("response", response.data);
         const status = response.data.status;
         localStorage.removeItem("access_token");
         const tutorIndex = allTutors.findIndex((tutor) => tutor.id === id);
@@ -50,6 +50,15 @@ const TutorPage = () => {
       console.error("error", error);
     }
   };
+
+  const handlePageChange = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+  };
+
+  // Calculate the index of the first and last tutor to display
+  const indexOfLastTutor = currentPage * tutorsPerPage;
+  const indexOfFirstTutor = indexOfLastTutor - tutorsPerPage;
+  const currentTutors = allTutors.slice(indexOfFirstTutor, indexOfLastTutor);
 
   return (
     <div>
@@ -64,10 +73,6 @@ const TutorPage = () => {
                   <th scope="col" className="px-6 py-3">
                     Name
                   </th>
-
-                  {/* <th scope="col" className="px-6 py-3">
-                  Position
-                </th>*/}
                   <th scope="col" className="px-6 py-3">
                     Status
                   </th>
@@ -77,9 +82,9 @@ const TutorPage = () => {
                 </tr>
               </thead>
               <tbody>
-                {allTutors.map((user) => (
+                {currentTutors.map((tutor) => (
                   <tr
-                    key={user.id}
+                    key={tutor.id}
                     className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
                   >
                     <td className="w-4 p-4"></td>
@@ -89,14 +94,11 @@ const TutorPage = () => {
                     >
                       <div className="ps-3">
                         <div className="text-base font-semibold">
-                          {user.username}
+                          {tutor.username}
                         </div>
-                        <div className="text-base font-thin">{user.email}</div>
+                        <div className="text-base font-thin">{tutor.email}</div>
                       </div>
                     </th>
-
-                    {/* code for showing the online status of the user */}
-                    {/* <td className="px-6 py-4">React Developer</td>*/}
                     <td className="px-6 py-4">
                       <div className="flex items-center">
                         <div className="h-2.5 w-2.5 rounded-full bg-green-500 me-2"></div>
@@ -104,19 +106,19 @@ const TutorPage = () => {
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      {user.block ? (
+                      {tutor.block ? (
                         <button
-                          onClick={() => handleBlock(user.id)}
+                          onClick={() => handleBlock(tutor.id)}
                           className="font-bold py-2 px-4 rounded-xl absolute bg-green-600 text-white"
                         >
-                          unblock
+                          Unblock
                         </button>
                       ) : (
                         <button
-                          onClick={() => handleBlock(user.id)}
+                          onClick={() => handleBlock(tutor.id)}
                           className="font-bold py-2 px-4 rounded-xl absolute bg-red-600 text-white"
                         >
-                          block
+                          Block
                         </button>
                       )}
                     </td>
@@ -124,9 +126,43 @@ const TutorPage = () => {
                 ))}
               </tbody>
             </table>
+            <div className="flex justify-center mt-4">
+              <button
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="px-4 py-2 mx-1 text-white bg-blue-500 rounded disabled:bg-gray-400"
+              >
+                Previous
+              </button>
+              {Array.from(
+                { length: Math.ceil(allTutors.length / tutorsPerPage) },
+                (_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => handlePageChange(index + 1)}
+                    className={`px-4 py-2 mx-1 ${
+                      currentPage === index + 1
+                        ? "bg-blue-700 text-white"
+                        : "bg-blue-500 text-white"
+                    } rounded`}
+                  >
+                    {index + 1}
+                  </button>
+                )
+              )}
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={
+                  currentPage === Math.ceil(allTutors.length / tutorsPerPage)
+                }
+                className="px-4 py-2 mx-1 text-white bg-blue-500 rounded disabled:bg-gray-400"
+              >
+                Next
+              </button>
+            </div>
           </div>
         ) : (
-          <p>No user found</p>
+          <p>No tutors found</p>
         )}
       </SpinnerWrapper>
     </div>

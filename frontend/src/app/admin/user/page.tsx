@@ -1,4 +1,3 @@
-// file for showing user name
 "use client";
 
 // importing all the required files
@@ -14,21 +13,17 @@ const AdminSidePanel = dynamic(
 
 const UserPage = () => {
   const [isLoading, setIsLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const usersPerPage = 5;
   const allUser = AppState((state) => state.allUser);
 
   useEffect(() => {
     setIsLoading(false);
   }, []);
 
-  if (isLoading) {
-    // make it a skeleton
-    return <div>Loading...</div>;
-  }
-
   const handleBlock = async (id: any) => {
     try {
       const token = localStorage.getItem("admin_access_token");
-      console.log("token", token);
       const response = await axios.patch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/admin/user/${id}`,
         {},
@@ -40,10 +35,7 @@ const UserPage = () => {
         }
       );
       if (response.status === 200) {
-        console.log("response", response.data);
         const status = response.data.status;
-        console.log("status", status);
-        localStorage.removeItem("access_token");
         const userIndex = allUser.findIndex((user) => user.id === id);
 
         if (userIndex !== -1) {
@@ -54,6 +46,20 @@ const UserPage = () => {
       console.error("error", error);
     }
   };
+
+  const handlePageChange = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+  };
+
+  // Calculate the index of the first and last user to display
+  const indexOfLastUser = currentPage * usersPerPage;
+  const indexOfFirstUser = indexOfLastUser - usersPerPage;
+  const currentUsers = allUser.slice(indexOfFirstUser, indexOfLastUser);
+
+  if (isLoading) {
+    // make it a skeleton
+    return <div>Loading...</div>;
+  }
 
   return (
     <div>
@@ -68,9 +74,6 @@ const UserPage = () => {
                   <th scope="col" className="px-6 py-3">
                     Name
                   </th>
-                  {/* <th scope="col" className="px-6 py-3">
-                  Position
-                </th> */}
                   <th scope="col" className="px-6 py-3">
                     Status
                   </th>
@@ -80,7 +83,7 @@ const UserPage = () => {
                 </tr>
               </thead>
               <tbody>
-                {allUser.map((user) => (
+                {currentUsers.map((user) => (
                   <tr
                     key={user.id}
                     className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
@@ -99,7 +102,6 @@ const UserPage = () => {
                         </div>
                       </div>
                     </th>
-                    {/* <td className="px-6 py-4">React Developer</td> */}
                     <td className="px-6 py-4">
                       <div className="flex items-center">
                         <div className="h-2.5 w-2.5 rounded-full bg-green-500 me-2"></div>
@@ -112,14 +114,14 @@ const UserPage = () => {
                           onClick={() => handleBlock(user.id)}
                           className="font-bold py-2 px-4 rounded-xl absolute bg-green-600 text-white"
                         >
-                          unblock
+                          Unblock
                         </button>
                       ) : (
                         <button
                           onClick={() => handleBlock(user.id)}
                           className="font-bold py-2 px-4 rounded-xl absolute bg-red-600 text-white"
                         >
-                          block
+                          Block
                         </button>
                       )}
                     </td>
@@ -127,9 +129,43 @@ const UserPage = () => {
                 ))}
               </tbody>
             </table>
+            <div className="flex justify-center mt-4">
+              <button
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="px-4 py-2 mx-1 text-white bg-blue-500 rounded disabled:bg-gray-400"
+              >
+                Previous
+              </button>
+              {Array.from(
+                { length: Math.ceil(allUser.length / usersPerPage) },
+                (_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => handlePageChange(index + 1)}
+                    className={`px-4 py-2 mx-1 ${
+                      currentPage === index + 1
+                        ? "bg-blue-700 text-white"
+                        : "bg-blue-500 text-white"
+                    } rounded`}
+                  >
+                    {index + 1}
+                  </button>
+                )
+              )}
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={
+                  currentPage === Math.ceil(allUser.length / usersPerPage)
+                }
+                className="px-4 py-2 mx-1 text-white bg-blue-500 rounded disabled:bg-gray-400"
+              >
+                Next
+              </button>
+            </div>
           </div>
         ) : (
-          <p>No user found</p>
+          <p>No users found</p>
         )}
       </SpinnerWrapper>
     </div>

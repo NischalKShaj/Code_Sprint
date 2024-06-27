@@ -1,4 +1,3 @@
-// file for showing the banner
 "use client";
 
 // importing the required modules
@@ -19,11 +18,15 @@ interface Banner {
 }
 
 const Banner = () => {
+  const [loading, setLoading] = useState(true);
   const [banners, setBanners] = useState<Banner[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
   const router = useRouter();
+  const bannersPerPage = 5;
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
       const token = localStorage.getItem("admin_access_token");
       try {
         const response = await axios.get<Banner[]>(
@@ -37,10 +40,12 @@ const Banner = () => {
         );
         if (response.status === 200) {
           setBanners(response.data);
+          setLoading(false);
         }
       } catch (error) {
         console.error("error", error);
         router.push("/admin/error");
+        setLoading(false);
       }
     };
     fetchData();
@@ -54,12 +59,21 @@ const Banner = () => {
     console.log(`Deleting banner with ID: ${bannerId}`);
   };
 
+  // Pagination logic
+  const indexOfLastBanner = currentPage * bannersPerPage;
+  const indexOfFirstBanner = indexOfLastBanner - bannersPerPage;
+  const currentBanners = banners.slice(indexOfFirstBanner, indexOfLastBanner);
+
+  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+
   return (
     <div>
       <SpinnerWrapper>
         <AdminSidePanel />
         <div className="flex-1 ml-[220px] flex justify-center mt-[25px]">
-          {banners && banners.length > 0 ? (
+          {loading ? (
+            <div>Loading...</div>
+          ) : banners && banners.length > 0 ? (
             <div className="relative items-center justify-center overflow-x-auto shadow-md sm:rounded-lg">
               <table className="w-[1000px] items-center justify-items-center text-sm text-center rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -79,7 +93,7 @@ const Banner = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {banners.map((banner) => (
+                  {currentBanners.map((banner) => (
                     <tr
                       key={banner._id}
                       className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
@@ -113,6 +127,49 @@ const Banner = () => {
                   ))}
                 </tbody>
               </table>
+              {/* Pagination buttons */}
+              <div className="flex justify-center mt-4">
+                <button
+                  onClick={() => paginate(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className={`px-4 py-2 mx-1 ${
+                    currentPage === 1
+                      ? "bg-gray-300 cursor-not-allowed"
+                      : "bg-blue-500 text-white"
+                  } rounded`}
+                >
+                  Previous
+                </button>
+                {Array.from(
+                  { length: Math.ceil(banners.length / bannersPerPage) },
+                  (_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => paginate(index + 1)}
+                      className={`px-4 py-2 mx-1 ${
+                        currentPage === index + 1
+                          ? "bg-blue-700 text-white"
+                          : "bg-blue-500 text-white"
+                      } rounded`}
+                    >
+                      {index + 1}
+                    </button>
+                  )
+                )}
+                <button
+                  onClick={() => paginate(currentPage + 1)}
+                  disabled={
+                    currentPage === Math.ceil(banners.length / bannersPerPage)
+                  }
+                  className={`px-4 py-2 mx-1 ${
+                    currentPage === Math.ceil(banners.length / bannersPerPage)
+                      ? "bg-gray-300 cursor-not-allowed"
+                      : "bg-blue-500 text-white"
+                  } rounded`}
+                >
+                  Next
+                </button>
+              </div>
             </div>
           ) : (
             <p>No banners found</p>
