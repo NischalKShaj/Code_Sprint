@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
+const chapterSchema = require("../chapter/chapter"); // Ensure you have exported chapterSchema correctly
 
-// creating the schema for the course database
 const courseSchema = new mongoose.Schema(
   {
     course_name: {
@@ -11,20 +11,11 @@ const courseSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    number_of_videos: {
-      type: String,
-      required: true,
-    },
     description: {
       type: String,
       required: true,
     },
-    videos: [
-      {
-        type: String,
-        required: true,
-      },
-    ],
+    chapters: [chapterSchema],
     tutor: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Tutor",
@@ -32,11 +23,10 @@ const courseSchema = new mongoose.Schema(
     },
     price: {
       type: Number,
-      // required: true,
+      required: true,
     },
   },
   { timestamps: true }
 );
 
-// exporting the modules
-module.exports = new mongoose.model("Course", courseSchema);
+module.exports = mongoose.model("Course", courseSchema);

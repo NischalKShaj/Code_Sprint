@@ -38,13 +38,19 @@ const upload = multer({
     s3: s3,
     bucket: BUCKET_NAME,
     metadata: function (req, file, cb) {
-      cb(null, { fieldname: file.fieldname });
+      cb(null, { fieldName: file.fieldname });
     },
     key: function (req, file, cb) {
       cb(null, file.originalname);
     },
   }),
-}).array("courses", 5);
+}).fields([
+  { name: "course_files", maxCount: 10 },
+  ...Array.from({ length: 10 }).map((_, index) => ({
+    name: `chapters[${index}][files]`,
+    maxCount: 5,
+  })),
+]);
 
 async function sendMessageToQueue(message) {
   const params = {

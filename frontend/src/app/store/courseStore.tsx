@@ -1,43 +1,25 @@
 import { create } from "zustand";
 
-// Creating the interface for the state
+interface Chapter {
+  chapterName: string;
+  videos: string[];
+}
+
+interface Course {
+  _id: string;
+  course_name: string;
+  description: string;
+  course_category: string;
+  chapters: Chapter[];
+  price: number;
+  tutor: string;
+}
+
 interface State {
-  course: {
-    course_name: string;
-    description: string;
-    course_category: string;
-    videos: { url: string }[];
-    number_of_tutorials: string;
-    tutor_id: string;
-    course_id: string;
-    price: string;
-  } | null;
-  showCourse: (course: {
-    course_name: string;
-    description: string;
-    course_category: string;
-    videos: { url: string }[];
-    number_of_tutorials: string;
-    course_id: string;
-    tutor_id: string;
-    price: string;
-  }) => void;
-  allCourse: {
-    _id: string;
-    course_name: string;
-    description: string;
-    course_category: string;
-    videos: string[];
-  }[];
-  findAllCourse: (
-    allCourse: {
-      _id: string;
-      course_name: string;
-      description: string;
-      course_category: string;
-      videos: string[];
-    }[]
-  ) => void;
+  course: Course | null;
+  showCourse: (course: Course) => void;
+  allCourse: Course[];
+  findAllCourse: (allCourse: Course[]) => void;
   isSubscribed: {
     [x: string]: any;
     user_id: string | undefined;
@@ -59,7 +41,7 @@ interface State {
       course_id: string;
     }[]
   ) => void;
-  unsubscribe: (courseId: string | undefined) => void; // Add this line
+  unsubscribe: (courseId: string | undefined) => void;
   completedVideos: Record<string, Record<string, boolean>>;
   toggleVideoCompletion: (courseId: string, videoUrl: string) => void;
 

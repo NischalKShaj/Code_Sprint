@@ -81,19 +81,27 @@ const Login = () => {
   const handleOAuth = async (provider: string) => {
     try {
       if (provider === "google") {
-        await signIn(provider, {
-          callbackUrl: "/",
-          onSuccess: () => {
-            setIsAuthenticated(true);
-          },
-        });
+        try {
+          await signIn(provider, {
+            callbackUrl: "/",
+            onSuccess: () => {
+              setIsAuthenticated(true);
+            },
+          });
+        } catch (error) {
+          console.error("error in google", error);
+        }
       } else if (provider === "github") {
-        await signIn(provider, {
-          callbackUrl: "/",
-          onSuccess: () => {
-            setIsAuthenticated(true);
-          },
-        });
+        try {
+          await signIn(provider, {
+            callbackUrl: "/",
+            onSuccess: () => {
+              setIsAuthenticated(true);
+            },
+          });
+        } catch (error) {
+          console.error("error in github", error);
+        }
       }
     } catch (error) {
       console.error("error", error);

@@ -1,6 +1,5 @@
 "use client";
 
-// Importing required modules
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import dotenv from "dotenv";
@@ -15,16 +14,26 @@ interface Category {
   category_name: string;
 }
 
+interface Chapter {
+  chapter_name: string;
+  files: File[];
+}
+
 const AddCourse = () => {
   const email = AppState((state) => state.user?.email);
-  const [files, setFiles] = useState<File[]>([]);
   const router = useRouter();
+
   const [form, setForm] = useState({
     course_name: "",
     course_category: "",
     description: "",
     amount: "",
   });
+
+  const [chapters, setChapters] = useState<Chapter[]>([
+    { chapter_name: "", files: [] },
+  ]);
+
   const [category, setCategory] = useState<Category[]>([]);
 
   useEffect(() => {
@@ -41,7 +50,6 @@ const AddCourse = () => {
           }
         );
         if (response.status === 202) {
-          console.log("response.data", response.data);
           setCategory(response.data);
         }
       } catch (error) {
@@ -58,28 +66,21 @@ const AddCourse = () => {
         alert("User email is not available. Please log in.");
         return;
       }
-      if (files.length === 0) {
-        alert("Select at least one video");
-        return;
-      }
-      if (files.length > 5) {
-        alert("Select a maximum of 5 videos");
-        return;
-      }
+
       const formData = new FormData();
-      // Append form data fields to the FormData object
       formData.append("course_name", form.course_name);
       formData.append("course_category", form.course_category);
       formData.append("description", form.description);
       formData.append("amount", form.amount);
 
-      for (const file of files) {
-        formData.append("courses", file);
-      }
-
-      const entries = Array.from(formData.entries());
-      entries.forEach(([key, value]) => {
-        console.log(`${key}: ${value}`);
+      chapters.forEach((chapter, index) => {
+        formData.append(
+          `chapters[${index}][chapter_name]`,
+          chapter.chapter_name
+        );
+        chapter.files.forEach((file, fileIndex) => {
+          formData.append(`chapters[${index}][files]`, file);
+        });
       });
 
       const token = localStorage.getItem("access_token");
@@ -106,7 +107,6 @@ const AddCourse = () => {
         }
       );
 
-      console.log("response", response.data);
       if (response.status !== 202) {
         router.push("/login");
       }
@@ -122,17 +122,33 @@ const AddCourse = () => {
     }
   };
 
-  const videoChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
-    const fileList = e.target.files;
-    if (fileList !== null) {
-      setFiles(Array.from(fileList));
+  const handleChapterChange = (index: number, field: string, value: string) => {
+    const newChapters = [...chapters];
+    newChapters[index] = { ...newChapters[index], [field]: value };
+    setChapters(newChapters);
+  };
+
+  const handleFileChange = (index: number, files: FileList | null) => {
+    const newChapters = [...chapters];
+    if (files) {
+      newChapters[index].files = Array.from(files);
     } else {
-      setFiles([]);
+      newChapters[index].files = [];
     }
+    setChapters(newChapters);
+  };
+
+  const addChapter = () => {
+    setChapters([...chapters, { chapter_name: "", files: [] }]);
+  };
+
+  const removeChapter = (index: number) => {
+    const newChapters = chapters.filter((_, i) => i !== index);
+    setChapters(newChapters);
   };
 
   const handleChange: React.ChangeEventHandler<
-    HTMLInputElement | HTMLSelectElement
+    HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
   > = (e) => {
     const { id, value } = e.target;
     setForm((prevForm) => ({
@@ -147,7 +163,7 @@ const AddCourse = () => {
       <h3 className="text-2xl font-bold mb-6 text-center items-center">
         Add New Course
       </h3>
-      <section className="bg-[#D9D9D9] p-8 h-[520px] w-[570px] rounded-lg shadow-md">
+      <section className="bg-[#D9D9D9] p-8 h-auto w-[570px] rounded-lg shadow-md">
         <form
           onSubmit={handleSubmit}
           encType="multipart/form-data"
@@ -159,58 +175,85 @@ const AddCourse = () => {
             name="course_name"
             required
             id="course_name"
-            placeholder="Enter the course name"
+            value={form.course_name}
             onChange={handleChange}
+            placeholder="Course Name"
           />
           <select
             className="p-4 bg-gray-50 border border-gray-300 rounded-lg  w-full mt-3"
-            name="course_category"
             required
             id="course_category"
+            value={form.course_category}
             onChange={handleChange}
           >
-            <option value="">Select a category</option>
-            {category.map((cat) => (
-              <option key={cat.category_name} value={cat.category_name}>
-                {cat.category_name}
+            <option value="">Select Category</option>
+            {category.map((category, index) => (
+              <option key={index} value={category.category_name}>
+                {category.category_name}
               </option>
             ))}
           </select>
-          <input
-            className="p-4 bg-gray-50 border border-gray-300 rounded-lg  w-full mt-3"
-            type="text"
+          <textarea
+            className="p-4 bg-gray-50 border border-gray-300 rounded-lg w-full mt-3"
             name="description"
-            required
             id="description"
-            placeholder="Enter the description for the course"
+            value={form.description}
             onChange={handleChange}
-          />
+            placeholder="Course Description"
+          ></textarea>
           <input
-            className="p-4 bg-gray-50 border border-gray-300 rounded-lg  w-full mt-3"
+            className="p-4 bg-gray-50 border border-gray-300 rounded-lg w-full mt-3"
             type="number"
             name="amount"
             required
             id="amount"
-            min={0}
-            placeholder="Enter the price for the course"
+            value={form.amount}
             onChange={handleChange}
+            placeholder="Amount"
           />
-          <label htmlFor="videos" className="text-gray-500 mr-[50px]">
-            Select MP4 or WebM format
-          </label>
-          <input
-            onChange={videoChange}
-            type="file"
-            className="p-4 bg-gray-50 border border-gray-300 rounded-lg  w-full mt-3"
-            id="videos"
-            name="courses"
-            multiple
-            accept="video/mp4,video/webm"
-            required
-          />
+          {chapters.map((chapter, index) => (
+            <div key={index} className="chapter-section mt-4">
+              <input
+                className="p-4 bg-gray-50 border border-gray-300 rounded-lg w-full mt-3"
+                type="text"
+                placeholder={`Chapter ${index + 1} Name`}
+                value={chapter.chapter_name}
+                onChange={(e) =>
+                  handleChapterChange(index, "chapter_name", e.target.value)
+                }
+              />
+              <label htmlFor="videos" className="text-gray-500 mr-[50px]">
+                Select MP4 or WebM format
+              </label>
+              <input
+                className="p-4 bg-gray-50 border border-gray-300 rounded-lg w-full mt-3"
+                type="file"
+                multiple
+                accept="video/webm, video/mp4"
+                name={`chapters[${index}][files]`}
+                onChange={(e) => handleFileChange(index, e.target.files)}
+              />
+              {index > 0 && (
+                <button
+                  type="button"
+                  className="mt-3 p-2 bg-red-500 text-white rounded"
+                  onClick={() => removeChapter(index)}
+                >
+                  Remove Chapter
+                </button>
+              )}
+            </div>
+          ))}
           <button
-            className="bg-[#686DE0] text-white font-bold py-2 px-4 rounded-xl w-full mt-7"
+            type="button"
+            className="mt-3 p-2 bg-[#686DE0] text-white rounded w-full"
+            onClick={addChapter}
+          >
+            Add Chapter
+          </button>
+          <button
             type="submit"
+            className="mt-6 p-4 bg-[#686DE0] text-white rounded-lg w-full"
           >
             Submit
           </button>

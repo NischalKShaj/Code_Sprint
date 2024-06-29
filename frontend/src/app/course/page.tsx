@@ -1,6 +1,6 @@
 "use client";
 
-// import all the required modules
+// Import all the required modules
 import axios from "axios";
 import { useEffect, useState } from "react";
 import dotenv from "dotenv";
@@ -9,6 +9,7 @@ import { CourseState } from "../store/courseStore";
 import { AppState } from "../store";
 import SpinnerWrapper from "@/components/partials/SpinnerWrapper";
 import FilterCourse from "@/components/partials/FilterCourse";
+import crypto from "crypto";
 dotenv.config();
 
 interface VideoDetails {
@@ -18,11 +19,18 @@ interface VideoDetails {
 }
 
 interface Course {
+  _id: string;
   course_name: string;
   description: string;
   course_category: string;
+  price: number;
+  tutor: string;
+  chapters: Chapter[];
+}
+
+interface Chapter {
+  chapterName: string;
   videos: string[];
-  _id: string;
 }
 
 const Course = () => {
@@ -35,10 +43,7 @@ const Course = () => {
   const allCourse = CourseState((state) => state.allCourse);
   const [courses, setCourses] = useState<Course[]>([]);
   const router = useRouter();
-  const { isSubscribed } = CourseState();
-  isSubscribed?.forEach((sub) =>
-    console.log("Subscribed course_id", sub.course_id)
-  );
+  const isSubscribed = CourseState((state) => state.isSubscribed);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -55,15 +60,15 @@ const Course = () => {
           }
         );
         if (response.status === 200) {
-          const transformedCourses = response.data.map((course: any) => ({
-            _id: course._id,
-            course_name: course.course_name,
-            description: course.description,
-            course_category: course.course_category,
-            videos: course.videos.map((video: string) => removeLastChar(video)),
+          console.log("response", response.data);
+          const decryptedCourses = response.data.map((course: Course) => ({
+            ...course,
+            chapters: course.chapters.map((chapter) => ({
+              ...chapter,
+              videos: chapter.videos.map((video) => decryptVideo(video)),
+            })),
           }));
-          findAllCourse(transformedCourses);
-          setCourses(response.data);
+          findAllCourse(decryptedCourses);
         } else if (response.status === 500) {
           router.push("/error");
         } else {
@@ -81,12 +86,42 @@ const Course = () => {
     fetchData();
   }, [router]);
 
-  // Utility function to remove the last character from a URL
-  const removeLastChar = (url: string): string => {
-    return url.slice(0, -1);
+  const decryptVideo = (encryptedUrl: string): string => {
+    try {
+      console.log("Decrypting video:", encryptedUrl);
+
+      const parts = encryptedUrl.split(":");
+      console.log("parts", parts.length);
+      if (parts.length !== 3) {
+        throw new Error(`Invalid encrypted URL format: ${encryptedUrl}`);
+      }
+
+      const iv = Buffer.from(parts[0], "hex");
+      const tag = Buffer.from(parts[1], "hex");
+      const ciphertext = Buffer.from(parts[2], "hex");
+      const key = Buffer.from(process.env.NEXT_PUBLIC_CIPHER_SECRETKEY!, "hex");
+
+      console.log("IV:", iv);
+      console.log("Tag:", tag);
+      console.log("Ciphertext:", ciphertext);
+      console.log("env", process.env.NEXT_PUBLIC_CIPHER_SECRETKEY);
+
+      const decipher = crypto.createDecipheriv("aes-256-gcm", key, iv);
+      decipher.setAuthTag(tag);
+
+      let decrypted = decipher.update(ciphertext, undefined, "utf8");
+      decrypted += decipher.final("utf8");
+
+      console.log("Decrypted video URL:", decrypted);
+
+      return decrypted;
+    } catch (error: any) {
+      console.error("Decryption error:", error.message);
+      throw error;
+    }
   };
 
-  // function to get the videos type
+  // Function to get the videos type
   const getMimeType = (url: string): string => {
     const extension = url.split(".").pop();
     switch (extension) {
@@ -97,7 +132,7 @@ const Course = () => {
     }
   };
 
-  // function for showing the main course page and the payment details etc..
+  // Function for showing the main course page and the payment details etc..
   const handleSubscribe = async (id: string) => {
     console.log("inside");
     try {
@@ -115,18 +150,7 @@ const Course = () => {
       );
       console.log("response", response.data);
       if (response.status === 202) {
-        showCourse({
-          course_name: response.data.courses.course_name,
-          course_category: response.data.courses.course_category,
-          description: response.data.courses.description,
-          number_of_tutorials: response.data.courses.number_of_videos,
-          videos: response.data.courses.videos.map((video: string) => ({
-            url: removeLastChar(video),
-          })),
-          course_id: response.data.courses._id,
-          tutor_id: response.data.courses.tutor,
-          price: response.data.courses.price,
-        });
+        showCourse(response.data.courses);
         router.push(`/course/${id}`);
       } else if (response.status === 500) {
         router.push("/error");
@@ -163,16 +187,17 @@ const Course = () => {
               const isCourseSubscribed = isSubscribed.some(
                 (sub) => sub.course_id === course._id
               );
+              const firstVideoUrl = course.chapters?.[0]?.videos?.[0] ?? ""; // Get the first video URL
               return (
                 <div
                   key={course._id}
                   className="flex items-start border border-black p-4 mb-4 rounded-lg relative"
                 >
-                  {course.videos && course.videos.length > 0 && (
-                    <video className="rounded-lg w-72 mr-4">
+                  {firstVideoUrl && (
+                    <video className="rounded-lg w-72 mr-4" controls={false}>
                       <source
-                        src={course.videos[0]}
-                        type={getMimeType(course.videos[0])}
+                        src={firstVideoUrl}
+                        type={getMimeType(firstVideoUrl)}
                       />
                       Your browser does not support the video tag.
                     </video>

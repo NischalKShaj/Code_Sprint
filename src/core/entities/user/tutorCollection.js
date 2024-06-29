@@ -1,9 +1,24 @@
 const mongoose = require("mongoose");
 
+// defining a schema for chapters within the course schema
+const chapterSchema = new mongoose.Schema({
+  chapterName: {
+    type: String,
+    required: true,
+  },
+  videos: [
+    {
+      type: String,
+      required: true,
+    },
+  ],
+});
+
 // defining a module schema for courses within the tutor schema
 const moduleSchema = new mongoose.Schema({
   courseId: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Course",
     required: true,
   },
   title: {
@@ -18,12 +33,7 @@ const moduleSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  url: [
-    {
-      type: String,
-      required: true,
-    },
-  ],
+  chapters: [chapterSchema],
 });
 
 // defining the tutor schema
@@ -92,4 +102,4 @@ const tutorSchema = new mongoose.Schema(
 );
 
 // exporting the collection
-module.exports = new mongoose.model("Tutor", tutorSchema);
+module.exports = mongoose.model("Tutor", tutorSchema);

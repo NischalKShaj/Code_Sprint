@@ -37,34 +37,67 @@ const tutorController = {
       }
 
       try {
-        const courseDetails = req.files;
-        console.log("courseDetails", courseDetails);
+        const files = req.files;
+        console.log("files", files);
 
         const course = req.body;
         console.log("course Data", course);
 
-        if (!courseDetails || courseDetails.length === 0) {
+        if (!files || Object.keys(files).length === 0) {
           return res
             .status(400)
             .json({ success: false, data: "No files uploaded" });
         }
 
+        const chapters = [];
+
+        // Iterate over the chapters in req.body
+        for (let i = 0; i < course.chapters.length; i++) {
+          const chapterName = course.chapters[i].chapter_name;
+          const chapterFiles = files[`chapters[${i}][files]`];
+
+          // Ensure chapterFiles exist and handle as needed
+          if (Array.isArray(chapterFiles) && chapterFiles.length > 0) {
+            const formattedVideos = chapterFiles.map((file) => file.location);
+            chapters.push({
+              chapter_name: chapterName,
+              videos: formattedVideos,
+            });
+          } else if (chapterFiles) {
+            chapters.push({
+              chapter_name: chapterName,
+              videos: [chapterFiles.location], // Single file location
+            });
+          } else {
+            return res
+              .status(400)
+              .json({
+                success: false,
+                data: `No files uploaded for chapter ${i}`,
+              });
+          }
+        }
+
+        console.log("Organized Chapters: ", chapters);
+
+        // Call your use case function to add course
         const result = await tutorUseCase.addCourses(
           course,
-          courseDetails,
+          chapters,
           userDetails
         );
         if (result.success) {
-          console.log("success", result);
-          await sendMessageToQueue({ course, courseDetails, userDetails });
-          res.status(202).json(result.data);
+          console.log("Success", result);
+          // Example of sending a message to a queue
+          await sendMessageToQueue({ course, chapters, userDetails });
+          return res.status(202).json(result.data);
         } else {
-          console.error("error", result.data);
-          res.status(400).json(result.data);
+          console.error("Error", result.data);
+          return res.status(400).json(result.data);
         }
       } catch (error) {
-        console.error("error", error);
-        res.status(500).json("internal server error");
+        console.error("Error", error);
+        return res.status(500).json("Internal server error");
       }
     });
   },
