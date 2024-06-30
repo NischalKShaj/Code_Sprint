@@ -150,7 +150,22 @@ const Course = () => {
       );
       console.log("response", response.data);
       if (response.status === 202) {
-        showCourse(response.data.courses);
+        const decryptedCourse = {
+          ...response.data.courses,
+          chapters: response.data.courses.chapters.map((chapter: Chapter) => ({
+            ...chapter,
+            videos: chapter.videos.map((video: string) => decryptVideo(video)),
+          })),
+        };
+        showCourse({
+          _id: decryptedCourse._id,
+          course_name: decryptedCourse.course_name,
+          description: decryptedCourse.description,
+          course_category: decryptedCourse.course_category,
+          chapters: decryptedCourse.chapters,
+          price: decryptedCourse.price,
+          tutor: decryptedCourse.tutor,
+        });
         router.push(`/course/${id}`);
       } else if (response.status === 500) {
         router.push("/error");
@@ -187,7 +202,7 @@ const Course = () => {
               const isCourseSubscribed = isSubscribed.some(
                 (sub) => sub.course_id === course._id
               );
-              const firstVideoUrl = course.chapters?.[0]?.videos?.[0] ?? ""; // Get the first video URL
+              const firstVideoUrl = course.chapters?.[0]?.videos?.[0] ?? "";
               return (
                 <div
                   key={course._id}

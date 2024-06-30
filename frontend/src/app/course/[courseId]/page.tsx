@@ -1,6 +1,5 @@
 "use client";
 
-// Import necessary modules
 import { CourseState } from "@/app/store/courseStore";
 import axios, { AxiosError } from "axios";
 import Link from "next/link";
@@ -13,7 +12,23 @@ import SpinnerWrapper from "@/components/partials/SpinnerWrapper";
 import { loadScript } from "@/utils/razorpay";
 import { AppState } from "@/app/store";
 import Swal from "sweetalert2";
+import crypto from "crypto";
 dotenv.config();
+
+interface Course {
+  _id: string;
+  course_name: string;
+  description: string;
+  course_category: string;
+  price: number;
+  tutor: string;
+  chapters: Chapter[];
+}
+
+interface Chapter {
+  chapterName: string;
+  videos: string[];
+}
 
 const CourseId = () => {
   const userData = AppState((state) => state.user);
@@ -33,8 +48,46 @@ const CourseId = () => {
   const subCourses = CourseState((state) => state.isSubscribed);
 
   const courseSubscribed = subCourses?.some(
-    (sub) => sub.course_id === course?.course_id
+    (sub) => sub.course_id === course?._id
   );
+
+  const [decryptedVideos, setDecryptedVideos] = useState<string[]>([]);
+
+  // function to decrypt the videos url
+  const decryptVideo = (encryptedUrl: string): string => {
+    try {
+      console.log("Decrypting video:", encryptedUrl);
+
+      const parts = encryptedUrl.split(":");
+      console.log("parts", parts.length);
+      if (parts.length !== 3) {
+        throw new Error(`Invalid encrypted URL format: ${encryptedUrl}`);
+      }
+
+      const iv = Buffer.from(parts[0], "hex");
+      const tag = Buffer.from(parts[1], "hex");
+      const ciphertext = Buffer.from(parts[2], "hex");
+      const key = Buffer.from(process.env.NEXT_PUBLIC_CIPHER_SECRETKEY!, "hex");
+
+      console.log("IV:", iv);
+      console.log("Tag:", tag);
+      console.log("Ciphertext:", ciphertext);
+      console.log("env", process.env.NEXT_PUBLIC_CIPHER_SECRETKEY);
+
+      const decipher = crypto.createDecipheriv("aes-256-gcm", key, iv);
+      decipher.setAuthTag(tag);
+
+      let decrypted = decipher.update(ciphertext, undefined, "utf8");
+      decrypted += decipher.final("utf8");
+
+      console.log("Decrypted video URL:", decrypted);
+
+      return decrypted;
+    } catch (error: any) {
+      console.error("Decryption error:", error.message);
+      throw error;
+    }
+  };
 
   useEffect(() => {
     setIsLoading(false);
@@ -43,9 +96,7 @@ const CourseId = () => {
         const token = localStorage.getItem("access_token");
         const response = await axios.post(
           `${process.env.NEXT_PUBLIC_BASE_URL}/courses/${id}`,
-          {
-            id: userData?.id,
-          },
+          { id: userData?.id },
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -55,22 +106,23 @@ const CourseId = () => {
         );
         console.log("response", response.data);
         if (response.status === 202) {
-          const transformedVideos = response.data.courses.videos.map(
-            (video: string) => ({
-              url: video.slice(0, -1), // Remove the last character from the URL
-            })
+          const decryptedCourse = {
+            ...response.data.courses,
+            chapters: response.data.courses.chapters.map(
+              (chapter: Chapter) => ({
+                ...chapter,
+                videos: chapter.videos.map((video: string) =>
+                  decryptVideo(video)
+                ),
+              })
+            ),
+          };
+          showCourse(decryptedCourse);
+          setDecryptedVideos(
+            decryptedCourse.chapters.flatMap(
+              (chapter: Chapter) => chapter.videos
+            )
           );
-
-          showCourse({
-            course_name: response.data.courses.course_name,
-            course_category: response.data.courses.course_category,
-            description: response.data.courses.description,
-            number_of_tutorials: response.data.courses.number_of_videos,
-            videos: transformedVideos,
-            course_id: response.data.courses._id,
-            tutor_id: response.data.courses.tutor,
-            price: response.data.courses.price,
-          });
 
           if (response.data.subCourse) {
             const subscribedCourse = {
@@ -102,9 +154,8 @@ const CourseId = () => {
     }
   }, [courseId, router, showCourse, userData?.id, userData?.username]);
 
-  // to handle the course completion status
-  const handleCheckboxChange = (video: { url: string }) => {
-    toggleVideoCompletion(courseId, video.url);
+  const handleCheckboxChange = (videoUrl: string) => {
+    toggleVideoCompletion(courseId, videoUrl);
   };
 
   const { completedVideos } = CourseState();
@@ -113,26 +164,31 @@ const CourseId = () => {
       ? completedVideos[courseId]
       : {};
   const completedCount = Object.values(courseCompletion).filter(Boolean).length;
-  const totalTutorials = course?.videos.length || 0;
+  const totalTutorials = decryptedVideos.length;
   const completionPercentage = Math.round(
     (completedCount / totalTutorials) * 100
   );
 
-  // to handle the pagination
   const handlePageChange = (pageNumber: number) => {
     setCurrentPage(pageNumber);
   };
 
   const indexOfLastVideo = currentPage * videosPerPage;
   const indexOfFirstVideo = indexOfLastVideo - videosPerPage;
-  const currentVideos =
-    course?.videos.slice(indexOfFirstVideo, indexOfLastVideo) ?? [];
+  const currentVideos = decryptedVideos.slice(
+    indexOfFirstVideo,
+    indexOfLastVideo
+  );
 
   const renderPagination = () => {
-    if (!course || !course.videos) return null;
+    if (!decryptedVideos.length) return null;
 
     const pageNumbers = [];
-    for (let i = 1; i <= Math.ceil(course.videos.length / videosPerPage); i++) {
+    for (
+      let i = 1;
+      i <= Math.ceil(decryptedVideos.length / videosPerPage);
+      i++
+    ) {
       pageNumbers.push(i);
     }
 
@@ -159,7 +215,6 @@ const CourseId = () => {
     return <div>Loading...</div>;
   }
 
-  // function to initiate the online payment
   const handleSubscribe = async () => {
     try {
       const scriptLoaded = await loadScript(
@@ -173,7 +228,7 @@ const CourseId = () => {
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/razorpay`,
         {
           user: userData?.id,
-          course: course?.course_id,
+          course: course?._id,
           amount: course?.price,
         }
       );
@@ -181,30 +236,25 @@ const CourseId = () => {
 
       const options = {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID!,
-        amount: parseInt(course?.price || "0", 10) * 100,
+        amount: (course?.price ?? 0) * 100,
         currency,
         name: course?.course_name,
         order_id,
         handler: async function (response: any) {
-          // to update the subscription
           try {
-            const response = await axios.post(
+            const res = await axios.post(
               `${process.env.NEXT_PUBLIC_BASE_URL}/api/payment-success`,
-              { user: userData?.id, course: course?.course_id }
+              { user: userData?.id, course: course?._id }
             );
-            console.log("response", response.data);
-            if (response.status === 202) {
+            if (res.status === 202) {
               Swal.fire({
                 title: "Payment Success!",
                 text: "Thank you for subscribing! Get ready to dive into the course and unlock your potential!",
                 icon: "success",
                 confirmButtonText: "OK",
               });
-              // the value is not correctly updated in the state check
-              // try mapping the array course
-              const courseDetails = response.data.courses;
-              console.log("course Details", courseDetails);
-              // let subScribedCourse;
+
+              const courseDetails = res.data.courses;
               if (courseDetails && courseDetails.length > 0) {
                 const subscribedCourses = courseDetails.map(
                   (courseDetail: { tutorId: any; courseId: any }) => ({
@@ -219,11 +269,6 @@ const CourseId = () => {
                 );
 
                 subscribe(subscribedCourses);
-                console.log("Subscribed Courses:", subscribedCourses);
-              } else {
-                console.error(
-                  "Course details are not available in the response"
-                );
               }
             } else {
               Swal.fire({
@@ -240,201 +285,129 @@ const CourseId = () => {
               icon: "warning",
               confirmButtonText: "OK",
             });
-            console.error("error", error);
           }
         },
         prefill: {
           name: userData?.username,
           email: userData?.email,
+          contact: userData?.phone,
+        },
+        notes: {
+          address: "1234 Main Street",
         },
         theme: {
-          color: "#3399cc",
+          color: "#1a202c",
         },
       };
 
-      const rzp = new (window as any).Razorpay(options);
-      rzp.open();
-    } catch (error: AxiosError | any) {
-      console.error("Error initiating payment: ", error);
+      const paymentObject = new (window as any).Razorpay(options);
+      paymentObject.open();
+    } catch (error) {
+      console.error(error);
     }
   };
 
-  // function to handle unsubscribing
   const handleUnsubscribe = async () => {
-    const result = await Swal.fire({
-      position: "center",
-      icon: "warning",
-      text: "Amount will not be refunded if unsubscribed",
-      showConfirmButton: true,
-      showCancelButton: true,
-      confirmButtonText: "Yes, Unsubscribe",
-      cancelButtonText: "Cancel",
-    });
-
-    if (result.isConfirmed) {
-      try {
-        const token = localStorage.getItem("access_token");
-        const response = await axios.post(
-          `${process.env.NEXT_PUBLIC_BASE_URL}/course/unsubscribe/${id}`,
-          {
-            id: userData?.id,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-            withCredentials: true,
-          }
-        );
-
-        if (response.status === 202) {
-          Swal.fire({
-            title: "Unsubscribed!",
-            text: "You have been unsubscribed from the course.",
-            icon: "success",
-            confirmButtonText: "OK",
-          });
-
-          // Update state to reflect un-subscription
-          unsubscribe(course?.course_id);
-
-          // Remove from local storage
-          const courseStates = localStorage.getItem("courseState");
-          if (courseStates) {
-            const parsedState = JSON.parse(courseStates);
-
-            delete parsedState.isSubscribed;
-            const updatedCourse = JSON.stringify(parsedState);
-            localStorage.setItem("courseState", updatedCourse);
-          }
-        } else {
-          Swal.fire({
-            title: "Unsubscription Failed!",
-            text: "An error occurred while unsubscribing.",
-            icon: "error",
-            confirmButtonText: "OK",
-          });
+    try {
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/unsubscribe`,
+        {
+          user_id: userData?.id,
+          course_id: course?._id,
         }
-      } catch (error) {
+      );
+
+      if (response.status === 200) {
+        Swal.fire({
+          title: "Unsubscribed!",
+          text: "You have successfully unsubscribed from the course.",
+          icon: "success",
+          confirmButtonText: "OK",
+        });
+
+        unsubscribe(course?._id);
+      } else {
         Swal.fire({
           title: "Unsubscription Failed!",
-          text: "An error occurred while unsubscribing.",
+          text: "There was an error while trying to unsubscribe.",
           icon: "error",
           confirmButtonText: "OK",
         });
-        console.error("Error unsubscribing: ", error);
       }
+    } catch (error) {
+      console.error("Error while unsubscribing:", error);
     }
   };
 
-  function getVideoName(url: string) {
-    const parts = url.split("/");
-    const fileName = parts[parts.length - 1];
-    const nameWithoutExtension = fileName.split(".")[0];
-    return nameWithoutExtension;
-  }
-
   return (
-    <div>
-      <SpinnerWrapper>
-        <>
-          {course && (
-            <>
-              <div className="course-details flex flex-col justify-start text-end bg-gradient-to-r from-purple-500 to-indigo-500 py-4 px-8">
-                <Link className="text-left flex" href="/course">
-                  Back to courses
-                </Link>
-                <div className="mr-[300px] text-left ml-[1000px] mt-[100px] mb-5 p-3 bg-gradient-to-r from-purple-500 to-indigo-500 shadow-lg rounded-lg">
-                  {course.description}
-                  {!courseSubscribed && !userData?.premium && (
-                    <>
-                      <button
-                        className="bg-[#2a31f8] mt-5 text-white font-bold py-2 px-4 rounded-xl"
-                        onClick={handleSubscribe}
-                      >
-                        Subscribe
-                      </button>
-                      <p>Price: &#8377; {course.price}</p>
-                    </>
-                  )}
-                  {courseSubscribed && !userData?.premium && (
-                    <button
-                      className="bg-[#f82a2a] mt-5 text-white font-bold py-2 px-4 rounded-xl"
-                      onClick={handleUnsubscribe}
-                    >
-                      Unsubscribe
-                    </button>
-                  )}
-                </div>
-              </div>
-              <div className="flex">
-                <section className="bg-[#D9D9D9] p-8 ml-[200px] mt-5 mb-5 w-[650px] rounded-lg shadow-lg">
-                  <h1 className="text-center text-3xl font-semibold">
-                    {course.course_name}
-                  </h1>
-                  {courseSubscribed || userData?.premium ? (
-                    <div className="flex flex-col mt-[30px] grid-cols-2 gap-4">
-                      {currentVideos?.map(
-                        (video: { url: string }, index: number) => (
-                          <div className="flex relative" key={index}>
-                            <p className="video-name absolute top-0 left-[50px] bg-black bg-opacity-50 text-white px-2 py-1 rounded">
-                              {getVideoName(video.url)}
-                            </p>
-                            <video
-                              src={video.url}
-                              className="rounded-lg ml-9"
-                              width="300"
-                              height="200"
-                              controls
-                            />
-                            <div className="ml-5">
-                              <input
-                                type="checkbox"
-                                className="ml-14 mt-[80px] w-6 h-6"
-                                checked={!!courseCompletion[video.url]}
-                                onChange={() => handleCheckboxChange(video)}
-                              />
-                            </div>
-                          </div>
-                        )
-                      )}
-                      {renderPagination()}
-                    </div>
-                  ) : (
-                    <p>subscribe to watch the videos</p>
-                  )}
-                </section>
+    <div className="min-h-screen bg-gray-100 p-6">
+      <div className="bg-white rounded-lg shadow-lg p-6">
+        <Link href="/">
+          <span className="text-blue-500 hover:text-blue-700">&larr; Back</span>
+        </Link>
+        {course ? (
+          <>
+            <h1 className="text-3xl font-bold mb-4">{course.course_name}</h1>
+            <p className="mb-4">{course.description}</p>
+            <p className="mb-4">Category: {course.course_category}</p>
+            <p className="mb-4">Price: ${course.price}</p>
+            <p className="mb-4">Tutor: {course.tutor}</p>
+            <div className="my-6">
+              <CircularProgressbar
+                value={completionPercentage}
+                text={`${completionPercentage}%`}
+                styles={buildStyles({
+                  textColor: "#4a5568",
+                  pathColor: "#4a5568",
+                  trailColor: "#e2e8f0",
+                })}
+              />
+            </div>
 
-                <section className="bg-[#D9D9D9] p-8 ml-[300px] mt-5 mb-5 w-[500px] h-[300px] rounded-lg shadow-lg">
-                  <h1 className="text-left text-xl font-semibold">
-                    Course Completion Status
-                  </h1>
-                  <div className="mt-[60px] space-y-6 flex items-center">
-                    <div>
-                      <h3>Total Tutorials: {totalTutorials}</h3>
-                      <h3>Completed: {completedCount}</h3>
-                    </div>
-                    <div className="ml-4">
-                      <div className="w-[100px] h-[100px] ml-[100px]">
-                        <CircularProgressbar
-                          value={completionPercentage}
-                          text={`${completionPercentage}%`}
-                          styles={buildStyles({
-                            textSize: "16px",
-                            pathColor: "#4CAF50",
-                            textColor: "#000",
-                            trailColor: "#A5D6A7",
-                          })}
-                        />
-                      </div>
+            {!courseSubscribed ? (
+              <button
+                onClick={handleSubscribe}
+                className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+              >
+                Subscribe
+              </button>
+            ) : (
+              <button
+                onClick={handleUnsubscribe}
+                className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition"
+              >
+                Unsubscribe
+              </button>
+            )}
+
+            {currentVideos.length > 0 ? (
+              <div className="mt-6">
+                {currentVideos.map((videoUrl, index) => (
+                  <div key={index} className="mb-6">
+                    <video controls src={videoUrl} className="w-full h-auto" />
+                    <div className="flex items-center mt-2">
+                      <input
+                        type="checkbox"
+                        checked={courseCompletion[videoUrl] || false}
+                        onChange={() => handleCheckboxChange(videoUrl)}
+                        className="mr-2"
+                      />
+                      <label>{`Video ${
+                        index + 1 + (currentPage - 1) * videosPerPage
+                      }`}</label>
                     </div>
                   </div>
-                </section>
+                ))}
+                {renderPagination()}
               </div>
-            </>
-          )}
-        </>
-      </SpinnerWrapper>
+            ) : (
+              <div>No videos found for this course.</div>
+            )}
+          </>
+        ) : (
+          <div>Course not found.</div>
+        )}
+      </div>
     </div>
   );
 };
