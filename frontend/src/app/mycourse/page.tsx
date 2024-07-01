@@ -2,7 +2,7 @@
 
 // Importing the required modules
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { AppState } from "../store";
 import axios from "axios";
 import dotenv from "dotenv";
@@ -40,6 +40,13 @@ const MyCourse: React.FC = () => {
   const [courses, setCourses] = useState<Course[]>([]);
   const [flattenedVideos, setFlattenedVideos] = useState<FlattenedVideo[]>([]);
   const tutorId = AppState((state) => state.user?.id);
+  const isAuthorized = AppState((state) => state.isAuthorized);
+
+  useLayoutEffect(() => {
+    if (!isAuthorized) {
+      router.push("/login");
+    }
+  });
 
   useEffect(() => {
     const fetchData = async () => {

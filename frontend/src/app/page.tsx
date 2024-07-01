@@ -28,14 +28,12 @@ const Home = () => {
         premium: session.users.premium,
         phone: null,
       });
-    } else if (status === "unauthenticated") {
-      localStorage.removeItem("access_token");
     }
     setTimeout(() => {
       isLoggedOut();
       localStorage.removeItem("access_token");
     }, 4000000);
-  }, [status, session, isLoggedOut]);
+  }, [status, session, isLoggedOut, isLoggedIn]);
 
   return (
     <div>

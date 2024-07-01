@@ -4,11 +4,12 @@
 import AdminSidePanel from "@/components/partials/AdminSidePanel";
 import SpinnerWrapper from "@/components/partials/SpinnerWrapper";
 import { isValid } from "@/utils/validation";
-import React, { ChangeEventHandler, useState } from "react";
+import React, { ChangeEventHandler, useLayoutEffect, useState } from "react";
 import dotenv from "dotenv";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
+import { AppState } from "@/app/store";
 dotenv.config();
 
 type Errors = { [key: string]: string };
@@ -23,6 +24,13 @@ const AddCategory = () => {
   const [errors, setErrors] = useState<Errors>({});
   const [message, setMessage] = useState("");
   const router = useRouter();
+  const isAdmin = AppState((state) => state.isAdmin);
+
+  useLayoutEffect(() => {
+    if (!isAdmin) {
+      router.push("/admin");
+    }
+  });
 
   // Function to handle change
   const handleChange: ChangeEventHandler<HTMLInputElement> = (e) => {

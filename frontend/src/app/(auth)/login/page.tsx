@@ -49,6 +49,7 @@ const Login = () => {
       if (response.status === 202) {
         console.log("role", role);
         localStorage.setItem("access_token", token);
+        console.log("token", token);
         Swal.fire({
           position: "center",
           icon: "success",

@@ -4,11 +4,12 @@
 // importing the required modules
 import axios from "axios";
 import { useParams, useRouter } from "next/navigation";
-import React, { FormEvent, useEffect, useState } from "react";
+import React, { FormEvent, useEffect, useLayoutEffect, useState } from "react";
 import dotenv from "dotenv";
 import SpinnerWrapper from "@/components/partials/SpinnerWrapper";
 import AdminSidePanel from "@/components/partials/AdminSidePanel";
 import Swal from "sweetalert2";
+import { AppState } from "@/app/store";
 dotenv.config();
 
 interface Banner {
@@ -24,6 +25,13 @@ const EditBanner = () => {
   const { editBanner } = useParams() as { editBanner: string };
   const router = useRouter();
   const id = editBanner;
+  const isAdmin = AppState((state) => state.isAdmin);
+
+  useLayoutEffect(() => {
+    if (!isAdmin) {
+      router.push("/admin");
+    }
+  });
 
   // use effect for fetching the data of the particular banner
   useEffect(() => {

@@ -2,7 +2,7 @@
 
 // Import all the required modules
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import dotenv from "dotenv";
 import { useRouter } from "next/navigation";
 import { CourseState } from "../store/courseStore";
@@ -44,6 +44,13 @@ const Course = () => {
   const [courses, setCourses] = useState<Course[]>([]);
   const router = useRouter();
   const isSubscribed = CourseState((state) => state.isSubscribed);
+  const isAuthorized = AppState((state) => state.isAuthorized);
+
+  useLayoutEffect(() => {
+    if (!isAuthorized) {
+      router.push("/login");
+    }
+  });
 
   useEffect(() => {
     const fetchData = async () => {

@@ -2,7 +2,7 @@
 "use client";
 
 // importing the required modules
-import { useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import axios from "axios";
@@ -10,12 +10,14 @@ import Swal from "sweetalert2";
 import { AppState } from "@/app/store";
 import UserSideBar from "@/components/partials/UserSideBar";
 import dotenv from "dotenv";
+import SpinnerWrapper from "@/components/partials/SpinnerWrapper";
 dotenv.config();
 
 const StudentId = () => {
   const router = useRouter();
   const user = AppState((state) => state.user);
   const isLoggedIn = AppState((state) => state.isLoggedIn);
+  const isAuthenticated = AppState((state) => state.isAuthorized);
   const id = user?.id;
 
   // Initialize form state
@@ -27,6 +29,12 @@ const StudentId = () => {
     profileImage: user?.profileImage || "", // URL for preview
   });
   const [file, setFile] = useState<File | null>(null); // Actual File object
+
+  useLayoutEffect(() => {
+    if (!isAuthenticated) {
+      router.push("/login");
+    }
+  });
 
   // Handle file input change
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -110,70 +118,72 @@ const StudentId = () => {
 
   return (
     <div>
-      <UserSideBar />
-      <div className="flex flex-col items-center mb-24 bg-white mt-16">
-        <section className="bg-[#D9D9D9] p-8 rounded-lg shadow-md">
-          <form onSubmit={handleUpdate}>
-            <div className="flex justify-center">
-              <Image
-                className="w-24 h-24 rounded-full ring-4 dark:ring-gray-800 mt-[10px]"
-                width={100}
-                height={100}
-                src={formData.profileImage || ""}
-                alt="profile image"
-              />
-            </div>
-            <input
-              type="file"
-              id="profileImage"
-              name="profileImage"
-              onChange={handleFileChange}
-              className="p-4 bg-gray-50 border border-gray-300 rounded-lg w-full mt-3"
-              accept="image/*"
-            />
-            <input
-              type="text"
-              id="username"
-              name="username"
-              value={formData.username}
-              onChange={handleChange}
-              placeholder="Username"
-              className="p-4 bg-gray-50 border border-gray-300 rounded-lg w-full mt-3"
-            />
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              placeholder="Email"
-              className="p-4 bg-gray-50 border border-gray-300 rounded-lg w-full mt-3"
-            />
-            <div className="border border-gray-300 bg-gray-50 rounded-lg p-4 w-full mt-3">
-              <div className="flex items-center mb-4">
-                <span className="mr-2">Role:</span>
-                <span className="font-normal">
-                  {formData.role.charAt(0).toUpperCase() +
-                    formData.role.slice(1)}
-                </span>
+      <SpinnerWrapper>
+        <UserSideBar />
+        <div className="flex flex-col items-center mb-24 bg-white mt-16">
+          <section className="bg-[#D9D9D9] p-8 rounded-lg shadow-md">
+            <form onSubmit={handleUpdate}>
+              <div className="flex justify-center">
+                <Image
+                  className="w-24 h-24 rounded-full ring-4 dark:ring-gray-800 mt-[10px]"
+                  width={100}
+                  height={100}
+                  src={formData.profileImage || ""}
+                  alt="profile image"
+                />
               </div>
-            </div>
-            <input
-              type="text"
-              id="phone"
-              name="phone"
-              placeholder="Phone"
-              value={formData.phone}
-              onChange={handleChange}
-              required
-              className="p-4 bg-gray-50 border border-gray-300 rounded-lg w-full mt-3"
-            />
-            <button className="bg-[#686DE0] text-white font-bold py-2 px-4 rounded-xl w-full mt-7">
-              Update
-            </button>
-          </form>
-        </section>
-      </div>
+              <input
+                type="file"
+                id="profileImage"
+                name="profileImage"
+                onChange={handleFileChange}
+                className="p-4 bg-gray-50 border border-gray-300 rounded-lg w-full mt-3"
+                accept="image/*"
+              />
+              <input
+                type="text"
+                id="username"
+                name="username"
+                value={formData.username}
+                onChange={handleChange}
+                placeholder="Username"
+                className="p-4 bg-gray-50 border border-gray-300 rounded-lg w-full mt-3"
+              />
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="Email"
+                className="p-4 bg-gray-50 border border-gray-300 rounded-lg w-full mt-3"
+              />
+              <div className="border border-gray-300 bg-gray-50 rounded-lg p-4 w-full mt-3">
+                <div className="flex items-center mb-4">
+                  <span className="mr-2">Role:</span>
+                  <span className="font-normal">
+                    {formData.role.charAt(0).toUpperCase() +
+                      formData.role.slice(1)}
+                  </span>
+                </div>
+              </div>
+              <input
+                type="text"
+                id="phone"
+                name="phone"
+                placeholder="Phone"
+                value={formData.phone}
+                onChange={handleChange}
+                required
+                className="p-4 bg-gray-50 border border-gray-300 rounded-lg w-full mt-3"
+              />
+              <button className="bg-[#686DE0] text-white font-bold py-2 px-4 rounded-xl w-full mt-7">
+                Update
+              </button>
+            </form>
+          </section>
+        </div>
+      </SpinnerWrapper>
     </div>
   );
 };

@@ -5,10 +5,11 @@
 import AdminSidePanel from "@/components/partials/AdminSidePanel";
 import SpinnerWrapper from "@/components/partials/SpinnerWrapper";
 import axios from "axios";
-import React, { useState, ChangeEvent } from "react";
+import React, { useState, ChangeEvent, useLayoutEffect } from "react";
 import dotenv from "dotenv";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
+import { AppState } from "@/app/store";
 dotenv.config();
 
 const AddBanner: React.FC = () => {
@@ -22,6 +23,13 @@ const AddBanner: React.FC = () => {
     banner: null,
   });
   const router = useRouter();
+  const isAdmin = AppState((state) => state.isAdmin);
+
+  useLayoutEffect(() => {
+    if (!isAdmin) {
+      router.push("/admin");
+    }
+  });
 
   // image change
   const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {

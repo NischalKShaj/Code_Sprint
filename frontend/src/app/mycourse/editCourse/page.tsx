@@ -1,7 +1,13 @@
 "use client";
 
 // Importing required modules
-import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
+import React, {
+  useState,
+  useEffect,
+  ChangeEvent,
+  FormEvent,
+  useLayoutEffect,
+} from "react";
 import TutorSideBar from "@/components/partials/TutorSideBar";
 import axios from "axios";
 import Swal from "sweetalert2";
@@ -29,10 +35,17 @@ interface Course {
 }
 
 const EditCoursePage = () => {
+  const isAuthorized = AppState((state) => state.isAuthorized);
   const myCourse = CourseState((state) => state.myCourse);
   const router = useRouter();
   const user = AppState((state) => state.user);
   const id = user?.id;
+
+  useLayoutEffect(() => {
+    if (!isAuthorized) {
+      router.push("/login");
+    }
+  });
 
   // Initialize form state using myCourse data or defaults
   const [formData, setFormData] = useState<Course>({

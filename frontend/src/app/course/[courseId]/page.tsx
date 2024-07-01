@@ -4,7 +4,7 @@ import { CourseState } from "@/app/store/courseStore";
 import axios, { AxiosError } from "axios";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import dotenv from "dotenv";
@@ -52,6 +52,14 @@ const CourseId = () => {
   );
 
   const [decryptedVideos, setDecryptedVideos] = useState<string[]>([]);
+
+  const isAuthorized = AppState((state) => state.isAuthorized);
+
+  useLayoutEffect(() => {
+    if (isAuthorized) {
+      router.push("/login");
+    }
+  });
 
   // function to decrypt the videos url
   const decryptVideo = (encryptedUrl: string): string => {

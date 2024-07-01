@@ -1,7 +1,7 @@
 "use client";
 
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import dotenv from "dotenv";
 import { AppState } from "../../store";
 import { useRouter } from "next/navigation";
@@ -22,6 +22,13 @@ interface Chapter {
 const AddCourse = () => {
   const email = AppState((state) => state.user?.email);
   const router = useRouter();
+  const isAuthorized = AppState((state) => state.isAuthorized);
+
+  useLayoutEffect(() => {
+    if (!isAuthorized) {
+      router.push("/login");
+    }
+  });
 
   const [form, setForm] = useState({
     course_name: "",

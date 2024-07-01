@@ -9,7 +9,7 @@ import TutorSideBar from "@/components/partials/TutorSideBar";
 import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 
 // interface for the subscriber
 interface Subscriber {
@@ -23,6 +23,13 @@ const TutorProfilePage = () => {
   const user = AppState((state) => state.user);
   const router = useRouter();
   const [totalSub, setTotalSub] = useState<Subscriber[]>([]);
+  const isAuthorized = AppState((state) => state.isAuthorized);
+
+  useLayoutEffect(() => {
+    if (!isAuthorized) {
+      router.push("/login");
+    }
+  });
 
   useEffect(() => {
     setIsLoading(false);

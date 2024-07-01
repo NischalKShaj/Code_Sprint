@@ -2,7 +2,7 @@
 
 // Import necessary modules
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import dotenv from "dotenv";
 import UserSideBar from "@/components/partials/UserSideBar";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
@@ -34,6 +34,7 @@ const Profile = () => {
   const subscribe = CourseState((state) => state.subscribe);
   const [currentPage, setCurrentPage] = useState(1);
   const coursesPerPage = 1;
+  const isAuthenticated = AppState((state) => state.isAuthorized);
 
   // static value for the problems submissions
   const easy = 4;
@@ -42,11 +43,18 @@ const Profile = () => {
   const totalQuestion = 30;
   const totalQuestionProgress = ((easy + medium + hard) / totalQuestion) * 100;
 
+  useLayoutEffect(() => {
+    if (!isAuthenticated) {
+      router.push("/login");
+    }
+  });
+
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
       const id = user?.id;
       const token = localStorage.getItem("access_token");
+      console.log("token", token);
 
       if (!id || !token) {
         router.push("/login");

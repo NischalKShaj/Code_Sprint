@@ -1,11 +1,12 @@
 "use client";
 
 // importing all the required files
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { AppState } from "@/app/store";
 import dynamic from "next/dynamic";
 import axios from "axios";
 import SpinnerWrapper from "@/components/partials/SpinnerWrapper";
+import { useRouter } from "next/navigation";
 const AdminSidePanel = dynamic(
   () => import("@/components/partials/AdminSidePanel"),
   { ssr: false }
@@ -16,10 +17,18 @@ const UserPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const usersPerPage = 5;
   const allUser = AppState((state) => state.allUser);
+  const isAdmin = AppState((state) => state.isAdmin);
+  const router = useRouter();
 
   useEffect(() => {
     setIsLoading(false);
   }, []);
+
+  useLayoutEffect(() => {
+    if (!isAdmin) {
+      router.push("/admin");
+    }
+  });
 
   const handleBlock = async (id: any) => {
     try {

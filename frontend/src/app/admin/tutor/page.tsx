@@ -6,18 +6,27 @@ import AdminSidePanel from "@/components/partials/AdminSidePanel";
 import SpinnerWrapper from "@/components/partials/SpinnerWrapper";
 import axios from "axios";
 import dotenv from "dotenv";
+import { useRouter } from "next/navigation";
 dotenv.config();
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 
 const TutorPage = () => {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const tutorsPerPage = 5;
   const allTutors = AppState((state) => state.allTutor);
+  const isAdmin = AppState((state) => state.isAdmin);
+  const router = useRouter();
 
   useEffect(() => {
     setLoading(false);
   }, []);
+
+  useLayoutEffect(() => {
+    if (!isAdmin) {
+      router.push("/admin");
+    }
+  });
 
   if (loading) {
     return <div>Loading...</div>;

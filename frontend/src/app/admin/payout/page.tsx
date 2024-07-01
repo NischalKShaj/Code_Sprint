@@ -8,7 +8,8 @@ import Swal from "sweetalert2";
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import axios from "axios";
 import dotenv from "dotenv";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 dotenv.config();
 
 // Interface for payout
@@ -26,6 +27,14 @@ const PayoutPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [currentPayment, setCurrentPayment] = useState<Payment | null>(null);
   const payoutsPerPage = 5;
+  const router = useRouter();
+  const isAdmin = AppState((state) => state.isAdmin);
+
+  useLayoutEffect(() => {
+    if (!isAdmin) {
+      router.push("/admin");
+    }
+  });
 
   // Fetching the data from the database
   useEffect(() => {

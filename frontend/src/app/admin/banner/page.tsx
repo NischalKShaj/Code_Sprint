@@ -4,10 +4,11 @@
 import AdminSidePanel from "@/components/partials/AdminSidePanel";
 import SpinnerWrapper from "@/components/partials/SpinnerWrapper";
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import dotenv from "dotenv";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { AppState } from "@/app/store";
 dotenv.config();
 
 interface Banner {
@@ -23,6 +24,13 @@ const Banner = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const router = useRouter();
   const bannersPerPage = 5;
+  const isAdmin = AppState((state) => state.isAdmin);
+
+  useLayoutEffect(() => {
+    if (!isAdmin) {
+      router.push("/admin");
+    }
+  });
 
   useEffect(() => {
     const fetchData = async () => {

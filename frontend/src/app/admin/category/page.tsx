@@ -4,9 +4,10 @@
 import AdminSidePanel from "@/components/partials/AdminSidePanel";
 import SpinnerWrapper from "@/components/partials/SpinnerWrapper";
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import dotenv from "dotenv";
 import { useRouter } from "next/navigation";
+import { AppState } from "@/app/store";
 dotenv.config();
 
 interface Category {
@@ -20,6 +21,13 @@ const Category = () => {
   const categoriesPerPage = 5;
   const [categories, setCategories] = useState<Category[]>([]);
   const router = useRouter();
+  const isAdmin = AppState((state) => state.isAdmin);
+
+  useLayoutEffect(() => {
+    if (!isAdmin) {
+      router.push("/admin");
+    }
+  });
 
   useEffect(() => {
     const fetchData = async () => {

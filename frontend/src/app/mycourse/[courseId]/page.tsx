@@ -3,13 +3,14 @@
 // importing the required modules
 import axios from "axios";
 import { useParams } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import dotenv from "dotenv";
 import SpinnerWrapper from "@/components/partials/SpinnerWrapper";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { CourseState } from "@/app/store/courseStore";
 import crypto from "crypto";
+import { AppState } from "@/app/store";
 dotenv.config();
 
 interface Course {
@@ -34,6 +35,13 @@ const CourseView = () => {
   const [loading, setLoading] = useState(true);
   const [currentChapter, setCurrentChapter] = useState(0);
   const router = useRouter();
+  const isAuthorized = AppState((state) => state.isAuthorized);
+
+  useLayoutEffect(() => {
+    if (!isAuthorized) {
+      router.push("/login");
+    }
+  });
 
   useEffect(() => {
     const token = localStorage.getItem("access_token");
