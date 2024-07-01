@@ -4,18 +4,24 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import dotenv from "dotenv";
-import { AppState } from "../../store";
-import { useRouter } from "next/navigation";
 import UserSideBar from "@/components/partials/UserSideBar";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
+import crypto from "crypto";
 import { CourseState } from "@/app/store/courseStore";
 import Link from "next/link";
 import SpinnerWrapper from "@/components/partials/SpinnerWrapper";
+import { AppState } from "@/app/store";
+import { useRouter } from "next/navigation";
 dotenv.config();
 
 interface Video {
   course_id: string;
+  chapter: Chapter[];
+}
+
+interface Chapter {
+  chapterName: string;
   videos: string[];
 }
 
@@ -37,11 +43,16 @@ const Profile = () => {
   const totalQuestionProgress = ((easy + medium + hard) / totalQuestion) * 100;
 
   useEffect(() => {
-    setIsLoading(false);
-    const id = user?.id;
-    const token = localStorage.getItem("access_token");
-
     const fetchData = async () => {
+      setIsLoading(true);
+      const id = user?.id;
+      const token = localStorage.getItem("access_token");
+
+      if (!id || !token) {
+        router.push("/login");
+        return;
+      }
+
       try {
         const response = await axios.get(
           `${process.env.NEXT_PUBLIC_BASE_URL}/profile/user/${id}`,
@@ -54,7 +65,7 @@ const Profile = () => {
         );
 
         if (response.status === 202) {
-          const subscribed = response.data.subscribed;
+          const subscribed = response.data.subscribed || [];
 
           const formattedSubscribedCourses = subscribed.map((course: any) => ({
             user_id: user?.id,
@@ -70,7 +81,12 @@ const Profile = () => {
 
           const formattedSubscribedVideos = subscribed.map((course: any) => ({
             course_id: course._id,
-            videos: Array.isArray(course.videos) ? course.videos : [],
+            chapter: course.chapters.map((chapter: any) => ({
+              chapterName: chapter.chapterName,
+              videos: chapter.videos.map((video: string) =>
+                decryptVideo(video)
+              ),
+            })),
           }));
 
           setSubscribedVideos(formattedSubscribedVideos);
@@ -78,25 +94,48 @@ const Profile = () => {
           router.push("/login");
         }
       } catch (error) {
-        if (!id) {
-          router.push("/login");
-        } else {
-          console.error("Error fetching data:", error);
-          router.push("/error");
-        }
+        console.error("Error fetching data:", error);
+        router.push("/error");
+      } finally {
+        setIsLoading(false);
       }
     };
 
     fetchData();
   }, [router, user?.id, subscribe]);
 
+  const decryptVideo = (encryptedUrl: string): string => {
+    try {
+      const parts = encryptedUrl.split(":");
+      if (parts.length !== 3) {
+        throw new Error(`Invalid encrypted URL format: ${encryptedUrl}`);
+      }
+
+      const iv = Buffer.from(parts[0], "hex");
+      const tag = Buffer.from(parts[1], "hex");
+      const ciphertext = Buffer.from(parts[2], "hex");
+      const key = Buffer.from(process.env.NEXT_PUBLIC_CIPHER_SECRETKEY!, "hex");
+
+      const decipher = crypto.createDecipheriv("aes-256-gcm", key, iv);
+      decipher.setAuthTag(tag);
+
+      let decrypted = decipher.update(ciphertext, undefined, "utf8");
+      decrypted += decipher.final("utf8");
+
+      return decrypted;
+    } catch (error: any) {
+      console.error("Decryption error:", error.message);
+      throw error;
+    }
+  };
+
+  const handlePagination = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
-
-  const handlePageChange = (pageNumber: number) => {
-    setCurrentPage(pageNumber);
-  };
 
   // Calculate index of videos to display based on current page
   const indexOfLastCourse = currentPage * coursesPerPage;
@@ -105,9 +144,7 @@ const Profile = () => {
     indexOfFirstCourse,
     indexOfLastCourse
   );
-  const handlePagination = (pageNumber: number) => {
-    setCurrentPage(pageNumber);
-  };
+
   return (
     <div>
       <SpinnerWrapper>
@@ -156,12 +193,33 @@ const Profile = () => {
             ) : (
               <>
                 {currentCourses.map((course) => {
-                  const courseVideos =
-                    subscribedVideos.find(
-                      (videoObj) => videoObj.course_id === course.course_id
-                    )?.videos || [];
+                  const foundCourse = subscribedVideos.find(
+                    (videoObj) => videoObj.course_id === course.course_id
+                  );
+
+                  if (
+                    !foundCourse ||
+                    !foundCourse.chapter ||
+                    foundCourse.chapter.length === 0
+                  ) {
+                    return (
+                      <div
+                        key={course.course_id}
+                        className="space-y-6 flex items-center"
+                      >
+                        <div className="flex flex-col mt-8">
+                          <h3>Course name: {course.course_name}</h3>
+                          <p>No videos available</p>
+                        </div>
+                      </div>
+                    );
+                  }
+
+                  const firstChapter = foundCourse.chapter[0];
                   const firstVideo =
-                    courseVideos.length > 0 ? courseVideos[0] : null;
+                    firstChapter && firstChapter.videos.length > 0
+                      ? firstChapter.videos[0]
+                      : null;
 
                   return (
                     <div
@@ -175,7 +233,6 @@ const Profile = () => {
                             className="rounded-lg ml-0"
                             width="300"
                             height="200"
-                            controls
                           >
                             <source src={firstVideo} type="video/webm" />
                             Your browser does not support the video tag.
@@ -194,32 +251,30 @@ const Profile = () => {
                     </div>
                   );
                 })}
-
-                {/* Pagination Controls */}
-                <div className="mt-4 flex justify-center">
-                  {Array.from(
-                    {
-                      length: Math.ceil(
-                        subscribedCourse.length / coursesPerPage
-                      ),
-                    },
-                    (_, index) => (
-                      <button
-                        key={index}
-                        onClick={() => handlePagination(index + 1)}
-                        className={`mx-1 px-3 py-1 rounded ${
-                          currentPage === index + 1
-                            ? "bg-gray-300"
-                            : "bg-gray-200 hover:bg-gray-300"
-                        }`}
-                      >
-                        {index + 1}
-                      </button>
-                    )
-                  )}
-                </div>
               </>
             )}
+
+            {/* Pagination Controls */}
+            <div className="mt-4 flex justify-center">
+              {Array.from(
+                {
+                  length: Math.ceil(subscribedCourse.length / coursesPerPage),
+                },
+                (_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => handlePagination(index + 1)}
+                    className={`mx-1 px-3 py-1 rounded ${
+                      currentPage === index + 1
+                        ? "bg-gray-300"
+                        : "bg-gray-200 hover:bg-gray-300"
+                    }`}
+                  >
+                    {index + 1}
+                  </button>
+                )
+              )}
+            </div>
           </section>
         </div>
         <section className="bg-[#D9D9D9] p-8 ml-[400px] mt-[-60px] mb-5 w-[1100px] rounded-lg shadow-lg">

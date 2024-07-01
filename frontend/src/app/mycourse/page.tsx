@@ -9,36 +9,36 @@ import dotenv from "dotenv";
 import { useRouter } from "next/navigation";
 import SpinnerWrapper from "@/components/partials/SpinnerWrapper";
 import TutorSideBar from "@/components/partials/TutorSideBar";
+import crypto from "crypto";
 
 dotenv.config();
 
-interface VideoDetails {
-  url: string;
-  key: string;
-  originalname: string;
+interface Course {
+  _id: string;
+  course_name: string;
+  description: string;
+  course_category: string;
+  price: number;
+  tutor: string;
+  chapters: Chapter[];
 }
 
-interface Course {
-  title: string;
-  description: string;
-  url: string[];
-  _id: string;
-  courseId: string;
+interface Chapter {
+  chapterName: string;
+  videos: string[];
 }
 
 interface FlattenedVideo {
   courseTitle: string;
   videoUrl: string;
   description: string;
-  courseId: string; // Include courseId here
+  courseId: string;
 }
 
 const MyCourse: React.FC = () => {
   const router = useRouter();
   const [courses, setCourses] = useState<Course[]>([]);
   const [flattenedVideos, setFlattenedVideos] = useState<FlattenedVideo[]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const videosPerPage = 5; // Number of videos per page
   const tutorId = AppState((state) => state.user?.id);
 
   useEffect(() => {
@@ -55,22 +55,29 @@ const MyCourse: React.FC = () => {
           }
         );
         if (response.status === 200) {
-          setCourses(response.data);
           console.log("response", response.data);
-          // Flatten the video URLs into a single list, but only the first video of each course
-          const flattened = response.data
-            .map((course: Course) => {
-              return course.url.length > 0
-                ? {
-                    courseTitle: course.title,
-                    videoUrl: course.url[0].slice(0, -1), // Remove the last character from the URL
-                    description: course.description,
-                    courseId: course.courseId, // Include the courseId here
-                  }
-                : null;
-            })
-            .filter(Boolean); // Filter out any null values
-          setFlattenedVideos(flattened as FlattenedVideo[]);
+          const decryptedCourse = response.data.map((course: Course) => ({
+            ...course,
+            chapters: course.chapters.map((chapter) => ({
+              ...chapter,
+              videos: chapter.videos.map((video) => decryptVideo(video)),
+            })),
+          }));
+          setCourses(decryptedCourse);
+
+          const flattened = decryptedCourse.flatMap((course: any) => {
+            const firstChapter = course.chapters[0];
+            const firstVideo = firstChapter.videos[0]; // Only get the first video
+            return {
+              courseTitle: course.title,
+              videoUrl: firstVideo,
+              description: course.description,
+              courseId: course.courseId,
+            };
+          });
+          console.log("flattened", flattened);
+
+          setFlattenedVideos(flattened);
         } else {
           router.push("/login");
         }
@@ -87,6 +94,32 @@ const MyCourse: React.FC = () => {
     fetchData();
   }, [router, tutorId]);
 
+  const decryptVideo = (encryptedUrl: string): string => {
+    try {
+      const parts = encryptedUrl.split(":");
+      console.log("parts", parts.length);
+      if (parts.length !== 3) {
+        throw new Error(`Invalid encrypted URL format: ${encryptedUrl}`);
+      }
+
+      const iv = Buffer.from(parts[0], "hex");
+      const tag = Buffer.from(parts[1], "hex");
+      const ciphertext = Buffer.from(parts[2], "hex");
+      const key = Buffer.from(process.env.NEXT_PUBLIC_CIPHER_SECRETKEY!, "hex");
+
+      const decipher = crypto.createDecipheriv("aes-256-gcm", key, iv);
+      decipher.setAuthTag(tag);
+
+      let decrypted = decipher.update(ciphertext, undefined, "utf8");
+      decrypted += decipher.final("utf8");
+
+      return decrypted;
+    } catch (error: any) {
+      console.error("Decryption error:", error.message);
+      throw error;
+    }
+  };
+
   const getMimeType = (url: string): string => {
     const extension = url.split(".").pop();
     switch (extension) {
@@ -99,23 +132,12 @@ const MyCourse: React.FC = () => {
     }
   };
 
-  // Get current videos for pagination
-  const indexOfLastVideo = currentPage * videosPerPage;
-  const indexOfFirstVideo = indexOfLastVideo - videosPerPage;
-  const currentVideos = flattenedVideos.slice(
-    indexOfFirstVideo,
-    indexOfLastVideo
-  );
-
-  // Change page
-  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
-
   return (
     <div className="flex flex-col items-center mb-36 bg-white mt-16">
       <SpinnerWrapper>
         <TutorSideBar />
         <section className="bg-[#D9D9D9] p-8 w-[1000px] rounded-lg shadow-md">
-          {currentVideos.map((video, index) => (
+          {flattenedVideos.map((video, index) => (
             <div key={index} style={{ margin: "20px 0" }}>
               <h3 className="text-2xl text-center font-bold mb-6">
                 {video.courseTitle}
@@ -123,7 +145,7 @@ const MyCourse: React.FC = () => {
               <div className="mb-6">
                 <p className="text-md text-left mb-4">{video.description}</p>
                 <div className="flex justify-center">
-                  <video className="rounded-lg" width="600">
+                  <video className="rounded-lg" width="600" controls>
                     <source
                       src={video.videoUrl}
                       type={getMimeType(video.videoUrl)}
@@ -148,22 +170,6 @@ const MyCourse: React.FC = () => {
             </div>
           ))}
         </section>
-        <nav className="mt-4" aria-label="Pagination">
-          <ul className="flex justify-center">
-            {Array.from({
-              length: Math.ceil(flattenedVideos.length / videosPerPage),
-            }).map((_, index) => (
-              <li key={index}>
-                <button
-                  className="px-4 py-2 mx-1 bg-gray-200 rounded-md"
-                  onClick={() => paginate(index + 1)}
-                >
-                  {index + 1}
-                </button>
-              </li>
-            ))}
-          </ul>
-        </nav>
       </SpinnerWrapper>
     </div>
   );

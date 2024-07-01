@@ -9,14 +9,21 @@ import SpinnerWrapper from "@/components/partials/SpinnerWrapper";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { CourseState } from "@/app/store/courseStore";
+import crypto from "crypto";
 dotenv.config();
 
 interface Course {
-  id: string;
+  _id: string;
   course_name: string;
-  course_category: string;
   description: string;
+  course_category: string;
   price: number;
+  tutor: string;
+  chapters: Chapter[];
+}
+
+interface Chapter {
+  chapterName: string;
   videos: string[];
 }
 
@@ -25,8 +32,7 @@ const CourseView = () => {
   const [course, setCourse] = useState<Course | null>(null);
   const setMyCourse = CourseState((state) => state.setMyCourse);
   const [loading, setLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(1);
-  const videosPerPage = 2;
+  const [currentChapter, setCurrentChapter] = useState(0);
   const router = useRouter();
 
   useEffect(() => {
@@ -43,27 +49,18 @@ const CourseView = () => {
           }
         );
         if (response.status === 202) {
-          const modifiedVideos = response.data.videos.map((videoUrl: string) =>
-            videoUrl.slice(0, -1)
-          );
-
-          setCourse({
-            id: response.data._id,
-            course_name: response.data.course_name,
-            course_category: response.data.course_category,
-            description: response.data.description,
-            price: response.data.price,
-            videos: modifiedVideos,
-          });
-
-          setMyCourse({
-            id: response.data._id,
-            course_name: response.data.course_name,
-            course_category: response.data.course_category,
-            description: response.data.description,
-            price: response.data.price,
-            videos: modifiedVideos,
-          });
+          console.log("response", response.data);
+          const decryptedCourses = {
+            ...response.data,
+            chapters: response.data.chapters.map((chapter: Chapter) => ({
+              ...chapter,
+              videos: chapter.videos.map((video: string) =>
+                decryptVideo(video)
+              ),
+            })),
+          };
+          setCourse(decryptedCourses);
+          setMyCourse(decryptedCourses);
         }
       } catch (error) {
         console.error("Error fetching course data:", error);
@@ -73,68 +70,59 @@ const CourseView = () => {
       }
     };
 
+    const decryptVideo = (encryptedUrl: string): string => {
+      try {
+        console.log("Decrypting video:", encryptedUrl);
+
+        const parts = encryptedUrl.split(":");
+        console.log("parts", parts.length);
+        if (parts.length !== 3) {
+          throw new Error(`Invalid encrypted URL format: ${encryptedUrl}`);
+        }
+
+        const iv = Buffer.from(parts[0], "hex");
+        const tag = Buffer.from(parts[1], "hex");
+        const ciphertext = Buffer.from(parts[2], "hex");
+        const key = Buffer.from(
+          process.env.NEXT_PUBLIC_CIPHER_SECRETKEY!,
+          "hex"
+        );
+
+        console.log("IV:", iv);
+        console.log("Tag:", tag);
+        console.log("Ciphertext:", ciphertext);
+        console.log("env", process.env.NEXT_PUBLIC_CIPHER_SECRETKEY);
+
+        const decipher = crypto.createDecipheriv("aes-256-gcm", key, iv);
+        decipher.setAuthTag(tag);
+
+        let decrypted = decipher.update(ciphertext, undefined, "utf8");
+        decrypted += decipher.final("utf8");
+
+        console.log("Decrypted video URL:", decrypted);
+
+        return decrypted;
+      } catch (error: any) {
+        console.error("Decryption error:", error.message);
+        throw error;
+      }
+    };
+
     if (courseId) {
       fetchData(courseId);
     }
   }, [courseId, router]);
 
-  const handleClick = (pageNumber: number) => {
-    setCurrentPage(pageNumber);
-  };
-
-  const getVideoName = (videoUrl: string) => {
-    return decodeURIComponent(
-      videoUrl.split("/").pop()?.split(".")[1] ?? "Unknown Video"
-    );
-  };
-
-  const renderVideos = () => {
-    if (!course || course.videos.length === 0) {
-      return <p>No videos available for this course.</p>;
+  const handlePrevChapter = () => {
+    if (currentChapter > 0) {
+      setCurrentChapter(currentChapter - 1);
     }
+  };
 
-    const indexOfLastVideo = currentPage * videosPerPage;
-    const indexOfFirstVideo = indexOfLastVideo - videosPerPage;
-    const currentVideos = course.videos.slice(
-      indexOfFirstVideo,
-      indexOfLastVideo
-    );
-
-    return (
-      <div className="flex flex-col items-center">
-        {currentVideos.map((videoUrl, index) => (
-          <div key={`${videoUrl}-${index}`} className="mb-6 text-center">
-            <h3 className="text-xl mb-2">{getVideoName(videoUrl)}</h3>
-            <video
-              key={`${videoUrl}-${index}-video`}
-              className="rounded-lg w-[500px]"
-              controls
-            >
-              <source src={videoUrl} type="video/mp4" />
-              Your browser does not support the video tag.
-            </video>
-          </div>
-        ))}
-        <div className="flex justify-center space-x-4 mt-4">
-          {Array.from(
-            { length: Math.ceil(course.videos.length / videosPerPage) },
-            (_, index) => (
-              <button
-                key={index + 1}
-                onClick={() => handleClick(index + 1)}
-                className={`px-4 py-2 rounded ${
-                  currentPage === index + 1
-                    ? "bg-blue-500 text-white"
-                    : "bg-gray-200"
-                }`}
-              >
-                {index + 1}
-              </button>
-            )
-          )}
-        </div>
-      </div>
-    );
+  const handleNextChapter = () => {
+    if (course && currentChapter < course.chapters.length - 1) {
+      setCurrentChapter(currentChapter + 1);
+    }
   };
 
   if (loading) {
@@ -156,6 +144,8 @@ const CourseView = () => {
       </div>
     );
   }
+
+  const currentChapterData = course.chapters[currentChapter];
 
   return (
     <div>
@@ -181,8 +171,48 @@ const CourseView = () => {
           </div>
         </div>
         <div className="bg-[#D9D9D9] p-8 w-[1000px] rounded-lg mb-7 shadow-md mx-auto mt-8">
-          <h2 className="text-2xl font-bold mb-4">Videos:</h2>
-          {renderVideos()}
+          <h2 className="text-2xl font-bold mb-4">
+            Chapter: {currentChapterData.chapterName}
+          </h2>
+          <div className="flex flex-col items-center">
+            {currentChapterData.videos.map((videoUrl, index) => (
+              <div key={`${videoUrl}-${index}`} className="mb-6 text-center">
+                <h3 className="text-xl mb-2">{`Video ${index + 1}`}</h3>
+                <video
+                  key={`${videoUrl}-${index}-video`}
+                  className="rounded-lg w-[500px]"
+                  controls
+                >
+                  <source src={videoUrl} type="video/mp4" />
+                  Your browser does not support the video tag.
+                </video>
+              </div>
+            ))}
+          </div>
+          <div className="flex justify-between mt-4">
+            <button
+              onClick={handlePrevChapter}
+              className={`px-4 py-2 rounded ${
+                currentChapter === 0
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-blue-500 text-white"
+              }`}
+              disabled={currentChapter === 0}
+            >
+              Prev
+            </button>
+            <button
+              onClick={handleNextChapter}
+              className={`px-4 py-2 rounded ${
+                currentChapter === course.chapters.length - 1
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-blue-500 text-white"
+              }`}
+              disabled={currentChapter === course.chapters.length - 1}
+            >
+              Next
+            </button>
+          </div>
         </div>
       </SpinnerWrapper>
     </div>

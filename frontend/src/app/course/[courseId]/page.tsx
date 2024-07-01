@@ -173,22 +173,14 @@ const CourseId = () => {
     setCurrentPage(pageNumber);
   };
 
-  const indexOfLastVideo = currentPage * videosPerPage;
-  const indexOfFirstVideo = indexOfLastVideo - videosPerPage;
-  const currentVideos = decryptedVideos.slice(
-    indexOfFirstVideo,
-    indexOfLastVideo
-  );
+  const currentChapter = course?.chapters[currentPage - 1];
+  const currentVideos = currentChapter?.videos || [];
 
   const renderPagination = () => {
-    if (!decryptedVideos.length) return null;
+    if (!course?.chapters.length) return null;
 
     const pageNumbers = [];
-    for (
-      let i = 1;
-      i <= Math.ceil(decryptedVideos.length / videosPerPage);
-      i++
-    ) {
+    for (let i = 1; i <= course.chapters.length; i++) {
       pageNumbers.push(i);
     }
 
@@ -212,7 +204,11 @@ const CourseId = () => {
   };
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div>
+        <SpinnerWrapper>Loading</SpinnerWrapper>
+      </div>
+    );
   }
 
   const handleSubscribe = async () => {
@@ -309,15 +305,21 @@ const CourseId = () => {
 
   const handleUnsubscribe = async () => {
     try {
+      const token = localStorage.getItem("access_token");
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/unsubscribe`,
+        `${process.env.NEXT_PUBLIC_BASE_URL}/course/unsubscribe/${id}`,
         {
           user_id: userData?.id,
-          course_id: course?._id,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
         }
       );
 
-      if (response.status === 200) {
+      if (response.status === 202) {
         Swal.fire({
           title: "Unsubscribed!",
           text: "You have successfully unsubscribed from the course.",
@@ -340,74 +342,102 @@ const CourseId = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
-      <div className="bg-white rounded-lg shadow-lg p-6">
-        <Link href="/">
-          <span className="text-blue-500 hover:text-blue-700">&larr; Back</span>
-        </Link>
-        {course ? (
-          <>
-            <h1 className="text-3xl font-bold mb-4">{course.course_name}</h1>
-            <p className="mb-4">{course.description}</p>
-            <p className="mb-4">Category: {course.course_category}</p>
-            <p className="mb-4">Price: ${course.price}</p>
-            <p className="mb-4">Tutor: {course.tutor}</p>
-            <div className="my-6">
-              <CircularProgressbar
-                value={completionPercentage}
-                text={`${completionPercentage}%`}
-                styles={buildStyles({
-                  textColor: "#4a5568",
-                  pathColor: "#4a5568",
-                  trailColor: "#e2e8f0",
-                })}
-              />
-            </div>
-
-            {!courseSubscribed ? (
-              <button
-                onClick={handleSubscribe}
-                className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
-              >
-                Subscribe
-              </button>
-            ) : (
-              <button
-                onClick={handleUnsubscribe}
-                className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition"
-              >
-                Unsubscribe
-              </button>
-            )}
-
-            {currentVideos.length > 0 ? (
-              <div className="mt-6">
-                {currentVideos.map((videoUrl, index) => (
-                  <div key={index} className="mb-6">
-                    <video controls src={videoUrl} className="w-full h-auto" />
-                    <div className="flex items-center mt-2">
-                      <input
-                        type="checkbox"
-                        checked={courseCompletion[videoUrl] || false}
-                        onChange={() => handleCheckboxChange(videoUrl)}
-                        className="mr-2"
-                      />
-                      <label>{`Video ${
-                        index + 1 + (currentPage - 1) * videosPerPage
-                      }`}</label>
+    <div>
+      <SpinnerWrapper>
+        <>
+          {course && (
+            <>
+              <div className="course-details flex flex-col justify-start text-end bg-gradient-to-r from-purple-500 to-indigo-500 py-4 px-8">
+                <Link className="text-left flex" href="/course">
+                  Back to courses
+                </Link>
+                <div className="mr-[300px] text-left ml-[1000px] mt-[100px] mb-5 p-3 bg-gradient-to-r from-purple-500 to-indigo-500 shadow-lg rounded-lg">
+                  {course.description}
+                  {!courseSubscribed && !userData?.premium && (
+                    <>
+                      <button
+                        className="bg-[#2a31f8] mt-5 text-white font-bold py-2 px-4 rounded-xl"
+                        onClick={handleSubscribe}
+                      >
+                        Subscribe
+                      </button>
+                      <p>Price: &#8377; {course.price}</p>
+                    </>
+                  )}
+                  {courseSubscribed && !userData?.premium && (
+                    <button
+                      className="bg-[#f82a2a] mt-5 text-white font-bold py-2 px-4 rounded-xl"
+                      onClick={handleUnsubscribe}
+                    >
+                      Unsubscribe
+                    </button>
+                  )}
+                </div>
+              </div>
+              <div className="flex">
+                <section className="bg-[#D9D9D9] p-8 ml-[200px] mt-5 mb-5 w-[650px] rounded-lg shadow-lg">
+                  <h1 className="text-center text-3xl font-semibold">
+                    {course?.course_name}
+                  </h1>
+                  {courseSubscribed || userData?.premium ? (
+                    <div className="flex flex-col mt-[30px] grid-cols-2 gap-4">
+                      <h2 className="text-2xl font-medium text-center">
+                        {currentChapter?.chapterName}
+                      </h2>
+                      {currentVideos?.map((videoUrl, index) => (
+                        <div className="flex relative" key={index}>
+                          <video
+                            src={videoUrl}
+                            className="rounded-lg ml-9"
+                            width="300"
+                            height="200"
+                            controls
+                          />
+                          <div className="ml-5">
+                            <input
+                              type="checkbox"
+                              className="ml-14 mt-[80px] w-6 h-6"
+                              checked={!!courseCompletion[videoUrl]}
+                              onChange={() => handleCheckboxChange(videoUrl)}
+                            />
+                          </div>
+                        </div>
+                      ))}
+                      {renderPagination()}
+                    </div>
+                  ) : (
+                    <p>subscribe to watch the videos</p>
+                  )}
+                </section>
+                <section className="bg-[#D9D9D9] p-8 ml-[300px] mt-5 mb-5 w-[500px] h-[300px] rounded-lg shadow-lg">
+                  <h1 className="text-left text-xl font-semibold">
+                    Course Completion Status
+                  </h1>
+                  <div className="mt-[60px] space-y-6 flex items-center">
+                    <div>
+                      <h3>Total Tutorials: {totalTutorials}</h3>
+                      <h3>Completed: {completedCount}</h3>
+                    </div>
+                    <div className="ml-4">
+                      <div className="w-[100px] h-[100px] ml-[100px]">
+                        <CircularProgressbar
+                          value={completionPercentage}
+                          text={`${completionPercentage}%`}
+                          styles={buildStyles({
+                            pathColor: "#4CAF50",
+                            textColor: "#000",
+                            trailColor: "#A5D6A7",
+                          })}
+                        />
+                      </div>
                     </div>
                   </div>
-                ))}
-                {renderPagination()}
+                </section>
               </div>
-            ) : (
-              <div>No videos found for this course.</div>
-            )}
-          </>
-        ) : (
-          <div>Course not found.</div>
-        )}
-      </div>
+            </>
+          )}
+        </>
+      </SpinnerWrapper>
     </div>
   );
 };

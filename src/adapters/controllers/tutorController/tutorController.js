@@ -69,12 +69,10 @@ const tutorController = {
               videos: [chapterFiles.location], // Single file location
             });
           } else {
-            return res
-              .status(400)
-              .json({
-                success: false,
-                data: `No files uploaded for chapter ${i}`,
-              });
+            return res.status(400).json({
+              success: false,
+              data: `No files uploaded for chapter ${i}`,
+            });
           }
         }
 
@@ -106,6 +104,7 @@ const tutorController = {
   getMyCourse: async (req, res) => {
     try {
       const courseId = req.params.id;
+      console.log("id", courseId);
       const response = await tutorUseCase.getMyCourse(courseId);
       if (response.success) {
         res.status(202).json(response.data);

@@ -200,7 +200,7 @@ const userController = {
   unSubscribe: async (req, res) => {
     try {
       const courseId = req.params.id;
-      const userId = req.body.id;
+      const userId = req.body.user_id;
       console.log(`${courseId}, ${userId}`);
       const response = await userUseCase.unSubscribe(courseId, userId);
       if (response.success) {

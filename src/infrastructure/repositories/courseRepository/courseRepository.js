@@ -3,6 +3,7 @@ const TutorCollection = require("../../../core/entities/user/tutorCollection");
 const CourseCollection = require("../../../core/entities/course/courseCollection");
 const UserCollection = require("../../../core/entities/user/userCollection");
 const CategoryCollection = require("../../../core/entities/category/category");
+const encrypt = require("../../../adapters/middleware/videoAuth");
 
 // creating courses repository
 const courseRepository = {
@@ -90,6 +91,7 @@ const courseRepository = {
   // method for showing the specific course for the editing purpose and all
   getMyCourse: async (courseId) => {
     try {
+      console.log("ids", courseId);
       const courseData = await CourseCollection.findById({ _id: courseId });
       console.log("courseData", courseData);
       if (courseData) {
@@ -103,46 +105,61 @@ const courseRepository = {
   },
 
   // method for editing the course
-  editCourse: async (courseData, courseVideos, tutorId) => {
+  editCourse: async (courseData, chapters, tutorId) => {
     try {
+      console.log("inside", chapters);
       const id = courseData.courseId;
-      const courseDetails = await CourseCollection.findById({ _id: id });
-      const tutor = await TutorCollection.findById({ _id: tutorId });
+      const courseDetails = await CourseCollection.findById(id);
+      const tutor = await TutorCollection.findById(tutorId);
 
-      if (tutor && courseDetails) {
-        // Merge existing videos with new ones
-        const existingVideos = courseDetails.videos;
-        const newVideos = courseVideos.map((video) => `${video.location}a`);
-        const updatedVideos = [...existingVideos, ...newVideos];
-
-        // Update course details
-        courseDetails.course_name = courseData.course_name;
-        courseDetails.course_category = courseData.course_category;
-        courseDetails.description = courseData.description;
-        courseDetails.price = parseInt(courseData.price, 10);
-        courseDetails.videos = updatedVideos;
-
-        await courseDetails.save();
-
-        // Update tutor's course videos
-        const courseIndex = tutor.course.findIndex(
-          (course) => course.courseId.toString() === id.toString()
-        );
-        if (courseIndex !== -1) {
-          tutor.course[courseIndex].title = courseData.course_name;
-          tutor.course[courseIndex].category = courseData.course_category;
-          tutor.course[courseIndex].description = courseData.description;
-          tutor.course[courseIndex].url = updatedVideos;
-        }
-
-        await tutor.save();
-
-        return courseDetails;
-      } else {
-        return null;
+      if (!courseDetails || !tutor) {
+        return { success: false, data: "Course or tutor not found" };
       }
+
+      // Update chapters with new and existing videos if chapters are provided
+      let updatedChapters = [];
+      if (chapters && chapters.length > 0) {
+        updatedChapters = chapters.map((chapter) => ({
+          chapterName: chapter.chapter_name,
+          videos: chapter.videos.map((video) => {
+            const encryptedVideo = encrypt.encrypt(video);
+            return encryptedVideo;
+          }),
+        }));
+      } else {
+        // If no chapters provided, retain existing chapters with their videos
+        updatedChapters = courseDetails.chapters.map((chapter) => ({
+          chapterName: chapter.chapterName,
+          videos: chapter.videos,
+        }));
+      }
+
+      // Update course details
+      courseDetails.course_name = courseData.course_name;
+      courseDetails.course_category = courseData.course_category;
+      courseDetails.description = courseData.description;
+      courseDetails.price = parseInt(courseData.price, 10);
+      courseDetails.chapters = updatedChapters;
+
+      await courseDetails.save();
+
+      // Update tutor's course information
+      const courseIndex = tutor.course.findIndex(
+        (course) => course.courseId.toString() === id.toString()
+      );
+      if (courseIndex !== -1) {
+        tutor.course[courseIndex].title = courseData.course_name;
+        tutor.course[courseIndex].category = courseData.course_category;
+        tutor.course[courseIndex].description = courseData.description;
+        tutor.course[courseIndex].chapters = updatedChapters;
+      }
+
+      await tutor.save();
+
+      return { success: true, data: courseDetails };
     } catch (error) {
-      throw error;
+      console.error("Error editing course:", error);
+      return { success: false, data: "Internal server error" };
     }
   },
 

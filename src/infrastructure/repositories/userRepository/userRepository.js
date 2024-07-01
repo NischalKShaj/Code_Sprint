@@ -192,13 +192,15 @@ const userRepository = {
           tutor: courseData.tutor.toString(),
         });
 
-        const updatedPayoutData = await PayoutCollection.findByIdAndUpdate(
-          { _id: payoutData._id },
-          { $inc: { wallet: courseData.price }, status: true },
-          { new: true }
-        );
+        if (payoutData) {
+          const updatedPayoutData = await PayoutCollection.findByIdAndUpdate(
+            { _id: payoutData._id },
+            { $inc: { wallet: courseData.price }, status: true },
+            { new: true }
+          );
 
-        console.log("payoutData", updatedPayoutData);
+          console.log("payoutData", updatedPayoutData);
+        }
 
         console.log("updatedUser", updatedUser);
         console.log("updated TUtor", updatedTutor);

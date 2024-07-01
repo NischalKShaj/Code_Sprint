@@ -45,23 +45,9 @@ interface State {
   completedVideos: Record<string, Record<string, boolean>>;
   toggleVideoCompletion: (courseId: string, videoUrl: string) => void;
 
-  myCourse: {
-    id: string;
-    course_name: string;
-    course_category: string;
-    description: string;
-    videos: string[];
-    price: number;
-  } | null;
+  myCourse: Course | null;
 
-  setMyCourse: (myCourse: {
-    id: string;
-    course_name: string;
-    course_category: string;
-    description: string;
-    videos: string[];
-    price: number;
-  }) => void;
+  setMyCourse: (myCourse: Course) => void;
 }
 
 // Creating the store

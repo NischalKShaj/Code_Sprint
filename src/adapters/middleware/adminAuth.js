@@ -20,7 +20,13 @@ module.exports.authenticateAdminJwt = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(actualToken, process.env.ADMIN_SECRET);
+
     console.log("Decoded token:", decoded);
+
+    if (decoded.role !== "admin") {
+      return res.status(403).json({ message: "forbidden" });
+    }
+
     req.user = decoded;
     next();
   } catch (error) {

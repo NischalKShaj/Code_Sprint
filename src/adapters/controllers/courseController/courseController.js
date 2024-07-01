@@ -64,30 +64,69 @@ const courseController = {
   editCourse: async (req, res) => {
     try {
       const tutorId = req.params.id;
-      console.log("first", tutorId);
+      console.log("tutorId:", tutorId);
 
       upload(req, res, async (err) => {
         if (err) {
-          console.error("error", err);
+          console.error("Upload error:", err);
           return res.status(500).json({ success: false, data: err.message });
         }
 
-        const courseVideos = req.files;
+        const files = req.files;
+        console.log("videos", files);
         const courseData = req.body;
-        console.log("courseVideos", courseVideos);
-        console.log("courseData", courseData);
+        console.log("courseData:", courseData);
+
+        // Prepare chapters array to update
+        let chapters = [];
+
+        // Iterate over the chapters in req.body, if any
+        if (courseData.chapters && Array.isArray(courseData.chapters)) {
+          for (let i = 0; i < courseData.chapters.length; i++) {
+            const chapterName = courseData.chapters[i].chapterName;
+            const chapterVideos = files[`chapters[${i}][files]`];
+
+            if (chapterVideos) {
+              const formattedVideos = Array.isArray(chapterVideos)
+                ? chapterVideos.map((video) => video.location)
+                : [chapterVideos.location];
+
+              chapters.push({
+                chapter_name: chapterName,
+                videos: formattedVideos,
+              });
+            } else {
+              // Handle case where no new videos are uploaded for a chapter
+              const existingVideosKey = `chapters[${i}][files],`;
+              if (courseData[existingVideosKey]) {
+                const existingVideos = Array.isArray(
+                  courseData[existingVideosKey]
+                )
+                  ? courseData[existingVideosKey]
+                  : [courseData[existingVideosKey]];
+
+                chapters.push({
+                  chapter_name: chapterName,
+                  videos: existingVideos,
+                });
+              }
+            }
+          }
+        }
+
+        console.log("Organized Chapters: ", chapters);
 
         // Proceed with updating course data
         const response = await courseUseCase.editCourse(
           courseData,
-          courseVideos,
+          chapters,
           tutorId
         );
 
         if (response.success) {
           // Only send message to queue if videos are uploaded
-          if (courseVideos && courseVideos.length > 0) {
-            await sendMessageToQueue({ courseData, courseVideos, tutorId });
+          if (files && Object.keys(files).length > 0) {
+            await sendMessageToQueue({ courseData, chapters, tutorId });
           }
           return res.status(202).json(response.data);
         } else {
@@ -95,8 +134,8 @@ const courseController = {
         }
       });
     } catch (error) {
-      console.error("error", error);
-      res.status(500).json("internal server error");
+      console.error("Error:", error);
+      return res.status(500).json("Internal server error");
     }
   },
 
