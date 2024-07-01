@@ -1,14 +1,12 @@
 // src/lib/auth.ts
-
 import { NextAuthOptions } from "next-auth";
 import dotenv from "dotenv";
 dotenv.config();
 
 import GithubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
-import axios, { AxiosError } from "axios"; // Import AxiosError for better error handling
-import axiosRetry from "axios-retry"; // Import axios-retry for retry mechanism
-import local from "local-storage";
+import axios, { AxiosError } from "axios";
+import axiosRetry from "axios-retry";
 
 // Create an axios instance with increased timeout
 const axiosInstance = axios.create({
@@ -30,8 +28,8 @@ export const authOptions: NextAuthOptions = {
       clientSecret: process.env.GITHUB_SECRET as string,
     }),
     GoogleProvider({
-      clientId: `${process.env.GOOGLE_CLIENT_ID}`,
-      clientSecret: `${process.env.GOOGLE_CLIENT_SECRET}`,
+      clientId: process.env.GOOGLE_CLIENT_ID as string,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
     }),
   ],
   callbacks: {
@@ -45,8 +43,25 @@ export const authOptions: NextAuthOptions = {
             { email, image, name },
             { withCredentials: true }
           );
-          console.log("Google OAuth successful", response);
-          // Additional logic here...
+          console.log("Google OAuth successful", response.data.data._id);
+          const token = response.data.token;
+          if (token) {
+            user.accessToken = token;
+            user.id = response.data.data._id;
+            const userData = {
+              id: response.data.data._id,
+              username: response.data.data.username,
+              email: response.data.data.email,
+              profileImage: response.data.data.profileImage,
+              role: response.data.data.role,
+              premium: response.data.data.premium,
+              blocked: response.data.data.blocked,
+            };
+            user.users = userData;
+            return true;
+          } else {
+            return false;
+          }
         } catch (error: any) {
           console.error("Google OAuth error:", error);
           handleAxiosError(error); // Ensure this handles retry logic
@@ -62,7 +77,18 @@ export const authOptions: NextAuthOptions = {
             throw new Error("Backend failed to load the user details");
           }
           const token = response.data.token;
-          storeToken(token); // Store token locally
+          user.id = response.data.data._id;
+          const userData = {
+            id: response.data.data._id,
+            username: response.data.data.username,
+            email: response.data.data.email,
+            profileImage: response.data.data.profileImage,
+            role: response.data.data.role,
+            premium: response.data.data.premium,
+            blocked: response.data.data.blocked,
+          };
+          user.users = userData;
+          user.accessToken = token;
         } catch (error: any) {
           handleAxiosError(error); // Handle Axios error with a dedicated function
         }
@@ -74,6 +100,9 @@ export const authOptions: NextAuthOptions = {
         token.name = user.name;
         token.email = user.email;
         token.image = user.image as string;
+        token.accessToken = user.accessToken; // Store the token in the JWT
+        token.id = user.id;
+        token.users = user.users;
       }
       return token;
     },
@@ -82,6 +111,8 @@ export const authOptions: NextAuthOptions = {
         session.user.name = token.name;
         session.user.email = token.email;
         session.user.image = token.image as string;
+        session.accessToken = token.accessToken; // Include the token in the session
+        session.users = token.users;
       }
       return session;
     },
@@ -109,10 +140,4 @@ function handleAxiosError(error: AxiosError) {
     // Not an Axios error
     console.error("Non-Axios error occurred:", error);
   }
-}
-
-// Function to store token locally using local-storage
-function storeToken(token: string) {
-  // local.set("authToken", token);
-  console.log("Token stored locally:", token);
 }

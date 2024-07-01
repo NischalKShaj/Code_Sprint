@@ -7,16 +7,35 @@ import { useEffect } from "react";
 import { AppState } from "./store";
 import UserBanner from "@/components/partials/UserBanner";
 import InterestCarousel from "@/components/partials/InterestCarousel";
+import { useSession } from "next-auth/react";
 
 const Home = () => {
   const isLoggedOut = AppState((state) => state.isLoggedOut);
   const user = AppState((state) => state.user);
+  const isLoggedIn = AppState((state) => state.isLoggedIn);
+  const { data: session, status } = useSession();
   useEffect(() => {
+    if (status === "authenticated" && session?.accessToken) {
+      localStorage.setItem("access_token", session.accessToken as string);
+      console.log("Access token stored in localStorage");
+      isLoggedIn({
+        id: session.users.id,
+        username: session.user?.name!,
+        email: session.users.email,
+        role: session.users.role,
+        profileImage: session.user?.image!,
+        blocked: session.users.blocked,
+        premium: session.users.premium,
+        phone: null,
+      });
+    } else if (status === "unauthenticated") {
+      localStorage.removeItem("access_token");
+    }
     setTimeout(() => {
       isLoggedOut();
       localStorage.removeItem("access_token");
     }, 4000000);
-  }, [isLoggedOut]);
+  }, [status, session, isLoggedOut]);
 
   return (
     <div>

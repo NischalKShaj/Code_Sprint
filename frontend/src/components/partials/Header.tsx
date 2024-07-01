@@ -45,6 +45,7 @@ const Header = () => {
   // function to for searching the course
   const handleSearch = async () => {
     const token = localStorage.getItem("access_token");
+    console.log("token");
     try {
       const response = await axios.get(
         `${process.env.NEXT_PUBLIC_BASE_URL}/courses`,

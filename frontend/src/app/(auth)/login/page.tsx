@@ -7,7 +7,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import React, { ChangeEventHandler, useEffect, useState } from "react";
 import { AppState } from "@/app/store";
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGoogle } from "@fortawesome/free-brands-svg-icons";
 import { faGithub } from "@fortawesome/free-brands-svg-icons";
@@ -22,6 +22,7 @@ const Login = () => {
   const router = useRouter();
   const login = AppState((state) => state.isLoggedIn);
   const authorized = AppState((state) => state.isAuthorized);
+  const { data: session, status } = useSession();
 
   // function for the changing value in the form
   const handleLogin: ChangeEventHandler<HTMLInputElement> = (e) => {
@@ -76,6 +77,13 @@ const Login = () => {
       setMessage("invalid user details");
     }
   };
+
+  // useEffect(() => {
+  //   if (status === "authenticated" && session?.accessToken) {
+  //     localStorage.setItem("access_token", session.accessToken);
+  //     router.push("/");
+  //   }
+  // }, [status, session, router]);
 
   //  for google and github authentication purpose
   const handleOAuth = async (provider: string) => {

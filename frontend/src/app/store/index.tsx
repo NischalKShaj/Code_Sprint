@@ -13,7 +13,7 @@ interface State {
     username: string;
     profileImage: string;
     blocked: boolean;
-    phone: string;
+    phone: string | null;
     premium: boolean;
   } | null;
   // function for implementing the userLogin
@@ -24,7 +24,7 @@ interface State {
     username: string;
     profileImage: string;
     blocked: boolean;
-    phone: string;
+    phone: string | null;
     premium: boolean;
   }) => void;
   // function for implementing the user Logout
