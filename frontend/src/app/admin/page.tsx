@@ -60,8 +60,10 @@ const AdminLogin = () => {
   useEffect(() => {
     if (isAdmin) {
       router.push("/admin/dashboard");
+    } else {
+      router.push("/admin");
     }
-  });
+  }, [isAdmin, router]);
 
   return (
     <div className="flex flex-col items-center mb-36 bg-white mt-16">

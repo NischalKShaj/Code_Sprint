@@ -26,8 +26,10 @@ const Category = () => {
   useLayoutEffect(() => {
     if (!isAdmin) {
       router.push("/admin");
+    } else {
+      setLoading(false);
     }
-  });
+  }, [isAdmin, router]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -69,8 +71,11 @@ const Category = () => {
   );
 
   if (loading) {
-    // Display loading spinner or skeleton
-    return <div>Loading...</div>;
+    return (
+      <SpinnerWrapper>
+        <div>Loading...</div>
+      </SpinnerWrapper>
+    );
   }
 
   return (

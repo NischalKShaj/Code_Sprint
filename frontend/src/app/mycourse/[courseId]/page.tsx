@@ -40,8 +40,10 @@ const CourseView = () => {
   useLayoutEffect(() => {
     if (!isAuthorized) {
       router.push("/login");
+    } else {
+      setLoading(false);
     }
-  });
+  }, [isAuthorized, router]);
 
   useEffect(() => {
     const token = localStorage.getItem("access_token");

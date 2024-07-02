@@ -15,6 +15,7 @@ import { useRouter } from "next/navigation";
 import { AppState } from "@/app/store";
 import dotenv from "dotenv";
 import { CourseState } from "@/app/store/courseStore";
+import SpinnerWrapper from "@/components/partials/SpinnerWrapper";
 
 dotenv.config();
 
@@ -40,12 +41,15 @@ const EditCoursePage = () => {
   const router = useRouter();
   const user = AppState((state) => state.user);
   const id = user?.id;
+  const [loading, setIsLoading] = useState(true);
 
   useLayoutEffect(() => {
     if (!isAuthorized) {
       router.push("/login");
+    } else {
+      setIsLoading(false);
     }
-  });
+  }, [isAuthorized, router]);
 
   // Initialize form state using myCourse data or defaults
   const [formData, setFormData] = useState<Course>({
@@ -323,219 +327,229 @@ const EditCoursePage = () => {
     });
   };
 
+  if (loading) {
+    return (
+      <SpinnerWrapper>
+        <div>Loading...</div>
+      </SpinnerWrapper>
+    );
+  }
+
   // Render the EditCoursePage component
   return (
     <div className="flex min-h-screen pt-4 pb-16 bg-gray-100">
       <TutorSideBar />
-      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <form
-          onSubmit={handleSubmit}
-          className="bg-white shadow-lg rounded-lg p-8 space-y-8 divide-y divide-gray-200"
-        >
-          <div className="space-y-8 divide-y divide-gray-200">
-            <div className="pt-8">
-              <div>
-                <h2 className="text-lg leading-6 font-medium text-gray-900">
-                  Course Information
-                </h2>
-              </div>
-              <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-4">
-                <div className="col-span-1">
-                  <label
-                    htmlFor="course_name"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Course Name
-                  </label>
-                  <input
-                    type="text"
-                    name="course_name"
-                    id="course_name"
-                    className="p-4 bg-gray-50 border border-gray-300 rounded-lg  w-full mt-3"
-                    placeholder="Enter course name"
-                    value={formData.course_name}
-                    onChange={handleChange}
-                  />
+      <SpinnerWrapper>
+        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <form
+            onSubmit={handleSubmit}
+            className="bg-white shadow-lg rounded-lg p-8 space-y-8 divide-y divide-gray-200"
+          >
+            <div className="space-y-8 divide-y divide-gray-200">
+              <div className="pt-8">
+                <div>
+                  <h2 className="text-lg leading-6 font-medium text-gray-900">
+                    Course Information
+                  </h2>
                 </div>
-                <div className="col-span-1">
-                  <label
-                    htmlFor="course_category"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Category
-                  </label>
-                  <input
-                    type="text"
-                    name="course_category"
-                    id="course_category"
-                    className="p-4 bg-gray-50 border border-gray-300 rounded-lg  w-full mt-3"
-                    placeholder="Enter course category"
-                    value={formData.course_category}
-                    onChange={handleChange}
-                  />
-                </div>
-                <div className="col-span-2">
-                  <label
-                    htmlFor="description"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Description
-                  </label>
-                  <textarea
-                    id="description"
-                    name="description"
-                    rows={3}
-                    className="p-4 bg-gray-50 border border-gray-300 rounded-lg  w-full mt-3"
-                    placeholder="Enter course description"
-                    value={formData.description}
-                    onChange={handleChange}
-                  />
-                </div>
-                <div className="col-span-1">
-                  <label
-                    htmlFor="price"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Price (₹)
-                  </label>
-                  <input
-                    type="number"
-                    name="price"
-                    id="price"
-                    className="p-4 bg-gray-50 border border-gray-300 rounded-lg w-full mt-3"
-                    placeholder="0.00"
-                    value={formData.price}
-                    onChange={handleChange}
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Chapters section */}
-            <div className="pt-8">
-              <div>
-                <h2 className="text-lg leading-6 font-medium text-gray-900">
-                  Chapters
-                </h2>
-                <p className="mt-1 text-sm text-gray-500">
-                  Edit or delete chapters for the course.
-                </p>
-              </div>
-
-              {formData.chapters.map((chapter, index) => (
-                <div key={index} className="mt-6">
-                  <div className="flex items-center justify-between">
-                    <div className="w-full">
-                      <label
-                        htmlFor={`chapter_name_${index}`}
-                        className="block text-sm font-medium text-gray-700"
-                      >
-                        Chapter {index + 1}
-                      </label>
-                      <input
-                        type="text"
-                        name={`chapter_name_${index}`}
-                        id={`chapter_name_${index}`}
-                        className="p-4 bg-gray-50 border border-gray-300 rounded-lg  w-full mt-3"
-                        placeholder={`Enter chapter ${index + 1} name`}
-                        value={chapter.chapterName}
-                        onChange={(e) => handleChapterChange(index, e)}
-                      />
-                    </div>
-                    <div className="ml-4">
-                      <button
-                        type="button"
-                        className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-                        onClick={() => handleRemoveChapter(index)}
-                      >
-                        Remove Chapter
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Videos section for each chapter */}
-                  <div className="mt-4">
-                    <label className="block text-sm font-medium text-gray-700">
-                      Videos
+                <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-4">
+                  <div className="col-span-1">
+                    <label
+                      htmlFor="course_name"
+                      className="block text-sm font-medium text-gray-700"
+                    >
+                      Course Name
                     </label>
-                    <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-4">
-                      {newVideoFileNames[index]?.map((url, fileIndex) => (
-                        <div
-                          key={fileIndex}
-                          className="col-span-1 flex items-center"
-                        >
-                          <video
-                            controls
-                            className="w-full h-auto rounded-lg shadow-md"
-                          >
-                            <source src={url} type="video/mp4" />
-                            Your browser does not support the video tag.
-                          </video>
-                        </div>
-                      ))}
-                      <div className="col-span-1">
+                    <input
+                      type="text"
+                      name="course_name"
+                      id="course_name"
+                      className="p-4 bg-gray-50 border border-gray-300 rounded-lg  w-full mt-3"
+                      placeholder="Enter course name"
+                      value={formData.course_name}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div className="col-span-1">
+                    <label
+                      htmlFor="course_category"
+                      className="block text-sm font-medium text-gray-700"
+                    >
+                      Category
+                    </label>
+                    <input
+                      type="text"
+                      name="course_category"
+                      id="course_category"
+                      className="p-4 bg-gray-50 border border-gray-300 rounded-lg  w-full mt-3"
+                      placeholder="Enter course category"
+                      value={formData.course_category}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div className="col-span-2">
+                    <label
+                      htmlFor="description"
+                      className="block text-sm font-medium text-gray-700"
+                    >
+                      Description
+                    </label>
+                    <textarea
+                      id="description"
+                      name="description"
+                      rows={3}
+                      className="p-4 bg-gray-50 border border-gray-300 rounded-lg  w-full mt-3"
+                      placeholder="Enter course description"
+                      value={formData.description}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div className="col-span-1">
+                    <label
+                      htmlFor="price"
+                      className="block text-sm font-medium text-gray-700"
+                    >
+                      Price (₹)
+                    </label>
+                    <input
+                      type="number"
+                      name="price"
+                      id="price"
+                      className="p-4 bg-gray-50 border border-gray-300 rounded-lg w-full mt-3"
+                      placeholder="0.00"
+                      value={formData.price}
+                      onChange={handleChange}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Chapters section */}
+              <div className="pt-8">
+                <div>
+                  <h2 className="text-lg leading-6 font-medium text-gray-900">
+                    Chapters
+                  </h2>
+                  <p className="mt-1 text-sm text-gray-500">
+                    Edit or delete chapters for the course.
+                  </p>
+                </div>
+
+                {formData.chapters.map((chapter, index) => (
+                  <div key={index} className="mt-6">
+                    <div className="flex items-center justify-between">
+                      <div className="w-full">
                         <label
-                          htmlFor={`video_${index}`}
+                          htmlFor={`chapter_name_${index}`}
                           className="block text-sm font-medium text-gray-700"
                         >
-                          Upload Video
+                          Chapter {index + 1}
                         </label>
-                        <div className="mt-1 flex items-center">
-                          <input
-                            type="file"
-                            id={`video_${index}`}
-                            name={`chapters[${index}][files]`}
-                            className="hidden"
-                            accept="video/*"
-                            onChange={(e) => handleVideoChange(index, e)}
-                            multiple
-                          />
+                        <input
+                          type="text"
+                          name={`chapter_name_${index}`}
+                          id={`chapter_name_${index}`}
+                          className="p-4 bg-gray-50 border border-gray-300 rounded-lg  w-full mt-3"
+                          placeholder={`Enter chapter ${index + 1} name`}
+                          value={chapter.chapterName}
+                          onChange={(e) => handleChapterChange(index, e)}
+                        />
+                      </div>
+                      <div className="ml-4">
+                        <button
+                          type="button"
+                          className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                          onClick={() => handleRemoveChapter(index)}
+                        >
+                          Remove Chapter
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Videos section for each chapter */}
+                    <div className="mt-4">
+                      <label className="block text-sm font-medium text-gray-700">
+                        Videos
+                      </label>
+                      <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-4">
+                        {newVideoFileNames[index]?.map((url, fileIndex) => (
+                          <div
+                            key={fileIndex}
+                            className="col-span-1 flex items-center"
+                          >
+                            <video
+                              controls
+                              className="w-full h-auto rounded-lg shadow-md"
+                            >
+                              <source src={url} type="video/mp4" />
+                              Your browser does not support the video tag.
+                            </video>
+                          </div>
+                        ))}
+                        <div className="col-span-1">
                           <label
                             htmlFor={`video_${index}`}
-                            className="cursor-pointer bg-white py-2 px-4 border border-gray-300 rounded-md text-sm leading-4 font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:border-blue-300 focus:ring-blue-500"
+                            className="block text-sm font-medium text-gray-700"
                           >
-                            Select Video
+                            Upload Video
                           </label>
+                          <div className="mt-1 flex items-center">
+                            <input
+                              type="file"
+                              id={`video_${index}`}
+                              name={`chapters[${index}][files]`}
+                              className="hidden"
+                              accept="video/*"
+                              onChange={(e) => handleVideoChange(index, e)}
+                              multiple
+                            />
+                            <label
+                              htmlFor={`video_${index}`}
+                              className="cursor-pointer bg-white py-2 px-4 border border-gray-300 rounded-md text-sm leading-4 font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:border-blue-300 focus:ring-blue-500"
+                            >
+                              Select Video
+                            </label>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))}
 
-              {/* Add chapter button */}
-              <div className="mt-6">
+                {/* Add chapter button */}
+                <div className="mt-6">
+                  <button
+                    type="button"
+                    className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                    onClick={handleAddChapter}
+                  >
+                    Add Chapter
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Submit and delete buttons */}
+            <div className="pt-5">
+              <div className="flex justify-end space-x-4">
+                <button
+                  type="submit"
+                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:border-blue-700 focus:ring-blue-500 active:bg-blue-700 transition duration-150 ease-in-out"
+                >
+                  Save Changes
+                </button>
                 <button
                   type="button"
-                  className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-                  onClick={handleAddChapter}
+                  onClick={() => handleDelete(formData._id)}
+                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:border-red-700 focus:ring-red-500 active:bg-red-700 transition duration-150 ease-in-out"
                 >
-                  Add Chapter
+                  Delete Course
                 </button>
               </div>
             </div>
-          </div>
-
-          {/* Submit and delete buttons */}
-          <div className="pt-5">
-            <div className="flex justify-end space-x-4">
-              <button
-                type="submit"
-                className="inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:border-blue-700 focus:ring-blue-500 active:bg-blue-700 transition duration-150 ease-in-out"
-              >
-                Save Changes
-              </button>
-              <button
-                type="button"
-                onClick={() => handleDelete(formData._id)}
-                className="inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:border-red-700 focus:ring-red-500 active:bg-red-700 transition duration-150 ease-in-out"
-              >
-                Delete Course
-              </button>
-            </div>
-          </div>
-        </form>
-      </div>
+          </form>
+        </div>
+      </SpinnerWrapper>
     </div>
   );
 };

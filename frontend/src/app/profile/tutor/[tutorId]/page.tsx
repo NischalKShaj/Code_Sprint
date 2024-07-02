@@ -19,12 +19,15 @@ const StudentId = () => {
   const isLoggedIn = AppState((state) => state.isLoggedIn);
   const id = user?.id;
   const isAuthorized = AppState((state) => state.isAuthorized);
+  const [loading, setIsLoading] = useState(true);
 
   useLayoutEffect(() => {
     if (!isAuthorized) {
       router.push("/login");
+    } else {
+      setIsLoading(false);
     }
-  });
+  }, [isAuthorized, router]);
 
   // Initialize form state
   const [formData, setFormData] = useState({
@@ -115,6 +118,14 @@ const StudentId = () => {
       router.push("/error");
     }
   };
+
+  if (loading) {
+    return (
+      <SpinnerWrapper>
+        <div>Loading...</div>
+      </SpinnerWrapper>
+    );
+  }
 
   return (
     <div>

@@ -3,6 +3,7 @@
 // importing the required files
 const UserCollection = require("../../../core/entities/user/userCollection");
 const TutorCollection = require("../../../core/entities/user/tutorCollection");
+const CourseCollection = require("../../../core/entities/course/courseCollection");
 const dotenv = require("dotenv");
 dotenv.config();
 
@@ -120,8 +121,15 @@ const adminRepository = {
 
       console.log("tutorGraph", tutorGraphs);
 
+      const totalSubscribers = await CourseCollection.find(
+        {},
+        { totalSubscribed: 1, course_name: 1 }
+      );
+
+      console.log("total", totalSubscribers);
+
       if (userGraphs && tutorGraphs) {
-        return { userGraphs, tutorGraphs };
+        return { userGraphs, tutorGraphs, totalSubscribers };
       } else {
         return null;
       }

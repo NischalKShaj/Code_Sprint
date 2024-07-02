@@ -27,8 +27,10 @@ const UserPage = () => {
   useLayoutEffect(() => {
     if (!isAdmin) {
       router.push("/admin");
+    } else {
+      setIsLoading(false);
     }
-  });
+  }, [isAdmin, router]);
 
   const handleBlock = async (id: any) => {
     try {
@@ -66,8 +68,11 @@ const UserPage = () => {
   const currentUsers = allUser.slice(indexOfFirstUser, indexOfLastUser);
 
   if (isLoading) {
-    // make it a skeleton
-    return <div>Loading...</div>;
+    return (
+      <SpinnerWrapper>
+        <div>Loading...</div>
+      </SpinnerWrapper>
+    );
   }
 
   return (

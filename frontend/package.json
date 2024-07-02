@@ -46,6 +46,7 @@
     "react-redux": "^9.1.2",
     "react-responsive-carousel": "^3.2.23",
     "react-spinners": "^0.13.8",
+    "recharts": "^2.12.7",
     "redux": "^5.0.1",
     "shortid": "^2.2.16",
     "sweetalert2": "^11.11.1",

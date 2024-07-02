@@ -18,7 +18,16 @@ const StudentId = () => {
   const user = AppState((state) => state.user);
   const isLoggedIn = AppState((state) => state.isLoggedIn);
   const isAuthenticated = AppState((state) => state.isAuthorized);
+  const [loading, setLoading] = useState(true);
   const id = user?.id;
+
+  useLayoutEffect(() => {
+    if (!isAuthenticated) {
+      router.push("/login");
+    } else {
+      setLoading(false);
+    }
+  }, [isAuthenticated, router]);
 
   // Initialize form state
   const [formData, setFormData] = useState({
@@ -29,12 +38,6 @@ const StudentId = () => {
     profileImage: user?.profileImage || "", // URL for preview
   });
   const [file, setFile] = useState<File | null>(null); // Actual File object
-
-  useLayoutEffect(() => {
-    if (!isAuthenticated) {
-      router.push("/login");
-    }
-  });
 
   // Handle file input change
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -115,6 +118,11 @@ const StudentId = () => {
       router.push("/error");
     }
   };
+
+  if (loading) {
+    // eslint-disable-next-line react/no-children-prop
+    return <SpinnerWrapper children={undefined} />;
+  }
 
   return (
     <div>

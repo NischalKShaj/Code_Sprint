@@ -29,8 +29,10 @@ const Banner = () => {
   useLayoutEffect(() => {
     if (!isAdmin) {
       router.push("/admin");
+    } else {
+      setLoading(false);
     }
-  });
+  }, [isAdmin, router]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -73,6 +75,14 @@ const Banner = () => {
   const currentBanners = banners.slice(indexOfFirstBanner, indexOfLastBanner);
 
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+
+  if (loading) {
+    return (
+      <SpinnerWrapper>
+        <div>Loading...</div>
+      </SpinnerWrapper>
+    );
+  }
 
   return (
     <div>

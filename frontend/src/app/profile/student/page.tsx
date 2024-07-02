@@ -46,8 +46,10 @@ const Profile = () => {
   useLayoutEffect(() => {
     if (!isAuthenticated) {
       router.push("/login");
+    } else {
+      setIsLoading(false);
     }
-  });
+  }, [isAuthenticated, router]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -112,6 +114,7 @@ const Profile = () => {
     fetchData();
   }, [router, user?.id, subscribe]);
 
+  // function to decrypt the videos
   const decryptVideo = (encryptedUrl: string): string => {
     try {
       const parts = encryptedUrl.split(":");
@@ -142,7 +145,11 @@ const Profile = () => {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <SpinnerWrapper>
+        <div>Loading...</div>
+      </SpinnerWrapper>
+    );
   }
 
   // Calculate index of videos to display based on current page

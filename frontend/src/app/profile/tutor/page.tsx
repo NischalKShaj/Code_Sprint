@@ -28,8 +28,10 @@ const TutorProfilePage = () => {
   useLayoutEffect(() => {
     if (!isAuthorized) {
       router.push("/login");
+    } else {
+      setIsLoading(false);
     }
-  });
+  }, [isAuthorized, router]);
 
   useEffect(() => {
     setIsLoading(false);
@@ -69,20 +71,13 @@ const TutorProfilePage = () => {
   }, [router, user?.id, user?.username]);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <SpinnerWrapper>
+        <div>Loading...</div>
+      </SpinnerWrapper>
+    );
   }
 
-  // implement pagination for the total subscribed user
-  // Calculate index of videos to display based on current page
-  //   const indexOfLastCourse = currentPage * coursesPerPage;
-  //   const indexOfFirstCourse = indexOfLastCourse - coursesPerPage;
-  //   const currentCourses = subscribedCourse.slice(
-  //     indexOfFirstCourse,
-  //     indexOfLastCourse
-  //   );
-  //   const handlePagination = (pageNumber: number) => {
-  //     setCurrentPage(pageNumber);
-  //   };
   return (
     <div>
       <SpinnerWrapper>

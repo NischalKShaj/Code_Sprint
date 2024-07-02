@@ -23,14 +23,17 @@ const AddCategory = () => {
   });
   const [errors, setErrors] = useState<Errors>({});
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
   const isAdmin = AppState((state) => state.isAdmin);
 
   useLayoutEffect(() => {
     if (!isAdmin) {
       router.push("/admin");
+    } else {
+      setLoading(false);
     }
-  });
+  }, [isAdmin, router]);
 
   // Function to handle change
   const handleChange: ChangeEventHandler<HTMLInputElement> = (e) => {
@@ -97,6 +100,14 @@ const AddCategory = () => {
       });
     }
   };
+
+  if (loading) {
+    return (
+      <SpinnerWrapper>
+        <div>Loading...</div>
+      </SpinnerWrapper>
+    );
+  }
 
   return (
     <div>

@@ -6,17 +6,23 @@ import React, { useEffect, useState } from "react";
 import dotenv from "dotenv";
 import axios from "axios";
 import { AppState } from "@/app/store";
+import crypto from "crypto";
 dotenv.config();
 
-interface CourseWithModifiedVideo {
+interface Chapter {
+  chapterName: string;
+  videos: string[];
+}
+
+interface Course {
   course_name: string;
   course_category: string;
-  video_url: string;
+  chapters: Chapter[];
   _id: string;
 }
 
 const InterestCarousel = () => {
-  const [courses, setCourses] = useState<CourseWithModifiedVideo[]>([]);
+  const [courses, setCourses] = useState<Course[]>([]);
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const user = AppState((state) => state.user);
   const id = user?.id;
@@ -36,11 +42,14 @@ const InterestCarousel = () => {
           withCredentials: true,
         });
         if (response.status === 202) {
-          const modifiedCourses = response.data.map((course: any) => ({
+          const decryptedCourses = response.data.map((course: any) => ({
             ...course,
-            video_url: course.videos[0].slice(0, -1),
+            chapters: course.chapters.map((chapter: any) => ({
+              chapterName: chapter.chapterName,
+              videos: chapter.videos.map((video: any) => decryptVideo(video)),
+            })),
           }));
-          setCourses(modifiedCourses);
+          setCourses(decryptedCourses);
         }
       } catch (error) {
         console.error("error", error);
@@ -49,46 +58,73 @@ const InterestCarousel = () => {
     fetchData();
   }, [id]);
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentSlideIndex((prevIndex) => (prevIndex + 1) % courses.length);
-    }, 5000);
-    return () => clearInterval(timer);
-  }, [courses.length]);
+  // function to decrypt the videos
+  const decryptVideo = (encryptedUrl: string): string => {
+    try {
+      const parts = encryptedUrl.split(":");
+      if (parts.length !== 3) {
+        throw new Error(`Invalid encrypted URL format: ${encryptedUrl}`);
+      }
+
+      const iv = Buffer.from(parts[0], "hex");
+      const tag = Buffer.from(parts[1], "hex");
+      const ciphertext = Buffer.from(parts[2], "hex");
+      const key = Buffer.from(process.env.NEXT_PUBLIC_CIPHER_SECRETKEY!, "hex");
+
+      const decipher = crypto.createDecipheriv("aes-256-gcm", key, iv);
+      decipher.setAuthTag(tag);
+
+      let decrypted = decipher.update(ciphertext, undefined, "utf8");
+      decrypted += decipher.final("utf8");
+
+      return decrypted;
+    } catch (error: any) {
+      console.error("Decryption error:", error.message);
+      throw error;
+    }
+  };
 
   const nextSlide = () => {
-    setCurrentSlideIndex((prevIndex) => (prevIndex + 1) % courses.length);
+    setCurrentSlideIndex(
+      (prevIndex) => (prevIndex + 1) % Math.ceil(courses.length / 3)
+    );
   };
 
   const prevSlide = () => {
     setCurrentSlideIndex(
-      (prevIndex) => (prevIndex - 1 + courses.length) % courses.length
+      (prevIndex) =>
+        (prevIndex - 1 + Math.ceil(courses.length / 3)) %
+        Math.ceil(courses.length / 3)
     );
   };
 
   return (
     <div className="relative w-full">
-      <h1 className="text-center text-3xl font-bold mb-6 text-gray-800">
+      <h1 className="text-center text-3xl mt-[90px] font-bold mb-6 text-gray-800">
         Suggested Courses for You
       </h1>
+      <hr className="w-20 h-1 mx-auto my-4 bg-black border-0 mt-2 rounded md:my-6 dark:bg-gray-700" />
 
-      <div className="relative h-56 overflow-hidden rounded-lg md:h-96">
-        {courses.map((course, index) => (
-          <div
-            key={course._id}
-            className={`absolute inset-0 transition-transform duration-700 ${
-              index === currentSlideIndex ? "translate-x-0" : "translate-x-full"
-            } ${index === currentSlideIndex - 1 ? "-translate-x-full" : ""}`}
-          >
-            <div className="flex justify-center items-center h-full">
-              <div className="flex flex-col items-center text-center">
-                {course.video_url && (
-                  <video
-                    className="w-full h-auto max-h-80 rounded-lg shadow-lg"
-                    src={course.video_url}
-                    controls={false}
-                  />
-                )}
+      <div className="relative overflow-hidden">
+        <div
+          className="flex transition-transform duration-700 "
+          style={{ transform: `translateX(-${currentSlideIndex * 100}%)` }}
+        >
+          {courses.map((course, index) => (
+            <div
+              key={course._id}
+              className="flex-shrink-0 w-1/3 p-4"
+              style={{ flexBasis: "33.3333%" }}
+            >
+              <div className="flex flex-col items-center text-center bg-[#E0F7FA] rounded-lg shadow-lg p-4">
+                {course.chapters.length > 0 &&
+                  course.chapters[0].videos.length > 0 && (
+                    <video
+                      className="w-full h-auto max-h-80 rounded-lg shadow-lg"
+                      src={course.chapters[0].videos[0]}
+                      controls={false}
+                    />
+                  )}
                 <h3 className="text-lg font-semibold mt-4 text-gray-700">
                   {course.course_name}
                 </h3>
@@ -97,12 +133,12 @@ const InterestCarousel = () => {
                 </p>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
 
       <div className="absolute inset-x-0 bottom-5 flex justify-center space-x-4">
-        {courses.map((_, index) => (
+        {[...Array(Math.ceil(courses.length / 3))].map((_, index) => (
           <button
             key={index}
             className={`w-3 h-3 rounded-full ${

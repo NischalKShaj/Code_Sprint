@@ -33,8 +33,10 @@ const PayoutPage = () => {
   useLayoutEffect(() => {
     if (!isAdmin) {
       router.push("/admin");
+    } else {
+      setLoading(false);
     }
-  });
+  }, [isAdmin, router]);
 
   // Fetching the data from the database
   useEffect(() => {
@@ -151,6 +153,14 @@ const PayoutPage = () => {
   );
 
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+
+  if (loading) {
+    return (
+      <SpinnerWrapper>
+        <div>Loading...</div>
+      </SpinnerWrapper>
+    );
+  }
 
   return (
     <div>

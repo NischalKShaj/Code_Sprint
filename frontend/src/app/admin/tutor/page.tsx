@@ -25,8 +25,10 @@ const TutorPage = () => {
   useLayoutEffect(() => {
     if (!isAdmin) {
       router.push("/admin");
+    } else {
+      setLoading(false);
     }
-  });
+  }, [isAdmin, router]);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -68,6 +70,14 @@ const TutorPage = () => {
   const indexOfLastTutor = currentPage * tutorsPerPage;
   const indexOfFirstTutor = indexOfLastTutor - tutorsPerPage;
   const currentTutors = allTutors.slice(indexOfFirstTutor, indexOfLastTutor);
+
+  if (loading) {
+    return (
+      <SpinnerWrapper>
+        <div>Loading...</div>
+      </SpinnerWrapper>
+    );
+  }
 
   return (
     <div>

@@ -26,12 +26,15 @@ const EditBanner = () => {
   const router = useRouter();
   const id = editBanner;
   const isAdmin = AppState((state) => state.isAdmin);
+  const [loading, setLoading] = useState(true);
 
   useLayoutEffect(() => {
     if (!isAdmin) {
       router.push("/admin");
+    } else {
+      setLoading(false);
     }
-  });
+  }, [isAdmin, router]);
 
   // use effect for fetching the data of the particular banner
   useEffect(() => {
@@ -146,6 +149,14 @@ const EditBanner = () => {
       });
     }
   };
+
+  if (loading) {
+    return (
+      <SpinnerWrapper>
+        <div>Loading...</div>
+      </SpinnerWrapper>
+    );
+  }
 
   return (
     <div>

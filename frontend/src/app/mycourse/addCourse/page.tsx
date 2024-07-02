@@ -7,6 +7,7 @@ import { AppState } from "../../store";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
 import TutorSideBar from "@/components/partials/TutorSideBar";
+import SpinnerWrapper from "@/components/partials/SpinnerWrapper";
 
 dotenv.config();
 
@@ -23,12 +24,15 @@ const AddCourse = () => {
   const email = AppState((state) => state.user?.email);
   const router = useRouter();
   const isAuthorized = AppState((state) => state.isAuthorized);
+  const [loading, setIsLoading] = useState(true);
 
   useLayoutEffect(() => {
     if (!isAuthorized) {
       router.push("/login");
+    } else {
+      setIsLoading(false);
     }
-  });
+  }, [isAuthorized, router]);
 
   const [form, setForm] = useState({
     course_name: "",
@@ -164,108 +168,118 @@ const AddCourse = () => {
     }));
   };
 
+  if (loading) {
+    return (
+      <SpinnerWrapper>
+        <div>Loading...</div>
+      </SpinnerWrapper>
+    );
+  }
+
   return (
     <div className="flex flex-col items-center mb-24 bg-white mt-8">
       <TutorSideBar />
-      <h3 className="text-2xl font-bold mb-6 text-center items-center">
-        Add New Course
-      </h3>
-      <section className="bg-[#D9D9D9] p-8 h-auto w-[570px] rounded-lg shadow-md">
-        <form
-          onSubmit={handleSubmit}
-          encType="multipart/form-data"
-          className="flex flex-col items-center justify-center text-left"
-        >
-          <input
-            className="p-4 bg-gray-50 border border-gray-300 rounded-lg  w-full mt-3"
-            type="text"
-            name="course_name"
-            required
-            id="course_name"
-            value={form.course_name}
-            onChange={handleChange}
-            placeholder="Course Name"
-          />
-          <select
-            className="p-4 bg-gray-50 border border-gray-300 rounded-lg  w-full mt-3"
-            required
-            id="course_category"
-            value={form.course_category}
-            onChange={handleChange}
+      <SpinnerWrapper>
+        <h3 className="text-2xl font-bold mb-6 text-center items-center">
+          Add New Course
+        </h3>
+        <section className="bg-[#D9D9D9] p-8 h-auto w-[570px] rounded-lg shadow-md">
+          <form
+            onSubmit={handleSubmit}
+            encType="multipart/form-data"
+            className="flex flex-col items-center justify-center text-left"
           >
-            <option value="">Select Category</option>
-            {category.map((category, index) => (
-              <option key={index} value={category.category_name}>
-                {category.category_name}
-              </option>
+            <input
+              className="p-4 bg-gray-50 border border-gray-300 rounded-lg  w-full mt-3"
+              type="text"
+              name="course_name"
+              required
+              id="course_name"
+              value={form.course_name}
+              onChange={handleChange}
+              placeholder="Course Name"
+            />
+            <select
+              className="p-4 bg-gray-50 border border-gray-300 rounded-lg  w-full mt-3"
+              required
+              id="course_category"
+              value={form.course_category}
+              onChange={handleChange}
+            >
+              <option value="">Select Category</option>
+              {category.map((category, index) => (
+                <option key={index} value={category.category_name}>
+                  {category.category_name}
+                </option>
+              ))}
+            </select>
+            <textarea
+              className="p-4 bg-gray-50 border border-gray-300 rounded-lg w-full mt-3"
+              name="description"
+              id="description"
+              value={form.description}
+              onChange={handleChange}
+              placeholder="Course Description"
+            ></textarea>
+            <input
+              className="p-4 bg-gray-50 border border-gray-300 rounded-lg w-full mt-3"
+              type="number"
+              name="amount"
+              required
+              id="amount"
+              value={form.amount}
+              onChange={handleChange}
+              placeholder="Amount"
+            />
+            {chapters.map((chapter, index) => (
+              <div key={index} className="chapter-section mt-4">
+                <input
+                  className="p-4 bg-gray-50 border border-gray-300 rounded-lg w-full mt-3"
+                  type="text"
+                  placeholder={`Chapter ${index + 1} Name`}
+                  value={chapter.chapter_name}
+                  onChange={(e) =>
+                    handleChapterChange(index, "chapter_name", e.target.value)
+                  }
+                />
+                <label htmlFor="videos" className="text-gray-500 mr-[50px]">
+                  Select MP4 or WebM format
+                </label>
+                <input
+                  className="p-4 bg-gray-50 border border-gray-300 rounded-lg w-full mt-3"
+                  type="file"
+                  multiple
+                  accept="video/webm, video/mp4"
+                  name={`chapters[${index}][files]`}
+                  onChange={(e) => handleFileChange(index, e.target.files)}
+                />
+                {index > 0 && (
+                  <button
+                    type="button"
+                    className="mt-3 p-2 bg-red-500 text-white rounded"
+                    onClick={() => removeChapter(index)}
+                  >
+                    Remove Chapter
+                  </button>
+                )}
+              </div>
             ))}
-          </select>
-          <textarea
-            className="p-4 bg-gray-50 border border-gray-300 rounded-lg w-full mt-3"
-            name="description"
-            id="description"
-            value={form.description}
-            onChange={handleChange}
-            placeholder="Course Description"
-          ></textarea>
-          <input
-            className="p-4 bg-gray-50 border border-gray-300 rounded-lg w-full mt-3"
-            type="number"
-            name="amount"
-            required
-            id="amount"
-            value={form.amount}
-            onChange={handleChange}
-            placeholder="Amount"
-          />
-          {chapters.map((chapter, index) => (
-            <div key={index} className="chapter-section mt-4">
-              <input
-                className="p-4 bg-gray-50 border border-gray-300 rounded-lg w-full mt-3"
-                type="text"
-                placeholder={`Chapter ${index + 1} Name`}
-                value={chapter.chapter_name}
-                onChange={(e) =>
-                  handleChapterChange(index, "chapter_name", e.target.value)
-                }
-              />
-              <label htmlFor="videos" className="text-gray-500 mr-[50px]">
-                Select MP4 or WebM format
-              </label>
-              <input
-                className="p-4 bg-gray-50 border border-gray-300 rounded-lg w-full mt-3"
-                type="file"
-                multiple
-                accept="video/webm, video/mp4"
-                name={`chapters[${index}][files]`}
-                onChange={(e) => handleFileChange(index, e.target.files)}
-              />
-              {index > 0 && (
-                <button
-                  type="button"
-                  className="mt-3 p-2 bg-red-500 text-white rounded"
-                  onClick={() => removeChapter(index)}
-                >
-                  Remove Chapter
-                </button>
-              )}
-            </div>
-          ))}
-          <button
-            type="button"
-            className="mt-3 p-2 bg-[#686DE0] text-white rounded w-full"
-            onClick={addChapter}
-          >
-            Add Chapter
-          </button>
-          <button
-            type="submit"
-            className="mt-6 p-4 bg-[#686DE0] text-white rounded-lg w-full"
-          >
-            Submit
-          </button>
-        </form>
-      </section>
+            <button
+              type="button"
+              className="mt-3 p-2 bg-[#686DE0] text-white rounded w-full"
+              onClick={addChapter}
+            >
+              Add Chapter
+            </button>
+            <button
+              type="submit"
+              className="mt-6 p-4 bg-[#686DE0] text-white rounded-lg w-full"
+            >
+              Submit
+            </button>
+          </form>
+        </section>
+      </SpinnerWrapper>
     </div>
   );
 };

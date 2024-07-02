@@ -24,12 +24,15 @@ const AddBanner: React.FC = () => {
   });
   const router = useRouter();
   const isAdmin = AppState((state) => state.isAdmin);
+  const [loading, setLoading] = useState(true);
 
   useLayoutEffect(() => {
     if (!isAdmin) {
       router.push("/admin");
+    } else {
+      setLoading(false);
     }
-  });
+  }, [isAdmin, router]);
 
   // image change
   const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -122,6 +125,14 @@ const AddBanner: React.FC = () => {
       router.push("/admin/error");
     }
   };
+
+  if (loading) {
+    return (
+      <SpinnerWrapper>
+        <div>Loading...</div>
+      </SpinnerWrapper>
+    );
+  }
 
   return (
     <div>

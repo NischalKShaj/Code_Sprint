@@ -45,12 +45,15 @@ const Course = () => {
   const router = useRouter();
   const isSubscribed = CourseState((state) => state.isSubscribed);
   const isAuthorized = AppState((state) => state.isAuthorized);
+  const [loading, setLoading] = useState(true);
 
   useLayoutEffect(() => {
     if (!isAuthorized) {
       router.push("/login");
+    } else {
+      setLoading(false);
     }
-  });
+  }, [isAuthorized, router]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -195,6 +198,14 @@ const Course = () => {
   const currentCourses = allCourse.slice(indexOfFirstCourse, indexOfLastCourse);
 
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+
+  if (loading) {
+    return (
+      <SpinnerWrapper>
+        <div>Loading...</div>
+      </SpinnerWrapper>
+    );
+  }
 
   return (
     <div>

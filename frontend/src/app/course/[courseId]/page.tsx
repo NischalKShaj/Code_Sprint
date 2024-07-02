@@ -56,10 +56,12 @@ const CourseId = () => {
   const isAuthorized = AppState((state) => state.isAuthorized);
 
   useLayoutEffect(() => {
-    if (isAuthorized) {
+    if (!isAuthorized) {
       router.push("/login");
+    } else {
+      setIsLoading(false);
     }
-  });
+  }, [isAuthorized]);
 
   // function to decrypt the videos url
   const decryptVideo = (encryptedUrl: string): string => {

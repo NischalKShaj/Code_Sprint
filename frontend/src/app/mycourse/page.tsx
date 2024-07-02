@@ -41,12 +41,15 @@ const MyCourse: React.FC = () => {
   const [flattenedVideos, setFlattenedVideos] = useState<FlattenedVideo[]>([]);
   const tutorId = AppState((state) => state.user?.id);
   const isAuthorized = AppState((state) => state.isAuthorized);
+  const [loading, setIsLoading] = useState(true);
 
   useLayoutEffect(() => {
     if (!isAuthorized) {
       router.push("/login");
+    } else {
+      setIsLoading(false);
     }
-  });
+  }, [isAuthorized, router]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -138,6 +141,14 @@ const MyCourse: React.FC = () => {
         return "video/mp4";
     }
   };
+
+  if (loading) {
+    return (
+      <SpinnerWrapper>
+        <div>Loading...</div>
+      </SpinnerWrapper>
+    );
+  }
 
   return (
     <div className="flex flex-col items-center mb-36 bg-white mt-16">

@@ -10,6 +10,8 @@ dotenv.config();
 const UserBarGraph = () => {
   const router = useRouter();
   const [monthlyUserCounts, setMonthlyUserCounts] = useState<number[]>([]);
+  const [yearlyUserCounts, setYearlyUserCounts] = useState<number[]>([]);
+  const [totalUserCount, setTotalUserCount] = useState(0);
   const [counts, setCounts] = useState<{ [key: string]: number }>({
     January: 0,
     February: 0,
@@ -24,6 +26,10 @@ const UserBarGraph = () => {
     November: 0,
     December: 0,
   });
+  const [yearlyCounts, setYearlyCounts] = useState<{ [key: string]: number }>(
+    {}
+  );
+  const [view, setView] = useState<"monthly" | "yearly">("monthly");
 
   useEffect(() => {
     const token = localStorage.getItem("admin_access_token");
@@ -41,9 +47,13 @@ const UserBarGraph = () => {
         );
         if (response.status === 202) {
           const userGraphs: string[] = response.data.userGraphs || [];
-          const newCounts = countUsersByMonth(userGraphs);
-          setCounts(newCounts);
-          setMonthlyUserCounts(Object.values(newCounts));
+          const monthlyCounts = countUsersByMonth(userGraphs);
+          const yearlyCounts = countUsersByYear(userGraphs);
+          setCounts(monthlyCounts);
+          setYearlyCounts(yearlyCounts);
+          setMonthlyUserCounts(Object.values(monthlyCounts));
+          setYearlyUserCounts(Object.values(yearlyCounts));
+          setTotalUserCount(userGraphs.length);
         }
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -71,7 +81,7 @@ const UserBarGraph = () => {
       October: 0,
       November: 0,
       December: 0,
-    } as { [key: string]: number }; // Type assertion for initialCounts
+    } as { [key: string]: number };
 
     userDates.forEach((dateString) => {
       const date = new Date(dateString);
@@ -85,19 +95,77 @@ const UserBarGraph = () => {
     return initialCounts;
   };
 
+  // Function to count users by year
+  const countUsersByYear = (userDates: string[]) => {
+    const yearlyCounts: { [key: string]: number } = {};
+
+    userDates.forEach((dateString) => {
+      const date = new Date(dateString);
+      const year = date.getFullYear().toString();
+
+      if (!yearlyCounts.hasOwnProperty(year)) {
+        yearlyCounts[year] = 0;
+      }
+      yearlyCounts[year]++;
+    });
+
+    return yearlyCounts;
+  };
+
   const xAxisLabels = Object.keys(counts); // Define xAxisLabels here based on counts
+  const xAxisLabelsYearly = Object.keys(yearlyCounts); // Use state variable for yearly counts
 
   return (
     <div style={{ textAlign: "start", width: "100%" }}>
-      <h2>User Chart</h2>
-      <div style={{ width: "100%", height: "400px", maxWidth: "100%" }}>
-        <BarChart
-          series={[{ data: monthlyUserCounts }]}
-          height={290}
-          xAxis={[{ data: xAxisLabels, scaleType: "band" }]}
-          margin={{ top: 10, bottom: 30, left: 40, right: 10 }}
-        />
+      <h2>Total Users: {totalUserCount}</h2>
+      <div style={{ margin: "20px 0" }}>
+        <button
+          onClick={() => setView("monthly")}
+          style={{
+            padding: "10px 20px",
+            marginRight: "10px",
+            backgroundColor: view === "monthly" ? "#686DE0" : "#D9D9D9",
+            color: "#fff",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer",
+          }}
+        >
+          Monthly
+        </button>
+        <button
+          onClick={() => setView("yearly")}
+          style={{
+            padding: "10px 20px",
+            backgroundColor: view === "yearly" ? "#686DE0" : "#D9D9D9",
+            color: "#fff",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer",
+          }}
+        >
+          Yearly
+        </button>
       </div>
+      {view === "monthly" ? (
+        <div style={{ width: "100%", height: "400px", maxWidth: "100%" }}>
+          <BarChart
+            series={[{ data: monthlyUserCounts }]}
+            height={290}
+            xAxis={[{ data: xAxisLabels, scaleType: "band" }]}
+            margin={{ top: 10, bottom: 30, left: 40, right: 10 }}
+          />
+        </div>
+      ) : (
+        <div style={{ width: "100%", height: "400px", maxWidth: "100%" }}>
+          <BarChart
+            series={[{ data: yearlyUserCounts }]}
+            height={290}
+            xAxis={[{ data: xAxisLabelsYearly, scaleType: "band" }]}
+            margin={{ top: 10, bottom: 30, left: 40, right: 10 }}
+          />
+        </div>
+      )}
     </div>
   );
 };

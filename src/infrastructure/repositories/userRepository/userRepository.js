@@ -153,7 +153,11 @@ const userRepository = {
   // method for verifying the payment
   paymentSuccess: async (course, user) => {
     try {
-      const courseData = await CourseCollection.findById({ _id: course });
+      const courseData = await CourseCollection.findByIdAndUpdate(
+        { _id: course },
+        { $inc: { totalSubscribed: 1 } },
+        { new: true }
+      );
       const userData = await UserCollection.findById({ _id: user });
       if (courseData && userData) {
         // for updating the user side to show the subscription
