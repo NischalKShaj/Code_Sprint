@@ -40,7 +40,8 @@ const users = new mongoose.Schema(
     },
     problems: [
       {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "problem",
         default: [],
       },
     ],

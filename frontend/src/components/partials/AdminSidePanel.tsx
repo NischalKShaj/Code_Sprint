@@ -137,6 +137,11 @@ const AdminSidePanel = () => {
     router.push("/admin/banner");
   };
 
+  // function to move to the problems page
+  const problemRoute = () => {
+    router.push("/admin/problem");
+  };
+
   return (
     <div>
       <button
@@ -234,6 +239,24 @@ const AdminSidePanel = () => {
                 </svg>
 
                 <span className="flex-1 ms-3 whitespace-nowrap">Courses</span>
+              </button>
+            </li>
+            <li>
+              <button
+                onClick={problemRoute}
+                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+              >
+                <svg
+                  className="w-5 h-5 text-gray-500 mr-2"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M12 2C8.13 2 5 5.13 5 9c0 2.93 1.95 5.43 4.63 6.32L10 17h4l.37-1.68C17.05 14.43 19 11.93 19 9c0-3.87-3.13-7-7-7zM12 22c-1.1 0-2-.9-2-2h4c0 1.1-.9 2-2 2zm3-5H9v-1h6v1z" />
+                </svg>
+
+                <span className="flex-1 ms-3 whitespace-nowrap">Problems</span>
               </button>
             </li>
             <li>

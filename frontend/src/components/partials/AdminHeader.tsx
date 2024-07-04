@@ -39,7 +39,7 @@ const AdminHeader = () => {
           <div className="flex items-center mr-[100px]">
             <Link href="/admin/banner/addBanner">
               <button className="bg-[#686DE0] text-white font-bold py-2 px-4 rounded-xl relative">
-                add banner
+                Add Banner
               </button>
             </Link>
           </div>
@@ -48,7 +48,16 @@ const AdminHeader = () => {
           <div className="flex items-center mr-[100px]">
             <Link href="/admin/category/addCategory">
               <button className="bg-[#686DE0] text-white font-bold py-2 px-4 rounded-xl relative">
-                add category
+                Add Category
+              </button>
+            </Link>
+          </div>
+        )}
+        {pathname === "/admin/problem" && (
+          <div className="flex items-center mr-[100px]">
+            <Link href="/admin/problem/addProblem">
+              <button className="bg-[#686DE0] text-white font-bold py-2 px-4 rounded-xl relative">
+                Add Problems
               </button>
             </Link>
           </div>
