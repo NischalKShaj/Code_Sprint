@@ -55,7 +55,7 @@ const AdminHeader = () => {
         )}
         {pathname === "/admin/problem" && (
           <div className="flex items-center mr-[100px]">
-            <Link href="/admin/problem/addProblem">
+            <Link href="/admin/problem/addProblems">
               <button className="bg-[#686DE0] text-white font-bold py-2 px-4 rounded-xl relative">
                 Add Problems
               </button>

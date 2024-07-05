@@ -337,9 +337,9 @@ const EditCoursePage = () => {
 
   // Render the EditCoursePage component
   return (
-    <div className="flex min-h-screen pt-4 pb-16 bg-gray-100">
-      <TutorSideBar />
-      <SpinnerWrapper>
+    <SpinnerWrapper>
+      <div className="flex min-h-screen pt-4 pb-16 bg-gray-100">
+        <TutorSideBar />
         <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <form
             onSubmit={handleSubmit}
@@ -549,8 +549,8 @@ const EditCoursePage = () => {
             </div>
           </form>
         </div>
-      </SpinnerWrapper>
-    </div>
+      </div>
+    </SpinnerWrapper>
   );
 };
 

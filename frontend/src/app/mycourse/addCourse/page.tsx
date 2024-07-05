@@ -177,9 +177,9 @@ const AddCourse = () => {
   }
 
   return (
-    <div className="flex flex-col items-center mb-24 bg-white mt-8">
-      <TutorSideBar />
-      <SpinnerWrapper>
+    <SpinnerWrapper>
+      <div className="flex flex-col items-center mb-24 bg-white mt-8">
+        <TutorSideBar />
         <h3 className="text-2xl font-bold mb-6 text-center items-center">
           Add New Course
         </h3>
@@ -279,8 +279,8 @@ const AddCourse = () => {
             </button>
           </form>
         </section>
-      </SpinnerWrapper>
-    </div>
+      </div>
+    </SpinnerWrapper>
   );
 };
 

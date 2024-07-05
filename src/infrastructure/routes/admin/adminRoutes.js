@@ -11,6 +11,7 @@ const {
 const bannerController = require("../../../adapters/controllers/bannerController/bannerController");
 const payoutController = require("../../../adapters/controllers/payoutController/payoutController");
 const categoryController = require("../../../adapters/controllers/categoryController/categoryController");
+const problemController = require("../../../adapters/controllers/problemController/problemController");
 
 // defining all the required routes
 
@@ -84,6 +85,20 @@ router.post(
   "/addCategory",
   authenticateAdminJwt,
   categoryController.addCategory
+);
+
+// router for adding the languages
+router.post(
+  "/problems/addLanguage",
+  authenticateAdminJwt,
+  problemController.addLanguage
+);
+
+// router for getting the difficulty and the languages
+router.get(
+  "/problems/addProblems/languageAndDifficulty",
+  authenticateAdminJwt,
+  problemController.getDifficultyAndLanguage
 );
 
 // router for logging out

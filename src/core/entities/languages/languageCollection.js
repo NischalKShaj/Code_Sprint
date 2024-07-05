@@ -8,12 +8,10 @@ const languageCollection = new mongoose.Schema({
   languageId: {
     type: Number,
     required: true,
-    default: 63,
   },
   language: {
     type: String,
     required: true,
-    default: "JavaScript",
   },
 });
 

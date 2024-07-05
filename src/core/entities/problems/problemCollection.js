@@ -27,6 +27,11 @@ const problems = new mongoose.Schema({
       required: true,
     },
   ],
+  difficulty: {
+    type: String,
+    enum: ["Easy", "Medium", "Hard"],
+    required: true,
+  },
   testCase: [
     {
       type: mongoose.Schema.Types.ObjectId,
@@ -34,6 +39,10 @@ const problems = new mongoose.Schema({
       required: true,
     },
   ],
+  clientCode: {
+    type: String,
+    required: true,
+  },
   mainCode: {
     type: String,
     required: true,
