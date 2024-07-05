@@ -6,9 +6,9 @@ const problemRepository = require("../../../infrastructure/repositories/problemR
 // create the use case for the problems
 const problemUseCase = {
   // use case for getting the language and the difficulty
-  getDifficultyAndLanguage: async () => {
+  getDifficultyAndCategory: async () => {
     try {
-      const response = await problemRepository.getDifficultyAndLanguage();
+      const response = await problemRepository.getDifficultyAndCategory();
       if (response) {
         return { success: true, data: response };
       } else {
@@ -21,9 +21,9 @@ const problemUseCase = {
   },
 
   // use case for adding different languages
-  addLanguage: async (language, id) => {
+  addCategory: async (category) => {
     try {
-      const response = await problemRepository.addLanguage(language, id);
+      const response = await problemRepository.addCategory(category);
       if (response) {
         return { success: true, data: response };
       } else {

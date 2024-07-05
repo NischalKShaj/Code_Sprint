@@ -20,13 +20,11 @@ const problems = new mongoose.Schema({
       required: true,
     },
   ],
-  problemType: [
-    {
-      type: [String],
-      enum: ["Array", "String"],
-      required: true,
-    },
-  ],
+  category: {
+    type: mongoose.Schema.Types.ObjectId,
+    enum: "problemCategory",
+    required: true,
+  },
   difficulty: {
     type: String,
     enum: ["Easy", "Medium", "Hard"],

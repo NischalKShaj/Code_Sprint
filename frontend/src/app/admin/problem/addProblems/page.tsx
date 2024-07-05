@@ -1,44 +1,43 @@
+// file to add new problems
 "use client";
 
+// importing the required modules
 import React, { useEffect, useState } from "react";
 import AdminSidePanel from "@/components/partials/AdminSidePanel";
 import SpinnerWrapper from "@/components/partials/SpinnerWrapper";
 import axios from "axios";
 import dotenv from "dotenv";
-import LanguageModal from "@/components/modal/LanguageModal";
 import CategoryModal from "@/components/modal/CategoryModal";
+import AddProblemIde from "@/components/IDE/AddProblemIde";
 
 dotenv.config();
 
-interface Language {
-  _id: string;
-  language: string;
-}
-
 interface Category {
   _id: string;
-  category: string;
+  category_name: string;
 }
 
 const AddProblems = () => {
   const [difficulty, setDifficulty] = useState<string[]>([]);
-  const [language, setLanguage] = useState<Language[]>([]);
   const [category, setCategory] = useState<Category[]>([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
   const [selectedDifficulty, setSelectedDifficulty] = useState("");
-  const [selectedLanguage, setSelectedLanguage] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [problemName, setProblemName] = useState("");
+  const [description, setDescription] = useState("");
+  const [testCases, setTestCases] = useState<
+    { testCase: string; expectedOutput: string }[]
+  >([]);
   const [currentSection, setCurrentSection] = useState(1);
 
-  const totalSections = 4;
+  const totalSections = 2;
 
-  // Fetch difficulty and language options
   useEffect(() => {
     const fetchData = async () => {
       const token = localStorage.getItem("admin_access_token");
       try {
         const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_BASE_URL}/admin/problems/addProblems/languageAndDifficulty`,
+          `${process.env.NEXT_PUBLIC_BASE_URL}/admin/problems/addProblems/categoryAndDifficulty`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -47,9 +46,8 @@ const AddProblems = () => {
           }
         );
         if (response.status === 202) {
-          console.log("resp", response.data.difficulty);
           setDifficulty(response.data.difficulty);
-          setLanguage(response.data.language);
+          setCategory(response.data.category);
         }
       } catch (error) {
         console.error("error", error);
@@ -58,58 +56,21 @@ const AddProblems = () => {
     fetchData();
   }, []);
 
-  // Handle opening the language modal
-  const handleAddLanguage = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    setIsModalOpen(true);
-  };
-
-  // handle the opening of the category modal
   const handleAddCategory = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     setIsCategoryModalOpen(true);
   };
 
-  // Handle closing the language modal
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-  };
-
-  // handle closing the category modal
   const handleCloseCategoryModal = () => {
     setIsCategoryModalOpen(false);
   };
 
-  // Handle saving language from modal
-  const handleSaveLanguage = async (language: string, id: string) => {
-    const token = localStorage.getItem("admin_access_token");
-    try {
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/admin/problems/addLanguage`,
-        { language, id },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          withCredentials: true,
-        }
-      );
-      if (response.status === 202) {
-        setLanguage((prev) => [...prev, response.data]);
-      }
-    } catch (error) {
-      console.error("error", error);
-    }
-    setIsModalOpen(false);
-  };
-
-  // Handle saving language from modal
-  const handleSaveCategory = async (category: string) => {
+  const handleSaveCategory = async (categoryName: string) => {
     const token = localStorage.getItem("admin_access_token");
     try {
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_BASE_URL}/admin/problems/addCategory`,
-        { category },
+        { category: categoryName },
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -119,6 +80,7 @@ const AddProblems = () => {
       );
       if (response.status === 202) {
         setCategory((prev) => [...prev, response.data]);
+        setSelectedCategory(response.data.category_name); // Set the newly added category as selected
       }
     } catch (error) {
       console.error("error", error);
@@ -126,28 +88,33 @@ const AddProblems = () => {
     setIsCategoryModalOpen(false);
   };
 
-  // Handle navigating to the next section
   const handleNextSection = () => {
     setCurrentSection((prevSection) =>
       Math.min(prevSection + 1, totalSections)
     );
   };
 
-  // Handle navigating to the previous section
   const handlePreviousSection = () => {
     setCurrentSection((prevSection) => Math.max(prevSection - 1, 1));
   };
 
-  // Calculate progress percentage
   const progressPercentage = ((currentSection - 1) / (totalSections - 1)) * 100;
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    // Implement your submit logic here
+  };
 
   return (
     <div>
       <SpinnerWrapper>
         <AdminSidePanel />
         <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <form className="bg-white shadow-lg rounded-lg p-8 space-y-8 divide-y divide-gray-200">
-            {/* Progress Bar */}
+          <form
+            className="bg-white shadow-lg rounded-lg p-8 space-y-8 divide-y divide-gray-200"
+            onSubmit={handleSubmit}
+          >
+            {/* Progress bar */}
             <div className="relative pt-1">
               <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-blue-200">
                 <div
@@ -175,35 +142,43 @@ const AddProblems = () => {
                       type="text"
                       name="problem_name"
                       id="problem_name"
+                      value={problemName}
+                      onChange={(e) => setProblemName(e.target.value)}
                       className="p-4 bg-gray-50 border border-gray-300 rounded-lg w-full mt-3"
                       placeholder="Enter problem"
                     />
                   </div>
                   <div className="col-span-1">
                     <label
-                      htmlFor="language"
+                      htmlFor="category"
                       className="block text-sm font-medium text-gray-700"
                     >
-                      Language
+                      Category
                     </label>
-                    <div className="flex items-center mt-3">
+                    <div className="flex items-center">
                       <select
-                        value={selectedLanguage}
-                        onChange={(e) => setSelectedLanguage(e.target.value)}
-                        className="p-4 bg-gray-50 border border-gray-300 rounded-lg flex-grow"
+                        id="category"
+                        name="category"
+                        autoComplete="category-name"
+                        value={selectedCategory}
+                        onChange={(e) => setSelectedCategory(e.target.value)}
+                        className="p-4 bg-gray-50 border border-gray-300 rounded-lg w-full mt-3"
                       >
-                        <option value="">Select a language</option>
-                        {language.map((lang) => (
-                          <option key={lang._id} value={lang._id}>
-                            {lang.language}
+                        <option value="" disabled>
+                          Select Category
+                        </option>
+                        {category.map((cat) => (
+                          <option key={cat._id} value={cat.category_name}>
+                            {cat.category_name}
                           </option>
                         ))}
                       </select>
                       <button
-                        onClick={handleAddLanguage}
-                        className="inline-flex items-center ml-3 px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:border-blue-700 focus:ring-blue-500 active:bg-blue-700 transition duration-150 ease-in-out"
+                        type="button"
+                        onClick={handleAddCategory}
+                        className="ml-3 inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none"
                       >
-                        +
+                        Add Category
                       </button>
                     </div>
                   </div>
@@ -217,6 +192,8 @@ const AddProblems = () => {
                     <textarea
                       id="description"
                       name="description"
+                      value={description}
+                      onChange={(e) => setDescription(e.target.value)}
                       rows={3}
                       className="p-4 bg-gray-50 border border-gray-300 rounded-lg w-full mt-3"
                       placeholder="Enter course description"
@@ -230,57 +207,32 @@ const AddProblems = () => {
                       Difficulty
                     </label>
                     <select
+                      id="difficulty"
+                      name="difficulty"
+                      autoComplete="difficulty-name"
                       value={selectedDifficulty}
                       onChange={(e) => setSelectedDifficulty(e.target.value)}
                       className="p-4 bg-gray-50 border border-gray-300 rounded-lg w-full mt-3"
                     >
-                      <option value="">Select a difficulty</option>
-                      {difficulty.map((diff, index) => (
-                        <option key={index} value={diff}>
+                      <option value="" disabled>
+                        Select Difficulty
+                      </option>
+                      {difficulty.map((diff) => (
+                        <option key={diff} value={diff}>
                           {diff}
                         </option>
                       ))}
                     </select>
                   </div>
-                  <div className="col-span-1">
-                    <label
-                      htmlFor="category"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      Category
-                    </label>
-                    <div className="flex items-center mt-3">
-                      <select
-                        value={selectedLanguage}
-                        onChange={(e) => setSelectedLanguage(e.target.value)}
-                        className="p-4 bg-gray-50 border border-gray-300 rounded-lg flex-grow"
-                      >
-                        <option value="">Select a category</option>
-                        {language.map((lang) => (
-                          <option key={lang._id} value={lang._id}>
-                            {lang.language}
-                          </option>
-                        ))}
-                      </select>
-                      <button
-                        onClick={handleAddCategory}
-                        className="inline-flex items-center ml-3 px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:border-blue-700 focus:ring-blue-500 active:bg-blue-700 transition duration-150 ease-in-out"
-                      >
-                        +
-                      </button>
-                    </div>
-                  </div>
                 </div>
-                <div className="pt-5">
-                  <div className="flex justify-end space-x-4">
-                    <button
-                      type="button"
-                      onClick={handleNextSection}
-                      className="inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:border-blue-700 focus:ring-blue-500 active:bg-blue-700 transition duration-150 ease-in-out"
-                    >
-                      Next
-                    </button>
-                  </div>
+                <div className="mt-8 flex justify-end">
+                  <button
+                    type="button"
+                    onClick={handleNextSection}
+                    className="ml-3 inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none"
+                  >
+                    Next
+                  </button>
                 </div>
               </div>
             )}
@@ -298,14 +250,14 @@ const AddProblems = () => {
                         htmlFor="problem_name"
                         className="block text-sm font-medium text-gray-700"
                       >
-                        Problem Name
+                        Test Case
                       </label>
                       <input
                         type="text"
                         name="problem_name"
                         id="problem_name"
                         className="p-4 bg-gray-50 border border-gray-300 rounded-lg w-full mt-3"
-                        placeholder="Enter problem"
+                        placeholder="Enter the test case"
                       />
                     </div>
                     <div className="col-span-1">
@@ -313,77 +265,18 @@ const AddProblems = () => {
                         htmlFor="problem_name"
                         className="block text-sm font-medium text-gray-700"
                       >
-                        Problem Name
+                        Expected Output
                       </label>
                       <input
                         type="text"
                         name="problem_name"
                         id="problem_name"
                         className="p-4 bg-gray-50 border border-gray-300 rounded-lg w-full mt-3"
-                        placeholder="Enter problem"
+                        placeholder="Enter the expected output"
                       />
                     </div>
+                    <AddProblemIde />
                   </div>
-                  <div className="pt-5">
-                    <div className="flex justify-between space-x-4">
-                      <button
-                        type="button"
-                        onClick={handlePreviousSection}
-                        className="inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:border-blue-700 focus:ring-blue-500 active:bg-blue-700 transition duration-150 ease-in-out"
-                      >
-                        Previous
-                      </button>
-                      <button
-                        type="button"
-                        onClick={handleNextSection}
-                        className="inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:border-blue-700 focus:ring-blue-500 active:bg-blue-700 transition duration-150 ease-in-out"
-                      >
-                        Next
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Section 3 */}
-            {currentSection === 3 && (
-              <div>
-                <h2 className="text-lg leading-6 font-medium text-gray-900">
-                  Add Examples - Step 3
-                </h2>
-                <div className="mt-6">
-                  {/* Add your inputs for section 3 here */}
-                  <div className="pt-5">
-                    <div className="flex justify-between space-x-4">
-                      <button
-                        type="button"
-                        onClick={handlePreviousSection}
-                        className="inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:border-blue-700 focus:ring-blue-500 active:bg-blue-700 transition duration-150 ease-in-out"
-                      >
-                        Previous
-                      </button>
-                      <button
-                        type="button"
-                        onClick={handleNextSection}
-                        className="inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:border-blue-700 focus:ring-blue-500 active:bg-blue-700 transition duration-150 ease-in-out"
-                      >
-                        Next
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Section 4 */}
-            {currentSection === 4 && (
-              <div>
-                <h2 className="text-lg leading-6 font-medium text-gray-900">
-                  Submit the Problem - Step 4
-                </h2>
-                <div className="mt-6">
-                  {/* Add your inputs for section 4 here */}
                   <div className="pt-5">
                     <div className="flex justify-between space-x-4">
                       <button
@@ -407,11 +300,6 @@ const AddProblems = () => {
           </form>
         </div>
       </SpinnerWrapper>
-      <LanguageModal
-        isOpen={isModalOpen}
-        onClose={handleCloseModal}
-        onSave={handleSaveLanguage}
-      />
       <CategoryModal
         isOpen={isCategoryModalOpen}
         onClose={handleCloseCategoryModal}

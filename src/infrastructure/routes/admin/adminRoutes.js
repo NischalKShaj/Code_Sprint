@@ -89,16 +89,16 @@ router.post(
 
 // router for adding the languages
 router.post(
-  "/problems/addLanguage",
+  "/problems/addCategory",
   authenticateAdminJwt,
-  problemController.addLanguage
+  problemController.addCategory
 );
 
 // router for getting the difficulty and the languages
 router.get(
-  "/problems/addProblems/languageAndDifficulty",
+  "/problems/addProblems/categoryAndDifficulty",
   authenticateAdminJwt,
-  problemController.getDifficultyAndLanguage
+  problemController.getDifficultyAndCategory
 );
 
 // router for logging out

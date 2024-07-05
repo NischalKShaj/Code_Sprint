@@ -31,15 +31,15 @@ const CategoryModal: React.FC<CategoryModalProps> = ({
         <div className="space-y-4">
           <div>
             <label
-              htmlFor="language"
+              htmlFor="category"
               className="block text-sm font-medium text-gray-700"
             >
               Category
             </label>
             <input
               type="text"
-              name="language"
-              id="language"
+              name="category"
+              id="category"
               value={category}
               onChange={(e) => setCategory(e.target.value)}
               className="p-4 bg-gray-50 border border-gray-300 rounded-lg w-full mt-1"

@@ -3,6 +3,7 @@
 // importing the required modules
 const ProblemCollection = require("../../../core/entities/problems/problemCollection");
 const LanguageCollection = require("../../../core/entities/languages/languageCollection");
+const CategoryCollection = require("../../../core/entities/problemCategory/problemCategory");
 
 // helper function to get the difficulty
 const getDifficulty = (schema, path) => {
@@ -13,15 +14,15 @@ const getDifficulty = (schema, path) => {
 // creating the problems repository
 const problemRepository = {
   // method for getting the language and the difficulty for the question
-  getDifficultyAndLanguage: async () => {
+  getDifficultyAndCategory: async () => {
     try {
-      const language = await LanguageCollection.find({}, { language: 1 });
-      console.log("langs", language);
+      const category = await CategoryCollection.find({}, { category_name: 1 });
+      console.log("langs", category);
 
       const difficulty = getDifficulty(ProblemCollection.schema, "difficulty");
       console.log("difficulty", difficulty);
-      if (language && difficulty) {
-        return { language, difficulty };
+      if (category && difficulty) {
+        return { category, difficulty };
       } else {
         null;
       }
@@ -31,16 +32,15 @@ const problemRepository = {
   },
 
   // method for adding new language
-  addLanguage: async (language, id) => {
+  addCategory: async (category) => {
     try {
-      const languageData = new LanguageCollection({
-        languageId: id,
-        language: language,
+      const categoryData = new CategoryCollection({
+        category_name: category,
       });
-      await languageData.save();
-      console.log("language", languageData);
-      if (languageData) {
-        return languageData;
+      await categoryData.save();
+      console.log("language", categoryData);
+      if (categoryData) {
+        return categoryData;
       } else {
         return null;
       }

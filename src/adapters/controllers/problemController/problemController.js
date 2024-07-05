@@ -6,9 +6,9 @@ const problemUseCase = require("../../../application/usecase/problemUseCase/prob
 // creating the controller for the problems
 const problemController = {
   // controller for getting the difficulty and the languages
-  getDifficultyAndLanguage: async (req, res) => {
+  getDifficultyAndCategory: async (req, res) => {
     try {
-      const response = await problemUseCase.getDifficultyAndLanguage();
+      const response = await problemUseCase.getDifficultyAndCategory();
       if (response.success) {
         res.status(202).json(response.data);
       } else {
@@ -20,11 +20,12 @@ const problemController = {
   },
 
   // controller for adding language
-  addLanguage: async (req, res) => {
+  addCategory: async (req, res) => {
     try {
-      const { language, id } = req.body;
-      console.log("lang and id", language, id);
-      const response = await problemUseCase.addLanguage(language, id);
+      console.log("first");
+      const { category } = req.body;
+      console.log("lang and id", category);
+      const response = await problemUseCase.addCategory(category);
       if (response.success) {
         res.status(202).json(response.data);
       } else {
