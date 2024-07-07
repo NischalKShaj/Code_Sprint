@@ -2,12 +2,13 @@
 "use client";
 
 // importing the required modules
-import React, { useEffect, useState } from "react";
+import React, { ChangeEventHandler, useEffect, useState } from "react";
 import AdminSidePanel from "@/components/partials/AdminSidePanel";
 import SpinnerWrapper from "@/components/partials/SpinnerWrapper";
 import axios from "axios";
 import dotenv from "dotenv";
 import CategoryModal from "@/components/modal/CategoryModal";
+import Editor from "@monaco-editor/react";
 import AddProblemIde from "@/components/IDE/AddProblemIde";
 
 dotenv.config();
@@ -25,12 +26,15 @@ const AddProblems = () => {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [problemName, setProblemName] = useState("");
   const [description, setDescription] = useState("");
+  const [inputTestCase, setInputTestCase] = useState("");
+  const [expectedOutput, setExpectedOutput] = useState("");
   const [testCases, setTestCases] = useState<
     { testCase: string; expectedOutput: string }[]
   >([]);
   const [currentSection, setCurrentSection] = useState(1);
+  const [sourceCode, setSourceCode] = useState('console.log("Hello World");');
 
-  const totalSections = 2;
+  const totalSections = 3;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -65,6 +69,7 @@ const AddProblems = () => {
     setIsCategoryModalOpen(false);
   };
 
+  // function to save the category
   const handleSaveCategory = async (categoryName: string) => {
     const token = localStorage.getItem("admin_access_token");
     try {
@@ -100,6 +105,50 @@ const AddProblems = () => {
 
   const progressPercentage = ((currentSection - 1) / (totalSections - 1)) * 100;
 
+  // function to add the test cases to the state
+  const handleTestCase: ChangeEventHandler<HTMLInputElement> = (e) => {
+    setInputTestCase(e.currentTarget.value);
+  };
+
+  const handleExpectedOutput: ChangeEventHandler<HTMLInputElement> = (e) => {
+    setExpectedOutput(e.currentTarget.value);
+  };
+
+  const handleSourceCodeChange = (value: string | undefined) => {
+    if (value) setSourceCode(value);
+  };
+
+  const addTestCase = () => {
+    if (inputTestCase && expectedOutput) {
+      setInputTestCase("");
+      setExpectedOutput("");
+      setTestCases([...testCases, { testCase: inputTestCase, expectedOutput }]);
+    }
+  };
+
+  // function to handle the verification of the testCases
+  const verifyTestCase = async () => {
+    const token = localStorage.getItem("admin_access_token");
+    try {
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/admin/addProblem/verifyTestCase`,
+        { sourceCode, testInput: inputTestCase, expectedOutput },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
+        }
+      );
+      if (response.status === 202) {
+        console.log("first");
+      }
+    } catch (error) {
+      console.error("error");
+    }
+  };
+
+  // function to add the question
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // Implement your submit logic here
@@ -247,35 +296,137 @@ const AddProblems = () => {
                   <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-4">
                     <div className="col-span-1">
                       <label
-                        htmlFor="problem_name"
+                        htmlFor="test_input"
                         className="block text-sm font-medium text-gray-700"
                       >
                         Test Case
                       </label>
                       <input
                         type="text"
-                        name="problem_name"
-                        id="problem_name"
+                        name="test_input"
+                        value={inputTestCase}
+                        onChange={handleTestCase}
+                        id="test_input"
                         className="p-4 bg-gray-50 border border-gray-300 rounded-lg w-full mt-3"
                         placeholder="Enter the test case"
                       />
                     </div>
                     <div className="col-span-1">
                       <label
-                        htmlFor="problem_name"
+                        htmlFor="expected_output"
                         className="block text-sm font-medium text-gray-700"
                       >
                         Expected Output
                       </label>
                       <input
                         type="text"
-                        name="problem_name"
-                        id="problem_name"
+                        name="expected_output"
+                        value={expectedOutput}
+                        onChange={handleExpectedOutput}
+                        id="expected_output"
                         className="p-4 bg-gray-50 border border-gray-300 rounded-lg w-full mt-3"
                         placeholder="Enter the expected output"
                       />
                     </div>
-                    <AddProblemIde />
+                    <div className="col-span-1 sm:col-span-2 flex justify-end space-x-4">
+                      <button
+                        onClick={addTestCase}
+                        className="bg-[#686DE0] text-white font-bold py-2 px-4 rounded-xl"
+                      >
+                        Add
+                      </button>
+                    </div>
+                    {testCases.length > 0 && (
+                      <div className="mt-6">
+                        <h3 className="text-lg leading-6 font-medium text-gray-900">
+                          Saved Test Cases
+                        </h3>
+                        {testCases.map((testCase, index) => (
+                          <div
+                            key={index}
+                            className="mt-2 p-4 bg-gray-100 border border-gray-300 rounded-lg"
+                          >
+                            <p>
+                              <strong>Test Case {index + 1}:</strong>{" "}
+                              {testCase.testCase}
+                            </p>
+                            <p>
+                              <strong>Expected Output:</strong>{" "}
+                              {testCase.expectedOutput}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    <div className="col-span-1 sm:col-span-2 mt-6">
+                      <label
+                        htmlFor="source_code"
+                        className="block text-sm font-medium text-gray-700"
+                      >
+                        Source Code
+                      </label>
+                      <div className="w-full max-w-4xl p-4 border">
+                        <Editor
+                          height="50vh"
+                          defaultLanguage="javascript"
+                          value={sourceCode}
+                          onChange={handleSourceCodeChange}
+                          theme="vs-dark"
+                        />
+                      </div>
+                    </div>
+                    <div className="col-span-1 sm:col-span-2 flex justify-end space-x-4">
+                      <button
+                        onClick={verifyTestCase}
+                        className="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-500"
+                      >
+                        Verify Test
+                      </button>
+                    </div>
+                  </div>
+                  <div className="pt-5">
+                    <div className="flex justify-between space-x-4">
+                      <button
+                        type="button"
+                        onClick={handlePreviousSection}
+                        className="inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:border-blue-700 focus:ring-blue-500 active:bg-blue-700 transition duration-150 ease-in-out"
+                      >
+                        Previous
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleNextSection}
+                        className="ml-3 inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none"
+                      >
+                        Next
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+            {currentSection === 3 && (
+              <div>
+                <h2 className="text-lg leading-6 font-medium text-gray-900">
+                  Add Constraints - Step 3
+                </h2>
+                <div className="mt-6">
+                  <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-4">
+                    <div className="col-span-1">
+                      <label
+                        htmlFor="problem_name"
+                        className="block text-sm font-medium text-gray-700"
+                      >
+                        Constraint
+                      </label>
+                      <input
+                        type="text"
+                        name="constraint"
+                        id="constraint"
+                        className="p-4 bg-gray-50 border border-gray-300 rounded-lg w-full mt-3"
+                        placeholder="Enter the constraints"
+                      />
+                    </div>
                   </div>
                   <div className="pt-5">
                     <div className="flex justify-between space-x-4">

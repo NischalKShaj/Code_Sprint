@@ -37,6 +37,11 @@ const problems = new mongoose.Schema({
       required: true,
     },
   ],
+  constrains: [
+    {
+      type: String,
+    },
+  ],
   clientCode: {
     type: String,
     required: true,

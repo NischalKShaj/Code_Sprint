@@ -101,6 +101,13 @@ router.get(
   problemController.getDifficultyAndCategory
 );
 
+// router for verifying test cases
+router.post(
+  "/addProblem/verifyTestCase",
+  authenticateAdminJwt,
+  problemController.verifyTestCase
+);
+
 // router for logging out
 router.get("/logout", adminController.adminLogout);
 
