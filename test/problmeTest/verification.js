@@ -1,8 +1,8 @@
 const axios = require("axios");
 const { Buffer } = require("buffer");
 
-// Your JavaScript code
-const jsCode = `
+// Your Java code
+const javaCode = `
 const readline = require('readline');
 
 const rl = readline.createInterface({
@@ -49,15 +49,15 @@ async function main() {
 main();
 `;
 
-// Base64 encode the JavaScript code
-const sourceCodeBase64 = Buffer.from(jsCode).toString("base64");
+// Base64 encode the Java code
+const sourceCodeBase64 = Buffer.from(javaCode).toString("base64");
 
 const verifyTestCase = async (inputTest, expectedOutput) => {
   const inputTestBase64 = Buffer.from(inputTest).toString("base64");
   const expectedOutputBase64 = Buffer.from(expectedOutput).toString("base64");
   const payload = {
     source_code: sourceCodeBase64,
-    language_id: 63, // JavaScript (Node.js)
+    language_id: 63, // Java
     stdin: inputTestBase64,
     expected_output: expectedOutputBase64,
     base64_encoded: true,
