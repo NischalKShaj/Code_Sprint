@@ -1,8 +1,8 @@
 const axios = require("axios");
 const { Buffer } = require("buffer");
 
-// Your Java code
-const javaCode = `
+// Your corrected JavaScript code
+const jsCode = `
 const readline = require('readline');
 
 const rl = readline.createInterface({
@@ -10,57 +10,33 @@ const rl = readline.createInterface({
   output: process.stdout
 });
 
-function askForInput(question) {
-  return new Promise((resolve) => {
-    rl.question(question, (answer) => {
-      resolve(answer);
-    });
-  });
-}
-
-function calculateSum(array) {
-  let sum = 0;
-  for (let num of array) {
-    sum += num;
-  }
-  return sum;
-}
-
-async function main() {
-  try {
-    const inputString = await askForInput('');
-    const stringArray = inputString.split(' ');
-    const intArray = stringArray.map(str => {
-      if (str.trim() !== '') {
-        return parseInt(str);
-      } else {
-        return 0;
-      }
-    });
-    const sum = calculateSum(intArray);
-    console.log(sum); // Ensure the sum is logged
-  } catch (error) {
-    console.error('Error:', error.message);
-  } finally {
-    rl.close();
-  }
-}
-
-main();
+rl.question('', (answer) => {
+  console.log(answer);
+  rl.close();
+});
 `;
 
-// Base64 encode the Java code
-const sourceCodeBase64 = Buffer.from(javaCode).toString("base64");
+// Base64 encode the corrected JavaScript code
+const sourceCodeBase64 = Buffer.from(jsCode).toString("base64");
 
-const verifyTestCase = async (inputTest, expectedOutput) => {
-  const inputTestBase64 = Buffer.from(inputTest).toString("base64");
-  const expectedOutputBase64 = Buffer.from(expectedOutput).toString("base64");
+const verifyTestCase = async () => {
   const payload = {
     source_code: sourceCodeBase64,
-    language_id: 63, // Java
-    stdin: inputTestBase64,
-    expected_output: expectedOutputBase64,
+    language_id: 63, // JavaScript language ID
+    number_of_runs: 1,
+    stdin: Buffer.from("hello").toString("base64"), // Base64 encode input "hello"
+    expected_output: Buffer.from("hello").toString("base64"), // Base64 encode expected output "hello"
     base64_encoded: true,
+    cpu_time_limit: "10", // Increase CPU time limit if necessary
+    cpu_extra_time: "1", // Increase extra CPU time if necessary
+    wall_time_limit: "15", // Increase wall time limit if necessary
+    memory_limit: "128000",
+    stack_limit: "64000",
+    max_processes_and_or_threads: "60",
+    enable_per_process_and_thread_time_limit: true,
+    enable_per_process_and_thread_memory_limit: true,
+    max_file_size: "1024",
+    enable_network: true,
   };
 
   try {
@@ -72,7 +48,7 @@ const verifyTestCase = async (inputTest, expectedOutput) => {
     console.log(response.data);
 
     if (response.data) {
-      const { status, message, stderr, stdout } = response.data;
+      const { status, message, stderr, stdout, compile_output } = response.data;
 
       if (message) {
         const decodedMessage = Buffer.from(message, "base64").toString("utf-8");
@@ -85,6 +61,13 @@ const verifyTestCase = async (inputTest, expectedOutput) => {
       if (stdout) {
         const decodedStdout = Buffer.from(stdout, "base64").toString("utf-8");
         console.log("Decoded Stdout:", decodedStdout);
+      }
+      if (compile_output) {
+        const decodedCompileOutput = Buffer.from(
+          compile_output,
+          "base64"
+        ).toString("utf-8");
+        console.log("Decoded Compile Output:", decodedCompileOutput);
       }
 
       if (status && status.id === 13) {
@@ -101,10 +84,7 @@ const verifyTestCase = async (inputTest, expectedOutput) => {
 };
 
 // Example usage
-const inputTest = "1 2 3 4 5";
-const expectedOutput = "15\n";
-
-verifyTestCase(inputTest, expectedOutput)
+verifyTestCase()
   .then((result) => {
     if (result.success) {
       console.log("Test Case Result:", result);

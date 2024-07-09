@@ -55,13 +55,24 @@ const problemUseCase = {
       source_code: encodedSourceCode,
       stdin: encodedInputTest,
       expected_output: encodedOutput,
-      language_id: 63,
+      language_id: 71,
+      base64_encoded: true,
+      cpu_time_limit: "15",
+      cpu_extra_time: "5",
+      wall_time_limit: "10",
+      memory_limit: "128000",
+      stack_limit: "64000",
+      max_processes_and_or_threads: "60",
+      enable_per_process_and_thread_time_limit: true,
+      enable_per_process_and_thread_memory_limit: true,
+      max_file_size: "1024",
+      enable_network: true,
       base64_encoded: true,
     };
 
     try {
       const response = await axios.post(
-        `${process.env.JUDGE0}/submissions?base64_encoded=true&wait=false`,
+        `${process.env.JUDGE0}/submissions?base64_encoded=true&wait=true`,
         payload
       );
 
@@ -90,12 +101,17 @@ const problemUseCase = {
 
       if (result.status.id === 3) {
         // Status 3: Accepted
-        return { success: true, data: result };
+        const decodedOutput = base64.decode(result.stdout);
+        return { success: true, data: { ...result, decodedOutput } };
+      } else if (result.status.id === 4) {
+        const decodedOutput = base64.decode(result.stdout);
+        return { success: true, data: { ...result, decodedOutput } };
       } else {
         // Other status: failed or error
         return { success: false, data: result };
       }
     } catch (error) {
+      console.error("error", error);
       return { success: false, data: error.message };
     }
   },

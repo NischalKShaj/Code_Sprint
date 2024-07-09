@@ -10,12 +10,29 @@ import dotenv from "dotenv";
 import CategoryModal from "@/components/modal/CategoryModal";
 import Editor from "@monaco-editor/react";
 import AddProblemIde from "@/components/IDE/AddProblemIde";
+import Swal from "sweetalert2";
 
 dotenv.config();
 
 interface Category {
   _id: string;
   category_name: string;
+}
+
+interface TestCase {
+  input: string;
+  expectedOutput: string;
+}
+
+interface FormData {
+  problemName: string;
+  description: string;
+  category: string;
+  difficulty: string;
+  testCase: TestCase[];
+  mainCode: string;
+  clientTemplate: string;
+  constraints: string;
 }
 
 const AddProblems = () => {
@@ -28,11 +45,23 @@ const AddProblems = () => {
   const [description, setDescription] = useState("");
   const [inputTestCase, setInputTestCase] = useState("");
   const [expectedOutput, setExpectedOutput] = useState("");
-  const [testCases, setTestCases] = useState<
-    { testCase: string; expectedOutput: string }[]
-  >([]);
+  const [testCases, setTestCases] = useState<TestCase[]>([]);
   const [currentSection, setCurrentSection] = useState(1);
   const [sourceCode, setSourceCode] = useState('console.log("Hello World");');
+  const [clientSourceCode, setClientSourceCode] = useState(
+    'console.log("Hello World");'
+  );
+  const [constraints, setConstraints] = useState("");
+  const [formData, setFormData] = useState<FormData>({
+    problemName: "",
+    description: "",
+    difficulty: "",
+    category: "",
+    testCase: [],
+    mainCode: "",
+    clientTemplate: "",
+    constraints: "",
+  });
 
   const totalSections = 3;
 
@@ -122,7 +151,7 @@ const AddProblems = () => {
     if (inputTestCase && expectedOutput) {
       setInputTestCase("");
       setExpectedOutput("");
-      setTestCases([...testCases, { testCase: inputTestCase, expectedOutput }]);
+      setTestCases([...testCases, { input: inputTestCase, expectedOutput }]);
     }
   };
 
@@ -141,17 +170,73 @@ const AddProblems = () => {
         }
       );
       if (response.status === 202) {
-        console.log("first");
+        const decodedOutput = response.data.decodedOutput;
+        console.log("response", response.data.decodedOutput);
+        if (parseInt(decodedOutput) === parseInt(expectedOutput)) {
+          Swal.fire({
+            position: "center",
+            icon: "success",
+            title: "Test case verified",
+            confirmButtonText: "Ok",
+          });
+        } else {
+          Swal.fire({
+            position: "center",
+            icon: "error",
+            title: "Test case not verified",
+            text: `Expected output is ${response.data.decodedOutput}`,
+            confirmButtonText: "Ok",
+          });
+        }
+      } else if (response.status === 404) {
+        Swal.fire({
+          position: "center",
+          icon: "error",
+          title: "Test case not verified",
+          text: `Expected output is ${response.data.decodedOutput}`,
+          confirmButtonText: "Ok",
+        });
       }
     } catch (error) {
-      console.error("error");
+      console.error("error", error);
+      Swal.fire({
+        position: "center",
+        icon: "error",
+        title: "Test case not verified",
+        // text: `Expected output is ${response.data.decodedOutput}`,
+        confirmButtonText: "Ok",
+      });
     }
+  };
+
+  // function to handle the client side template
+  const handleClientSourceCodeChange = (value: string | undefined) => {
+    if (value) setClientSourceCode(value);
+  };
+
+  // function to handle the constraints
+  const handleConstraintChange: ChangeEventHandler<HTMLInputElement> = (e) => {
+    setConstraints(e.currentTarget.value);
   };
 
   // function to add the question
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Implement your submit logic here
+
+    const token = localStorage.getItem("admin_access_token");
+
+    try {
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/admin/problem/addProblem`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
+        }
+      );
+    } catch (error) {}
   };
 
   return (
@@ -245,7 +330,7 @@ const AddProblems = () => {
                       onChange={(e) => setDescription(e.target.value)}
                       rows={3}
                       className="p-4 bg-gray-50 border border-gray-300 rounded-lg w-full mt-3"
-                      placeholder="Enter course description"
+                      placeholder="Enter problem description"
                     />
                   </div>
                   <div className="col-span-1">
@@ -348,7 +433,7 @@ const AddProblems = () => {
                           >
                             <p>
                               <strong>Test Case {index + 1}:</strong>{" "}
-                              {testCase.testCase}
+                              {testCase.input}
                             </p>
                             <p>
                               <strong>Expected Output:</strong>{" "}
@@ -410,6 +495,23 @@ const AddProblems = () => {
                 <h2 className="text-lg leading-6 font-medium text-gray-900">
                   Add Constraints - Step 3
                 </h2>
+                <div className="col-span-1 sm:col-span-2 mt-6">
+                  <label
+                    htmlFor="source_code"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Client side template
+                  </label>
+                  <div className="w-full max-w-4xl p-4 border">
+                    <Editor
+                      height="50vh"
+                      defaultLanguage="javascript"
+                      value={clientSourceCode}
+                      onChange={handleClientSourceCodeChange}
+                      theme="vs-dark"
+                    />
+                  </div>
+                </div>
                 <div className="mt-6">
                   <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-4">
                     <div className="col-span-1">
@@ -423,6 +525,8 @@ const AddProblems = () => {
                         type="text"
                         name="constraint"
                         id="constraint"
+                        value={constraints}
+                        onChange={handleConstraintChange}
                         className="p-4 bg-gray-50 border border-gray-300 rounded-lg w-full mt-3"
                         placeholder="Enter the constraints"
                       />
