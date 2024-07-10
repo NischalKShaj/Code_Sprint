@@ -9,8 +9,8 @@ import axios from "axios";
 import dotenv from "dotenv";
 import CategoryModal from "@/components/modal/CategoryModal";
 import Editor from "@monaco-editor/react";
-import AddProblemIde from "@/components/IDE/AddProblemIde";
 import Swal from "sweetalert2";
+import { useRouter } from "next/navigation";
 
 dotenv.config();
 
@@ -33,35 +33,31 @@ interface FormData {
   mainCode: string;
   clientTemplate: string;
   constraints: string;
+  premium: boolean;
 }
 
 const AddProblems = () => {
   const [difficulty, setDifficulty] = useState<string[]>([]);
   const [category, setCategory] = useState<Category[]>([]);
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
-  const [selectedDifficulty, setSelectedDifficulty] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
-  const [problemName, setProblemName] = useState("");
-  const [description, setDescription] = useState("");
   const [inputTestCase, setInputTestCase] = useState("");
   const [expectedOutput, setExpectedOutput] = useState("");
   const [testCases, setTestCases] = useState<TestCase[]>([]);
   const [currentSection, setCurrentSection] = useState(1);
-  const [sourceCode, setSourceCode] = useState('console.log("Hello World");');
-  const [clientSourceCode, setClientSourceCode] = useState(
-    'console.log("Hello World");'
-  );
-  const [constraints, setConstraints] = useState("");
   const [formData, setFormData] = useState<FormData>({
     problemName: "",
     description: "",
     difficulty: "",
     category: "",
     testCase: [],
-    mainCode: "",
-    clientTemplate: "",
+    mainCode: "console.log('hello world')",
+    clientTemplate: "console.log('hello world')",
     constraints: "",
+    premium: false,
   });
+
+  const router = useRouter();
 
   const totalSections = 3;
 
@@ -114,7 +110,7 @@ const AddProblems = () => {
       );
       if (response.status === 202) {
         setCategory((prev) => [...prev, response.data]);
-        setSelectedCategory(response.data.category_name); // Set the newly added category as selected
+        setSelectedCategory(response.data.category_name);
       }
     } catch (error) {
       console.error("error", error);
@@ -134,6 +130,17 @@ const AddProblems = () => {
 
   const progressPercentage = ((currentSection - 1) / (totalSections - 1)) * 100;
 
+  const handleInputChange: ChangeEventHandler<
+    HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+  > = (e) => {
+    const { name, value, type } = e.target;
+    if (type === "radio") {
+      setFormData((prevData) => ({ ...prevData, premium: value === "true" }));
+    } else {
+      setFormData((prevData) => ({ ...prevData, [name]: value }));
+    }
+  };
+
   // function to add the test cases to the state
   const handleTestCase: ChangeEventHandler<HTMLInputElement> = (e) => {
     setInputTestCase(e.currentTarget.value);
@@ -143,25 +150,27 @@ const AddProblems = () => {
     setExpectedOutput(e.currentTarget.value);
   };
 
-  const handleSourceCodeChange = (value: string | undefined) => {
-    if (value) setSourceCode(value);
-  };
-
   const addTestCase = () => {
     if (inputTestCase && expectedOutput) {
+      const newTestCase = { input: inputTestCase, expectedOutput };
+      setTestCases([...testCases, newTestCase]);
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        testCase: [...prevFormData.testCase, newTestCase],
+      }));
       setInputTestCase("");
       setExpectedOutput("");
-      setTestCases([...testCases, { input: inputTestCase, expectedOutput }]);
     }
   };
 
   // function to handle the verification of the testCases
   const verifyTestCase = async () => {
     const token = localStorage.getItem("admin_access_token");
+    let main = formData.mainCode;
     try {
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_BASE_URL}/admin/addProblem/verifyTestCase`,
-        { sourceCode, testInput: inputTestCase, expectedOutput },
+        { main, testInput: inputTestCase, expectedOutput },
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -199,24 +208,25 @@ const AddProblems = () => {
       }
     } catch (error) {
       console.error("error", error);
+      router.push("/admin/error");
       Swal.fire({
         position: "center",
         icon: "error",
         title: "Test case not verified",
-        // text: `Expected output is ${response.data.decodedOutput}`,
         confirmButtonText: "Ok",
       });
     }
   };
 
-  // function to handle the client side template
-  const handleClientSourceCodeChange = (value: string | undefined) => {
-    if (value) setClientSourceCode(value);
-  };
-
-  // function to handle the constraints
-  const handleConstraintChange: ChangeEventHandler<HTMLInputElement> = (e) => {
-    setConstraints(e.currentTarget.value);
+  // function to handle the change in the editor
+  const handleEditorChange = (
+    value: string | undefined,
+    field: keyof FormData
+  ) => {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [field]: value ?? "",
+    }));
   };
 
   // function to add the question
@@ -228,7 +238,7 @@ const AddProblems = () => {
     try {
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_BASE_URL}/admin/problem/addProblem`,
-        {},
+        formData,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -236,7 +246,17 @@ const AddProblems = () => {
           withCredentials: true,
         }
       );
-    } catch (error) {}
+      if (response.status === 202) {
+        Swal.fire({
+          position: "center",
+          icon: "success",
+          text: "Problem added successfully..!",
+          confirmButtonText: "OK",
+        });
+      }
+    } catch (error) {
+      console.error("error", error);
+    }
   };
 
   return (
@@ -274,10 +294,10 @@ const AddProblems = () => {
                     </label>
                     <input
                       type="text"
-                      name="problem_name"
+                      name="problemName"
                       id="problem_name"
-                      value={problemName}
-                      onChange={(e) => setProblemName(e.target.value)}
+                      value={formData.problemName}
+                      onChange={handleInputChange}
                       className="p-4 bg-gray-50 border border-gray-300 rounded-lg w-full mt-3"
                       placeholder="Enter problem"
                     />
@@ -294,8 +314,8 @@ const AddProblems = () => {
                         id="category"
                         name="category"
                         autoComplete="category-name"
-                        value={selectedCategory}
-                        onChange={(e) => setSelectedCategory(e.target.value)}
+                        value={formData.category}
+                        onChange={handleInputChange}
                         className="p-4 bg-gray-50 border border-gray-300 rounded-lg w-full mt-3"
                       >
                         <option value="" disabled>
@@ -326,8 +346,8 @@ const AddProblems = () => {
                     <textarea
                       id="description"
                       name="description"
-                      value={description}
-                      onChange={(e) => setDescription(e.target.value)}
+                      value={formData.description}
+                      onChange={handleInputChange}
                       rows={3}
                       className="p-4 bg-gray-50 border border-gray-300 rounded-lg w-full mt-3"
                       placeholder="Enter problem description"
@@ -344,8 +364,8 @@ const AddProblems = () => {
                       id="difficulty"
                       name="difficulty"
                       autoComplete="difficulty-name"
-                      value={selectedDifficulty}
-                      onChange={(e) => setSelectedDifficulty(e.target.value)}
+                      value={formData.difficulty}
+                      onChange={handleInputChange}
                       className="p-4 bg-gray-50 border border-gray-300 rounded-lg w-full mt-3"
                     >
                       <option value="" disabled>
@@ -454,8 +474,10 @@ const AddProblems = () => {
                         <Editor
                           height="50vh"
                           defaultLanguage="javascript"
-                          value={sourceCode}
-                          onChange={handleSourceCodeChange}
+                          value={formData.mainCode}
+                          onChange={(value) =>
+                            handleEditorChange(value, "mainCode")
+                          }
                           theme="vs-dark"
                         />
                       </div>
@@ -506,8 +528,10 @@ const AddProblems = () => {
                     <Editor
                       height="50vh"
                       defaultLanguage="javascript"
-                      value={clientSourceCode}
-                      onChange={handleClientSourceCodeChange}
+                      value={formData.clientTemplate}
+                      onChange={(value) =>
+                        handleEditorChange(value, "clientTemplate")
+                      }
                       theme="vs-dark"
                     />
                   </div>
@@ -523,13 +547,49 @@ const AddProblems = () => {
                       </label>
                       <input
                         type="text"
-                        name="constraint"
-                        id="constraint"
-                        value={constraints}
-                        onChange={handleConstraintChange}
+                        name="constraints"
+                        id="constraints"
+                        value={formData.constraints}
+                        onChange={handleInputChange}
                         className="p-4 bg-gray-50 border border-gray-300 rounded-lg w-full mt-3"
                         placeholder="Enter the constraints"
                       />
+                    </div>
+                    <div className="border border-gray-300 bg-gray-50 rounded-lg p-4 w-full mt-3">
+                      <label
+                        htmlFor="problem_name"
+                        className="block text-sm font-medium text-gray-700"
+                      >
+                        Premium
+                      </label>
+                      <div className="flex items-center space-x-4 mb-4">
+                        <div className="flex items-center">
+                          <input
+                            type="radio"
+                            id="isPremium"
+                            name="premium"
+                            onChange={handleInputChange}
+                            value="true"
+                            required
+                          />
+                          <label htmlFor="isPremium" className="ml-2">
+                            True
+                          </label>
+                        </div>
+                        <div className="flex items-center">
+                          <input
+                            type="radio"
+                            id="notPremium"
+                            onChange={handleInputChange}
+                            name="premium"
+                            value="false"
+                            required
+                          />
+                          <label htmlFor="notPremium" className="ml-2">
+                            False
+                          </label>
+                        </div>
+                      </div>
                     </div>
                   </div>
                   <div className="pt-5">

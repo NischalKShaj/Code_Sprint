@@ -115,6 +115,33 @@ const problemUseCase = {
       return { success: false, data: error.message };
     }
   },
+
+  // controller for adding the problem
+  addProblem: async (data) => {
+    try {
+      // encoding the main code and the client template
+      const mainCode = base64.encode(data.mainCode);
+      const clientCode = base64.encode(data.clientCode);
+      const testCases = data.testCase;
+      const exampleTestCase = data.testCase.slice(0, 3);
+
+      const response = await problemRepository.addProblem(
+        data,
+        mainCode,
+        clientCode,
+        testCases,
+        exampleTestCase
+      );
+
+      if (response) {
+        return { success: true, data: response };
+      } else {
+        return { success: false, data: response };
+      }
+    } catch (error) {
+      return { success: false, data: error.message };
+    }
+  },
 };
 
 module.exports = problemUseCase;

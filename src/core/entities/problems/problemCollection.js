@@ -13,13 +13,6 @@ const problems = new mongoose.Schema({
     type: String,
     required: true,
   },
-  language: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "language",
-      required: true,
-    },
-  ],
   category: {
     type: mongoose.Schema.Types.ObjectId,
     enum: "problemCategory",
@@ -34,14 +27,11 @@ const problems = new mongoose.Schema({
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "testCase",
-      required: true,
     },
   ],
-  constrains: [
-    {
-      type: String,
-    },
-  ],
+  constrains: {
+    type: String,
+  },
   clientCode: {
     type: String,
     required: true,
@@ -49,6 +39,10 @@ const problems = new mongoose.Schema({
   mainCode: {
     type: String,
     required: true,
+  },
+  premium: {
+    type: Boolean,
+    default: false,
   },
 });
 

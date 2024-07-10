@@ -6,7 +6,7 @@ const mongoose = require("mongoose");
 // creating the schema for the collection
 
 // schema for entire testCases input and expected outputs
-const testCaseSchema = new mongoose.model({
+const testCaseSchema = new mongoose.Schema({
   input: {
     type: String,
     required: true,
@@ -18,7 +18,7 @@ const testCaseSchema = new mongoose.model({
 });
 
 // schema for showing the example test cases
-const exampleTestCase = new mongoose.model({
+const exampleTestCase = new mongoose.Schema({
   input: {
     type: String,
     required: true,

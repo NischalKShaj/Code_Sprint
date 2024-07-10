@@ -108,6 +108,13 @@ router.post(
   problemController.verifyTestCase
 );
 
+// router for adding the problem
+router.post(
+  "/problem/addProblem",
+  authenticateAdminJwt,
+  problemController.addProblem
+);
+
 // router for logging out
 router.get("/logout", adminController.adminLogout);
 

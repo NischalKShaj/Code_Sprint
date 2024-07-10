@@ -39,12 +39,27 @@ const problemController = {
   // controller for verifying the language
   verifyTestCase: async (req, res) => {
     try {
-      const { sourceCode, testInput, expectedOutput } = req.body;
+      const { main, testInput, expectedOutput } = req.body;
       const response = await problemUseCase.verifyTestCase(
-        sourceCode,
+        main,
         testInput,
         expectedOutput
       );
+      if (response.success) {
+        res.status(202).json(response.data);
+      } else {
+        res.status(404).json(response.data);
+      }
+    } catch (error) {
+      res.status(500).json(error.message);
+    }
+  },
+
+  // controller for adding the problem
+  addProblem: async (req, res) => {
+    try {
+      const data = req.body;
+      const response = await problemUseCase.addProblem(data);
       if (response.success) {
         res.status(202).json(response.data);
       } else {
