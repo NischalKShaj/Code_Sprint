@@ -254,8 +254,10 @@ const AddProblems = () => {
           confirmButtonText: "OK",
         });
       }
+      router.push("/admin/problem");
     } catch (error) {
       console.error("error", error);
+      router.push("/admin/error");
     }
   };
 

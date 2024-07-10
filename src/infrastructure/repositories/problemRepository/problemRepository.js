@@ -59,7 +59,12 @@ const problemRepository = {
     exampleTestCase
   ) => {
     try {
-      console.log("first", data);
+      console.log("Received data:", data);
+      console.log("Main code:", mainCode);
+      console.log("Client code:", clientCode);
+      console.log("Test cases:", testCases);
+      console.log("Example test cases:", exampleTestCase);
+
       const problemData = new ProblemCollection({
         title: data.problemName,
         description: data.description,
@@ -69,24 +74,46 @@ const problemRepository = {
         clientCode: clientCode,
       });
 
-      await problemData.save();
+      let savedProblem = await problemData.save();
+      console.log("Saved problem:", savedProblem);
 
-      const testCase = new TestCaseCollection({
-        problemId: problemData._id,
+      const testCaseData = new TestCaseCollection({
+        problemId: savedProblem._id,
         testCases: testCases,
         exampleTest: exampleTestCase,
       });
 
-      await testCase.save();
+      let savedTestCase = await testCaseData.save();
+      console.log("Saved test cases:", savedTestCase);
 
-      const problem = await ProblemCollection.findByIdAndUpdate(
-        { _id: problemData._id },
-        { testCase: testCase },
+      const updatedProblem = await ProblemCollection.findByIdAndUpdate(
+        savedProblem._id,
+        { testCase: savedTestCase._id },
         { new: true }
       );
 
-      if (problem) {
-        return problem;
+      console.log("Updated problem with test cases:", updatedProblem);
+
+      if (updatedProblem) {
+        return updatedProblem;
+      } else {
+        throw new Error("Failed to update problem with test cases");
+      }
+    } catch (error) {
+      console.error("Error adding problem:", error);
+      throw error;
+    }
+  },
+
+  // method to show all the problems
+  showProblem: async () => {
+    try {
+      const problems = await ProblemCollection.find(
+        {},
+        { title: 1, category: 1, difficulty: 1, description: 1, premium: 1 }
+      );
+      if (problems) {
+        return problems;
       } else {
         return null;
       }

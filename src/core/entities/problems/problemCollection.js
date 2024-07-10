@@ -14,8 +14,7 @@ const problems = new mongoose.Schema({
     required: true,
   },
   category: {
-    type: mongoose.Schema.Types.ObjectId,
-    enum: "problemCategory",
+    type: String,
     required: true,
   },
   difficulty: {

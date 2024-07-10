@@ -121,7 +121,7 @@ const problemUseCase = {
     try {
       // encoding the main code and the client template
       const mainCode = base64.encode(data.mainCode);
-      const clientCode = base64.encode(data.clientCode);
+      const clientCode = base64.encode(data.clientTemplate);
       const testCases = data.testCase;
       const exampleTestCase = data.testCase.slice(0, 3);
 
@@ -137,6 +137,20 @@ const problemUseCase = {
         return { success: true, data: response };
       } else {
         return { success: false, data: response };
+      }
+    } catch (error) {
+      return { success: false, data: error.message };
+    }
+  },
+
+  // use for showing all the problems
+  showProblem: async () => {
+    try {
+      const result = await problemRepository.showProblem();
+      if (result) {
+        return { success: true, data: result };
+      } else {
+        return { success: false, data: result };
       }
     } catch (error) {
       return { success: false, data: error.message };

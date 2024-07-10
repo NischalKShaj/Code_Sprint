@@ -69,6 +69,20 @@ const problemController = {
       res.status(500).json(error.message);
     }
   },
+
+  // controller for showing all the problems
+  showProblem: async (req, res) => {
+    try {
+      const response = await problemUseCase.showProblem();
+      if (response.success) {
+        res.status(202).json(response.data);
+      } else {
+        res.status(404).json(response.data);
+      }
+    } catch (error) {
+      res.status(500).json(error.message);
+    }
+  },
 };
 
 module.exports = problemController;
