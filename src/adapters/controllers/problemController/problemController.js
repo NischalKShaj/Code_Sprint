@@ -71,9 +71,24 @@ const problemController = {
   },
 
   // controller for showing all the problems
+  showProblems: async (req, res) => {
+    try {
+      const response = await problemUseCase.showProblems();
+      if (response.success) {
+        res.status(202).json(response.data);
+      } else {
+        res.status(404).json(response.data);
+      }
+    } catch (error) {
+      res.status(500).json(error.message);
+    }
+  },
+
+  // controller to show the specific program
   showProblem: async (req, res) => {
     try {
-      const response = await problemUseCase.showProblem();
+      const id = req.params.id;
+      const response = await problemUseCase.showProblem(id);
       if (response.success) {
         res.status(202).json(response.data);
       } else {

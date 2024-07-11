@@ -116,7 +116,7 @@ router.post(
 );
 
 // router for showing all the problems
-router.get("/problems", authenticateAdminJwt, problemController.showProblem);
+router.get("/problems", authenticateAdminJwt, problemController.showProblems);
 
 // router for logging out
 router.get("/logout", adminController.adminLogout);

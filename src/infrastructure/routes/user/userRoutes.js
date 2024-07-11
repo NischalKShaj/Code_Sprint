@@ -13,6 +13,7 @@ const courseController = require("../../../adapters/controllers/courseController
 const profileController = require("../../../adapters/controllers/profileController/profileController");
 const payoutController = require("../../../adapters/controllers/payoutController/payoutController");
 const categoryController = require("../../../adapters/controllers/categoryController/categoryController");
+const problemController = require("../../../adapters/controllers/problemController/problemController");
 const upload = require("../../../adapters/middleware/multer");
 
 // creating the required routes
@@ -149,6 +150,19 @@ router.post(
   authenticateUserJwt,
   payoutController.premiumSubscription
 );
+
+// router for getting all the problems
+router.get("/problems", authenticateUserJwt, problemController.showProblems);
+
+// router for getting the categories and difficulties
+router.get(
+  "/category_difficulty",
+  authenticateUserJwt,
+  problemController.getDifficultyAndCategory
+);
+
+// router for getting the showing the specific problem
+router.get("/problems/:id", authenticateUserJwt, problemController.showProblem);
 
 // exporting the module
 module.exports = router;

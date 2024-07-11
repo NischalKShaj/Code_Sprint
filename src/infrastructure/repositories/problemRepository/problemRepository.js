@@ -106,7 +106,7 @@ const problemRepository = {
   },
 
   // method to show all the problems
-  showProblem: async () => {
+  showProblems: async () => {
     try {
       const problems = await ProblemCollection.find(
         {},
@@ -114,6 +114,20 @@ const problemRepository = {
       );
       if (problems) {
         return problems;
+      } else {
+        return null;
+      }
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  // method to show the specific program
+  showProblem: async (id) => {
+    try {
+      const problem = await ProblemCollection.findById({ _id: id });
+      if (problem) {
+        return problem;
       } else {
         return null;
       }

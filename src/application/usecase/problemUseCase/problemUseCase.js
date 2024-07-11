@@ -143,10 +143,24 @@ const problemUseCase = {
     }
   },
 
-  // use for showing all the problems
-  showProblem: async () => {
+  // use case for showing all the problems
+  showProblems: async () => {
     try {
-      const result = await problemRepository.showProblem();
+      const result = await problemRepository.showProblems();
+      if (result) {
+        return { success: true, data: result };
+      } else {
+        return { success: false, data: result };
+      }
+    } catch (error) {
+      return { success: false, data: error.message };
+    }
+  },
+
+  // use case for showing specific problem
+  showProblem: async (id) => {
+    try {
+      const result = await problemRepository.showProblem(id);
       if (result) {
         return { success: true, data: result };
       } else {
