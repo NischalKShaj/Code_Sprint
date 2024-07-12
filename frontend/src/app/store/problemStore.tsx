@@ -21,6 +21,7 @@ interface Problem {
   testCases: [];
   exampleTestCase: [];
   constraints: string;
+  clientCode: string;
   premium: boolean;
 }
 

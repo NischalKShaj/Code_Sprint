@@ -69,7 +69,8 @@ const problemRepository = {
         title: data.problemName,
         description: data.description,
         category: data.category,
-        difficulty: data.difficulty,
+        difficulty: data.difficulty, //add constraints after the review
+        constraints: data.constraints,
         mainCode: mainCode,
         clientCode: clientCode,
       });
@@ -126,8 +127,12 @@ const problemRepository = {
   showProblem: async (id) => {
     try {
       const problem = await ProblemCollection.findById({ _id: id });
-      if (problem) {
-        return problem;
+      const testCases = await TestCaseCollection.findOne(
+        { problemId: id },
+        { exampleTest: 1, testCases: 1 }
+      );
+      if (problem && testCases) {
+        return { problem, testCases };
       } else {
         return null;
       }
