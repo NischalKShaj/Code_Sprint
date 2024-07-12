@@ -69,7 +69,7 @@ const problemRepository = {
         title: data.problemName,
         description: data.description,
         category: data.category,
-        difficulty: data.difficulty, //add constraints after the review
+        difficulty: data.difficulty,
         constraints: data.constraints,
         mainCode: mainCode,
         clientCode: clientCode,
