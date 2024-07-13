@@ -140,6 +140,25 @@ const problemRepository = {
       throw error;
     }
   },
+
+  // method to check the test case
+  checkTestCase: async (id) => {
+    try {
+      const mainCode = await ProblemCollection.findById(
+        { _id: id },
+        { mainCode: 1, _id: 0 }
+      );
+      const exampleTestCase = await TestCaseCollection.findOne(
+        { problemId: id },
+        { exampleTest: 1, _id: 0 }
+      );
+      if (mainCode && exampleTestCase) {
+        return { mainCode, exampleTestCase };
+      }
+    } catch (error) {
+      throw error;
+    }
+  },
 };
 
 module.exports = problemRepository;

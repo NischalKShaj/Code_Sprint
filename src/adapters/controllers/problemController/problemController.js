@@ -1,6 +1,7 @@
 // file for the problems controller
 
 // importing the required modules
+const { response } = require("express");
 const problemUseCase = require("../../../application/usecase/problemUseCase/problemUseCase");
 
 // creating the controller for the problems
@@ -93,6 +94,21 @@ const problemController = {
         res.status(202).json(response.data);
       } else {
         res.status(404).json(response.data);
+      }
+    } catch (error) {
+      res.status(500).json(error.message);
+    }
+  },
+
+  // controller to verify the test cases
+  checkTestCase: async (req, res) => {
+    try {
+      const { id, clientCode } = req.body;
+      const response = await problemUseCase.checkTestCase(id, clientCode);
+      if (response.success) {
+        res.status(202).json(response.data);
+      } else {
+        res.status(400).json(response.data);
       }
     } catch (error) {
       res.status(500).json(error.message);

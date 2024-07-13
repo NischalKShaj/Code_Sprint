@@ -164,5 +164,12 @@ router.get(
 // router for getting the showing the specific problem
 router.get("/problems/:id", authenticateUserJwt, problemController.showProblem);
 
+// router for checking the test cases
+router.post(
+  "/problem/execute",
+  authenticateUserJwt,
+  problemController.checkTestCase
+);
+
 // exporting the module
 module.exports = router;

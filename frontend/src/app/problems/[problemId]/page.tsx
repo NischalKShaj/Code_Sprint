@@ -4,21 +4,33 @@
 // importing required modules
 import axios from "axios";
 import { useParams, useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import dotenv from "dotenv";
 import { ProblemState } from "@/app/store/problemStore";
 import { Editor } from "@monaco-editor/react";
 import base64 from "base-64";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlay } from "@fortawesome/free-solid-svg-icons";
+import { AppState } from "@/app/store";
+import SpinnerWrapper from "@/components/partials/SpinnerWrapper";
 dotenv.config();
 
 const ProblemId = () => {
   const { problemId } = useParams() as { problemId: string };
   const showProblem = ProblemState((state) => state.showProblem);
   const problem = ProblemState((state) => state.problem);
+  const isAuthorized = AppState((state) => state.isAuthorized);
   const router = useRouter();
   const [editorContent, setEditorContent] = useState<string>("");
+  const [loading, setLoading] = useState(true);
+
+  useLayoutEffect(() => {
+    if (!isAuthorized) {
+      router.push("/login");
+    } else {
+      setLoading(false);
+    }
+  }, [isAuthorized, router]);
 
   // fetching the data for the question
   useEffect(() => {
@@ -120,88 +132,98 @@ const ProblemId = () => {
     }
   };
 
+  if (loading) {
+    return (
+      <SpinnerWrapper>
+        <div>Loading...</div>
+      </SpinnerWrapper>
+    );
+  }
+
   return (
     <div className="container mx-auto p-4">
-      <div className="bg-gray-800 p-4 rounded-md">
-        <h1 className="text-2xl font-bold text-white">{problem?.title}</h1>
-        <p className="text-white mt-2">{problem?.description}</p>
-        <p className="mt-2">
-          <strong className="text-white">Difficulty:</strong>{" "}
-          <span
-            className={
-              problem?.difficulty === "Easy"
-                ? "text-green-500"
-                : problem?.difficulty === "Medium"
-                ? "text-yellow-500"
-                : problem?.difficulty === "Hard"
-                ? "text-red-500"
-                : ""
-            }
-          >
-            {problem?.difficulty}
-          </span>
-        </p>
-        <p className="text-white mt-2">
-          <strong>Category:</strong> {problem?.category}
-        </p>
-        <p className="text-white mt-2">
-          <strong>Constraints:</strong> {problem?.constraints}
-        </p>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-          <div>
-            <label
-              htmlFor="source_code"
-              className="block text-green-600 text-sm font-medium"
+      <SpinnerWrapper>
+        <div className="bg-gray-800 p-4 rounded-md">
+          <h1 className="text-2xl font-bold text-white">{problem?.title}</h1>
+          <p className="text-white mt-2">{problem?.description}</p>
+          <p className="mt-2">
+            <strong className="text-white">Difficulty:</strong>{" "}
+            <span
+              className={
+                problem?.difficulty === "Easy"
+                  ? "text-green-500"
+                  : problem?.difficulty === "Medium"
+                  ? "text-yellow-500"
+                  : problem?.difficulty === "Hard"
+                  ? "text-red-500"
+                  : ""
+              }
             >
-              Code {"</>"} <span className="text-white"> python</span>
-            </label>
-            <div className="w-full p-4 border">
-              <Editor
-                height="50vh"
-                defaultLanguage="python"
-                value={editorContent}
-                onChange={handleEditorChange}
-                theme="vs-dark"
-              />
-            </div>
-          </div>
-          <div>
-            <label
-              htmlFor="example_test_case"
-              className="block text-green-600  text-sm font-medium"
-            >
-              Example Test Case
-            </label>
-            <div className="w-full p-4 border bg-gray-700 text-white">
-              {problem?.exampleTestCase?.map((test: any, index) => (
-                <div key={index} className="mb-4">
-                  <p>
-                    <strong>Input:</strong> {test.input}
-                  </p>
-                  <p>
-                    <strong>Output:</strong> {test.expectedOutput}
-                  </p>
-                </div>
-              ))}
-            </div>
-            <div className="flex space-x-5 mt-4">
-              <button
-                onClick={handleTestCase}
-                className="bg-green-600 text-white px-4 py-2 rounded-md flex items-center"
+              {problem?.difficulty}
+            </span>
+          </p>
+          <p className="text-white mt-2">
+            <strong>Category:</strong> {problem?.category}
+          </p>
+          <p className="text-white mt-2">
+            <strong>Constraints:</strong> {problem?.constraints}
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+            <div>
+              <label
+                htmlFor="source_code"
+                className="block text-green-600 text-sm font-medium"
               >
-                <FontAwesomeIcon icon={faPlay} className="mr-2" />
-                Run
-              </button>
-              <button
-                onClick={handleSubmit}
-                className="bg-blue-600 text-white px-4 py-2 rounded-md"
+                Code {"</>"} <span className="text-white"> python</span>
+              </label>
+              <div className="w-full p-4 border">
+                <Editor
+                  height="50vh"
+                  defaultLanguage="python"
+                  value={editorContent}
+                  onChange={handleEditorChange}
+                  theme="vs-dark"
+                />
+              </div>
+            </div>
+            <div>
+              <label
+                htmlFor="example_test_case"
+                className="block text-green-600  text-sm font-medium"
               >
-                Submit
-              </button>
+                Example Test Case
+              </label>
+              <div className="w-full p-4 border bg-gray-700 text-white">
+                {problem?.exampleTestCase?.map((test: any, index) => (
+                  <div key={index} className="mb-4">
+                    <p>
+                      <strong>Input:</strong> {test.input}
+                    </p>
+                    <p>
+                      <strong>Output:</strong> {test.expectedOutput}
+                    </p>
+                  </div>
+                ))}
+              </div>
+              <div className="flex space-x-5 mt-4">
+                <button
+                  onClick={handleTestCase}
+                  className="bg-green-600 text-white px-4 py-2 rounded-md flex items-center"
+                >
+                  <FontAwesomeIcon icon={faPlay} className="mr-2" />
+                  Run
+                </button>
+                <button
+                  onClick={handleSubmit}
+                  className="bg-blue-600 text-white px-4 py-2 rounded-md"
+                >
+                  Submit
+                </button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </SpinnerWrapper>
     </div>
   );
 };

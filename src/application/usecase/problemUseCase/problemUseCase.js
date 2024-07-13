@@ -4,8 +4,9 @@
 const base64 = require("base-64");
 const axios = require("axios");
 const dotenv = require("dotenv");
-dotenv.config();
+const problemService = require("../../../infrastructure/services/codeService");
 const problemRepository = require("../../../infrastructure/repositories/problemRepository/problemRepository");
+dotenv.config();
 
 // create the use case for the problems
 const problemUseCase = {
@@ -167,6 +168,39 @@ const problemUseCase = {
         return { success: false, data: result };
       }
     } catch (error) {
+      return { success: false, data: error.message };
+    }
+  },
+
+  // use case for checking the test cases
+  checkTestCase: async (id, clientCode) => {
+    try {
+      const { mainCode, exampleTestCase } =
+        await problemRepository.checkTestCase(id);
+
+      console.log("main", exampleTestCase);
+
+      const decodedMain = base64.decode(mainCode.mainCode);
+      // combining the source code
+      const code = clientCode + "\n" + decodedMain;
+
+      const sourceCode = base64.encode(code); //encoding the entire code for testing
+
+      // passing the test inputs and the source code to the services
+      const { allPassed, results } = await problemService(
+        exampleTestCase.exampleTest,
+        sourceCode
+      );
+
+      console.log("verify", results);
+
+      if (allPassed) {
+        return { success: true, data: results };
+      } else {
+        return { success: false, data: results };
+      }
+    } catch (error) {
+      console.error("error", error);
       return { success: false, data: error.message };
     }
   },
