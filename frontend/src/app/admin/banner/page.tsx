@@ -9,6 +9,7 @@ import dotenv from "dotenv";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { AppState } from "@/app/store";
+import Swal from "sweetalert2";
 dotenv.config();
 
 interface Banner {
@@ -65,8 +66,33 @@ const Banner = () => {
     router.push(`/admin/banner/${bannerId}`);
   };
 
-  const handleDelete = (bannerId: string) => {
-    console.log(`Deleting banner with ID: ${bannerId}`);
+  const handleDelete = async (id: string) => {
+    console.log(`Deleting banner with ID: ${id}`);
+    const token = localStorage.getItem("admin_access_token");
+    try {
+      const response = await axios.delete(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/admin/banner/delete/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
+        }
+      );
+      if (response.status === 202) {
+        setBanners((prevBanners) =>
+          prevBanners.filter((banner) => banner._id !== id)
+        );
+        Swal.fire({
+          position: "center",
+          icon: "success",
+          title: "Banner Deleted Successfully",
+          confirmButtonText: "OK",
+        });
+      }
+    } catch (error) {
+      console.error("error", error);
+    }
   };
 
   // Pagination logic

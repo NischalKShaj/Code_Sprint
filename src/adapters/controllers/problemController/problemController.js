@@ -114,6 +114,25 @@ const problemController = {
       res.status(500).json(error.message);
     }
   },
+
+  // controller for code submission
+  problemSubmission: async (req, res) => {
+    try {
+      const { id, clientCode, userId } = req.body;
+      const response = await problemUseCase.problemSubmission(
+        id,
+        clientCode,
+        userId
+      );
+      if (response.success) {
+        res.status(202).json(response.data);
+      } else {
+        res.status(400).json(response.data);
+      }
+    } catch (error) {
+      res.status(500).json(error.message);
+    }
+  },
 };
 
 module.exports = problemController;

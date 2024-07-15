@@ -68,6 +68,21 @@ const bannerUseCase = {
       return { success: false, data: error.message };
     }
   },
+
+  // use case for deleting the banner
+  deleteBanner: async (bannerId) => {
+    try {
+      const result = await bannerRepository.deleteBanner(bannerId);
+      if (result) {
+        return { success: true, data: result };
+      } else {
+        return { success: false, data: result };
+      }
+    } catch (error) {
+      console.error("error", error);
+      return { success: false, data: error.message };
+    }
+  },
 };
 
 // exporting the modules

@@ -80,6 +80,21 @@ const bannerController = {
       res.status(500).json(error.message);
     }
   },
+
+  // controller for deleting the banner
+  deleteBanner: async (req, res) => {
+    try {
+      const bannerId = req.params.id;
+      const response = await bannerUseCase.deleteBanner(bannerId);
+      if (response.success) {
+        res.status(202).json("banner deleted successfully");
+      } else {
+        res.status(400).json("banner deletion failed");
+      }
+    } catch (error) {
+      res.status(500).json(error.message);
+    }
+  },
 };
 
 // exporting the bannerController

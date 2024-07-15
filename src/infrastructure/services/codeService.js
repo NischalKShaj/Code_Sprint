@@ -18,7 +18,15 @@ const processTestCases = async (testCases, sourceCode) => {
 
       results.push(verify);
 
-      if (!verify.success || verify.data.status.id !== 3) {
+      if (
+        !verify.success ||
+        (verify.data.statusId !== 3 && verify.data.statusId !== 4)
+      ) {
+        allPassed = false;
+        break;
+      }
+
+      if (verify.data.statusId === 4) {
         allPassed = false;
         break;
       }
@@ -39,8 +47,6 @@ const verifyTestCase = async (input, output, sourceCode) => {
   try {
     const encodedInputTest = base64.encode(input);
     const encodedOutput = base64.encode(output);
-
-    // console.log("decoded src", decodedSrc);
 
     // Payload for the Judge0 server
     const payload = {
@@ -91,12 +97,29 @@ const verifyTestCase = async (input, output, sourceCode) => {
       const result = statusResponse.data;
       console.log(result);
 
-      if (result.status.id === 3 || result.status.id === 4) {
+      if (result.status.id === 3) {
         const decodedOutput = base64.decode(result.stdout);
-        return { success: true, data: { ...result, decodedOutput } };
+        return {
+          success: true,
+          data: { ...result, decodedOutput, statusId: result.status.id },
+        };
+      } else if (result.status.id === 4) {
+        const decodedOutput = base64.decode(result.stdout);
+        return {
+          success: true,
+          data: {
+            ...result,
+            input,
+            decodedOutput,
+            expectedOutput: output,
+            statusId: result.status.id,
+          },
+        };
       } else {
-        // Other status: failed or error
-        return { success: false, data: result };
+        return {
+          success: false,
+          data: { ...result, statusId: result.status.id },
+        };
       }
     } catch (error) {
       console.error("error", error);

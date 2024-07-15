@@ -83,6 +83,22 @@ const bannerRepository = {
       throw error;
     }
   },
+
+  // method for deleting the banner
+  deleteBanner: async (bannerId) => {
+    try {
+      const banner = await BannerCollection.findByIdAndDelete({
+        _id: bannerId,
+      });
+      if (banner) {
+        return "deleted";
+      } else {
+        return null;
+      }
+    } catch (error) {
+      throw error;
+    }
+  },
 };
 
 module.exports = bannerRepository;

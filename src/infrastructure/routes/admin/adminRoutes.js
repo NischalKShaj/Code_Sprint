@@ -63,6 +63,13 @@ router.put(
   bannerController.editBanner
 );
 
+// router for deleting the banner
+router.delete(
+  "/banner/delete/:id",
+  authenticateAdminJwt,
+  bannerController.deleteBanner
+);
+
 // router for getting the payouts
 router.get(
   "/payout-request",

@@ -282,6 +282,24 @@ const userRepository = {
       throw error;
     }
   },
+
+  // method for adding the problem after submission
+  addProblem: async (id, userId) => {
+    try {
+      const user = await UserCollection.findByIdAndUpdate(
+        { _id: userId },
+        { $push: { problems: id } },
+        { new: true }
+      );
+      if (user) {
+        return user;
+      } else {
+        return null;
+      }
+    } catch (error) {
+      throw error;
+    }
+  },
 };
 
 module.exports = userRepository;

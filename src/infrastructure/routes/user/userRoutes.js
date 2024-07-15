@@ -171,5 +171,12 @@ router.post(
   problemController.checkTestCase
 );
 
+// router for submitting the problem
+router.post(
+  "/problem/submit",
+  authenticateUserJwt,
+  problemController.problemSubmission
+);
+
 // exporting the module
 module.exports = router;

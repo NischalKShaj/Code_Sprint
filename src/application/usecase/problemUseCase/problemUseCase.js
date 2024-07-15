@@ -6,6 +6,7 @@ const axios = require("axios");
 const dotenv = require("dotenv");
 const problemService = require("../../../infrastructure/services/codeService");
 const problemRepository = require("../../../infrastructure/repositories/problemRepository/problemRepository");
+const userRepository = require("../../../infrastructure/repositories/userRepository/userRepository");
 dotenv.config();
 
 // create the use case for the problems
@@ -196,6 +197,41 @@ const problemUseCase = {
 
       if (allPassed) {
         return { success: true, data: results };
+      } else {
+        return { success: false, data: results };
+      }
+    } catch (error) {
+      console.error("error", error);
+      return { success: false, data: error.message };
+    }
+  },
+
+  // use case for submitting code
+  problemSubmission: async (id, clientCode, userId) => {
+    try {
+      const { mainCode, testCases } = await problemRepository.problemSubmission(
+        id
+      );
+
+      const decodedMain = base64.decode(mainCode.mainCode);
+
+      // combining the client code and the main code
+      const code = clientCode + "\n" + decodedMain;
+
+      const sourceCode = base64.encode(code);
+
+      // passing the test inputs and the source code to the services
+      const { allPassed, results } = await problemService(
+        testCases.testCases,
+        sourceCode
+      );
+
+      if (allPassed) {
+        // if all the test cases are passed then the problem is added to the user collection
+        const user = await userRepository.addProblem(id, userId);
+        if (user) {
+          return { success: true, data: results };
+        }
       } else {
         return { success: false, data: results };
       }

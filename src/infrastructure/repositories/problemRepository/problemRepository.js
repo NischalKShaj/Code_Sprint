@@ -159,6 +159,27 @@ const problemRepository = {
       throw error;
     }
   },
+
+  // method to make the submission of the code
+  problemSubmission: async (id) => {
+    try {
+      const mainCode = await ProblemCollection.findById(
+        { _id: id },
+        { mainCode: 1, _id: 0 }
+      );
+
+      const testCases = await TestCaseCollection.findOne(
+        { problemId: id },
+        { testCases: 1, _id: 0 }
+      );
+
+      if (mainCode && testCases) {
+        return { mainCode, testCases };
+      }
+    } catch (error) {
+      throw error;
+    }
+  },
 };
 
 module.exports = problemRepository;
