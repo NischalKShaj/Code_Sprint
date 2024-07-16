@@ -59,7 +59,11 @@ const UserSideBar = () => {
                     alt="Profile Image"
                   />
                 )}
-                <span className="bottom-0 left-16 absolute  w-3.5 h-3.5 bg-green-400 border-2 border-white dark:border-gray-800 rounded-full"></span>
+                <span
+                  className={`bottom-0 left-16 absolute w-3.5 h-3.5 ${
+                    user?.isOnline === true ? "bg-green-400" : "bg-red-500"
+                  } border-2 border-white dark:border-gray-800 rounded-full`}
+                ></span>
               </div>
             </li>
             <li className="flex flex-col items-start mt-[10px]">

@@ -39,7 +39,12 @@ const userRepository = {
         bcryptjs.compareSync(userPassword, userDetails.password) &&
         userDetails.blocked === false
       ) {
-        return userDetails;
+        const updatedUser = await UserCollection.findByIdAndUpdate(
+          { _id: userDetails._id },
+          { isOnline: true },
+          { new: true }
+        );
+        return updatedUser;
       }
 
       // Check if tutor details exist and validate password

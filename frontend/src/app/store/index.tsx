@@ -14,6 +14,7 @@ interface State {
     profileImage: string;
     blocked: boolean;
     phone: string | null;
+    isOnline: boolean;
     premium: boolean;
   } | null;
   // function for implementing the userLogin
@@ -25,6 +26,7 @@ interface State {
     profileImage: string;
     blocked: boolean;
     phone: string | null;
+    isOnline: boolean;
     premium: boolean;
   }) => void;
   // function for implementing the user Logout

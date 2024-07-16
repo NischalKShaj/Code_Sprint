@@ -106,6 +106,13 @@ router.put(
   profileController.editTutor
 );
 
+// router for showing the solved problems
+router.get(
+  "/profile/user/solutions/:id",
+  authenticateUserJwt,
+  profileController.getSolvedProblems
+);
+
 // router for unsubscribing the course
 router.post(
   "/course/unsubscribe/:id",

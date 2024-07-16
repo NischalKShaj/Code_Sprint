@@ -4,6 +4,7 @@
 const UserCollection = require("../../../core/entities/user/userCollection");
 const CourseCollection = require("../../../core/entities/course/courseCollection");
 const TutorCollection = require("../../../core/entities/user/tutorCollection");
+const ProblemCollection = require("../../../core/entities/problems/problemCollection");
 
 // creating the profile repository
 const profileRepository = {
@@ -114,6 +115,36 @@ const profileRepository = {
         return tutorDetails;
       } else {
         return null;
+      }
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  // method for showing all the solved problems
+  getSolvedProblems: async (id) => {
+    try {
+      const user = await UserCollection.findById(
+        { _id: id },
+        { problems: 1, _id: 0 }
+      );
+      console.log("user", user);
+
+      solvedProblems = user.problems;
+
+      const problems = await ProblemCollection.find(
+        {
+          _id: { $in: solvedProblems.toString() },
+        },
+        { title: 1, category: 1, difficulty: 1, _id: 1 }
+      );
+
+      console.log("problem", problems);
+
+      if (problems) {
+        return problems;
+      } else {
+        return "no problems solved";
       }
     } catch (error) {
       throw error;

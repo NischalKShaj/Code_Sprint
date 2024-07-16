@@ -66,6 +66,7 @@ const Login = () => {
           blocked: data.blocked,
           phone: data.phone,
           premium: data.premium,
+          isOnline: data.isOnline,
         });
         router.push("/");
       } else if (response.status === 500) {

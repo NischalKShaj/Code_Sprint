@@ -109,6 +109,7 @@ const StudentId = () => {
           role: user?.role!,
           blocked: user?.blocked!,
           premium: user?.premium!,
+          isOnline: user?.isOnline!,
         });
 
         router.push("/profile/tutor");

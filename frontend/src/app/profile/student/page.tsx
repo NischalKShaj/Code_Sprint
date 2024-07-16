@@ -25,16 +25,24 @@ interface Chapter {
   videos: string[];
 }
 
+interface Solved {
+  _id: string | undefined;
+  title: string | undefined;
+  difficulty: string | undefined;
+  category: string | undefined;
+}
+
 const Profile = () => {
-  const [loading, setIsLoading] = useState(true);
-  const [subscribedVideos, setSubscribedVideos] = useState<Video[]>([]);
   const user = AppState((state) => state.user);
   const subscribedCourse = CourseState((state) => state.isSubscribed);
-  const router = useRouter();
   const subscribe = CourseState((state) => state.subscribe);
-  const [currentPage, setCurrentPage] = useState(1);
-  const coursesPerPage = 1;
   const isAuthenticated = AppState((state) => state.isAuthorized);
+  const [loading, setIsLoading] = useState(true);
+  const [subscribedVideos, setSubscribedVideos] = useState<Video[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [solvedProblems, setSolvedProblems] = useState<Solved[] | null>([]);
+  const coursesPerPage = 1;
+  const router = useRouter();
 
   // static value for the problems submissions
   const easy = 4;
@@ -112,7 +120,33 @@ const Profile = () => {
     };
 
     fetchData();
-  }, [router, user?.id, subscribe]);
+  }, [router, user?.id, subscribe, user?.username]);
+
+  // for fetching the solved problems
+  useEffect(() => {
+    const fetchData = async () => {
+      const id = user?.id;
+      const token = localStorage.getItem("access_token");
+      try {
+        const response = await axios.get(
+          `${process.env.NEXT_PUBLIC_BASE_URL}/profile/user/solutions/${id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            withCredentials: true,
+          }
+        );
+        if (response.status === 200) {
+          console.log("soln", response.data);
+          setSolvedProblems(response.data);
+        }
+      } catch (error) {
+        console.error("error", error);
+      }
+    };
+    fetchData();
+  }, [user?.id]);
 
   // function to decrypt the videos
   const decryptVideo = (encryptedUrl: string): string => {
@@ -308,6 +342,69 @@ const Profile = () => {
               videos: {""}
             </video>
           </div> */}
+          </div>
+        </section>
+        <section className="bg-[#D9D9D9] p-8 ml-[400px] mt-[60px] mb-5 w-[1100px] rounded-lg shadow-lg">
+          <h1 className="text-left text-xl font-semibold">
+            Submitted Problems
+          </h1>
+          <div className="mt-[20px] flex items-center">
+            {solvedProblems?.length && solvedProblems.length > 0 ? (
+              <table className="w-[1050px] top-[100px] items-center justify-items-center text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 rounded-lg overflow-hidden">
+                <thead className="text-xs text-gray-700 uppercase bg-gray-200 dark:bg-gray-700 dark:text-gray-400">
+                  <tr>
+                    <th scope="col" className="p-4">
+                      Index
+                    </th>
+                    <th scope="col" className="p-4">
+                      Title
+                    </th>
+                    <th scope="col" className="p-4">
+                      Category
+                    </th>
+                    <th scope="col" className="p-4">
+                      Difficulty
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {solvedProblems.map((problem, index) => (
+                    <tr
+                      key={problem._id}
+                      className="bg-white border-b text-black dark:bg-gray-800 dark:border-gray-700 hover:bg-blue-100 dark:hover:bg-gray-600"
+                    >
+                      <td className="w-4 p-4">{index + 1}</td>
+                      <td className="w-4 p-4">
+                        <Link
+                          className="text-black"
+                          href={`/problems/${problem._id}`}
+                        >
+                          {problem.title}
+                        </Link>
+                      </td>
+                      <td className="w-4 p-4">{problem.category}</td>
+                      <td
+                        className={`w-4 p-4 ${
+                          problem.difficulty === "Easy"
+                            ? "text-green-500"
+                            : problem.difficulty === "Medium"
+                            ? "text-yellow-500"
+                            : problem.difficulty === "Hard"
+                            ? "text-red-500"
+                            : ""
+                        }`}
+                      >
+                        {problem.difficulty}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            ) : (
+              <div>
+                <h1>No problems solved till now</h1>
+              </div>
+            )}
           </div>
         </section>
       </SpinnerWrapper>

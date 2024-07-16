@@ -75,6 +75,21 @@ const profileController = {
       res.status(500).json(error.message);
     }
   },
+
+  // controller for getting the solved problems
+  getSolvedProblems: async (req, res) => {
+    try {
+      const id = req.params.id;
+      const response = await profileUseCase.getSolvedProblems(id);
+      if (response.success) {
+        res.status(200).json(response.data);
+      } else {
+        res.status(400).json(response.data);
+      }
+    } catch (error) {
+      res.status(500).json(error.message);
+    }
+  },
 };
 
 module.exports = profileController;
