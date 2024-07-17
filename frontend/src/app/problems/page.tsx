@@ -56,6 +56,7 @@ const Problems = () => {
           }
         );
         if (response.status === 202) {
+          console.log("response", response.data);
           showProblems(response.data);
         }
       } catch (error) {

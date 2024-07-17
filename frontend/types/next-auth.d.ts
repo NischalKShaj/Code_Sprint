@@ -10,6 +10,7 @@ interface Users {
   profileImage: string;
   blocked: boolean;
   premium: boolean;
+  isOnline: boolean;
 }
 
 declare module "next-auth" {

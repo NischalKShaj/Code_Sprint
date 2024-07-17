@@ -71,7 +71,7 @@ const ProblemId = () => {
             category: response.data.problem.category,
             testCases: response.data.testCases.testCases,
             exampleTestCase: response.data.testCases.exampleTest,
-            constraints: "Integer is between 1-1000",
+            constraints: response.data.problem.constraints,
             premium: response.data.testCases.premium,
             clientCode: decodedClientCode,
           });

@@ -28,7 +28,7 @@ const problems = new mongoose.Schema({
       ref: "testCase",
     },
   ],
-  constrains: {
+  constraints: {
     type: String,
   },
   clientCode: {

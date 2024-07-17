@@ -80,6 +80,8 @@ const problemUseCase = {
 
       const token = response.data.token;
 
+      console.log("response", response.data);
+
       // Polling the submission status
       let statusResponse;
       let isCompleted = false;
@@ -237,6 +239,38 @@ const problemUseCase = {
       }
     } catch (error) {
       console.error("error", error);
+      return { success: false, data: error.message };
+    }
+  },
+
+  // use case for getting all problems and randomly generate the problem for the daily problem
+  dailyProblem: async () => {
+    try {
+      const allProblems = await problemRepository.showProblems();
+      if (allProblems) {
+        const randomIndex = Math.floor(Math.random() * allProblems.length); //random problem
+        const todaysProblem = allProblems[randomIndex]._id;
+        const dailyProblem = await problemRepository.dailyProblem(
+          todaysProblem
+        );
+        return dailyProblem;
+      }
+    } catch (error) {
+      console.error("object", error);
+      return error;
+    }
+  },
+
+  // use case for getting all the daily problems
+  getDailyProblems: async () => {
+    try {
+      const result = await problemRepository.getDailyProblems();
+      if (result) {
+        return { success: true, data: result };
+      } else {
+        return { success: false, data: result };
+      }
+    } catch (error) {
       return { success: false, data: error.message };
     }
   },

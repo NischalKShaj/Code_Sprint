@@ -56,6 +56,7 @@ export const authOptions: NextAuthOptions = {
               role: response.data.data.role,
               premium: response.data.data.premium,
               blocked: response.data.data.blocked,
+              isOnline: response.data.data.isOnline,
             };
             user.users = userData;
             return true;
@@ -86,6 +87,7 @@ export const authOptions: NextAuthOptions = {
             role: response.data.data.role,
             premium: response.data.data.premium,
             blocked: response.data.data.blocked,
+            isOnline: response.data.data.isOnline,
           };
           user.users = userData;
           user.accessToken = token;

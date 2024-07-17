@@ -26,6 +26,7 @@ const Home = () => {
         profileImage: session.user?.image!,
         blocked: session.users.blocked,
         premium: session.users.premium,
+        isOnline: session.users.isOnline,
         phone: null,
       });
     }

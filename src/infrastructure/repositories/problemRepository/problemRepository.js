@@ -2,10 +2,9 @@
 
 // importing the required modules
 const ProblemCollection = require("../../../core/entities/problems/problemCollection");
-const LanguageCollection = require("../../../core/entities/languages/languageCollection");
 const CategoryCollection = require("../../../core/entities/problemCategory/problemCategory");
 const TestCaseCollection = require("../../../core/entities/testCases/testCases");
-
+const DailyProblemCollection = require("../../../core/entities/dailyProblem/dailyProblem");
 // helper function to get the difficulty
 const getDifficulty = (schema, path) => {
   const enumValues = schema.path(path).enumValues;
@@ -175,6 +174,34 @@ const problemRepository = {
 
       if (mainCode && testCases) {
         return { mainCode, testCases };
+      }
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  // method for generating the daily problem and storing in the database
+  dailyProblem: async (id) => {
+    try {
+      const todaysProblem = new DailyProblemCollection({
+        problemId: id,
+        date: Date.now(),
+      });
+      const savedProblem = await todaysProblem.save();
+      return savedProblem;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  // method for getting the daily problems
+  getDailyProblems: async () => {
+    try {
+      const dailyProblems = await DailyProblemCollection.find();
+      if (dailyProblems) {
+        return dailyProblems;
+      } else {
+        return null;
       }
     } catch (error) {
       throw error;

@@ -45,6 +45,7 @@ interface State {
     email: string;
     profileImage: string;
     block: boolean;
+    isOnline: boolean;
   }[];
   // function to show all the users
   findAllUsers: (
@@ -54,6 +55,7 @@ interface State {
       email: string;
       profileImage: string;
       block: boolean;
+      isOnline: boolean;
     }[]
   ) => void;
   //  show all the tutors

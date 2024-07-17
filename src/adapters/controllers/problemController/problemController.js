@@ -133,6 +133,21 @@ const problemController = {
       res.status(500).json(error.message);
     }
   },
+
+  // controller for getting the daily problems
+  showDailyProblems: async (req, res) => {
+    try {
+      res.status(202).json("inside");
+      // const response = await problemUseCase.getDailyProblems();
+      // if (dailyProblems) {
+      //   res.status(202).json(response.data);
+      // } else {
+      //   res.status(400).json(response.data);
+      // }
+    } catch (error) {
+      res.status(500).json(error.message);
+    }
+  },
 };
 
 module.exports = problemController;

@@ -125,6 +125,13 @@ router.post(
 // router for showing all the problems
 router.get("/problems", authenticateAdminJwt, problemController.showProblems);
 
+// router for showing the daily problems
+router.get(
+  "/problem/dailyProblems",
+  authenticateAdminJwt,
+  problemController.showDailyProblems
+);
+
 // router for logging out
 router.get("/logout", adminController.adminLogout);
 

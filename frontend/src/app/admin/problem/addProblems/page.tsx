@@ -51,8 +51,8 @@ const AddProblems = () => {
     difficulty: "",
     category: "",
     testCase: [],
-    mainCode: "console.log('hello world')",
-    clientTemplate: "console.log('hello world')",
+    mainCode: "print('hello world')",
+    clientTemplate: "print('hello world')",
     constraints: "",
     premium: false,
   });
@@ -150,7 +150,9 @@ const AddProblems = () => {
     setExpectedOutput(e.currentTarget.value);
   };
 
-  const addTestCase = () => {
+  const addTestCase = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault(); // Prevent the default form submission
+
     if (inputTestCase && expectedOutput) {
       const newTestCase = { input: inputTestCase, expectedOutput };
       setTestCases([...testCases, newTestCase]);
@@ -164,7 +166,9 @@ const AddProblems = () => {
   };
 
   // function to handle the verification of the testCases
-  const verifyTestCase = async () => {
+  const verifyTestCase = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault(); // Prevent the default form submission
+
     const token = localStorage.getItem("admin_access_token");
     let main = formData.mainCode;
     try {
@@ -234,6 +238,8 @@ const AddProblems = () => {
     e.preventDefault();
 
     const token = localStorage.getItem("admin_access_token");
+
+    console.log("formData", formData);
 
     try {
       const response = await axios.post(
@@ -437,7 +443,7 @@ const AddProblems = () => {
                     </div>
                     <div className="col-span-1 sm:col-span-2 flex justify-end space-x-4">
                       <button
-                        onClick={addTestCase}
+                        onClick={(e) => addTestCase(e)}
                         className="bg-[#686DE0] text-white font-bold py-2 px-4 rounded-xl"
                       >
                         Add
@@ -475,7 +481,7 @@ const AddProblems = () => {
                       <div className="w-full max-w-4xl p-4 border">
                         <Editor
                           height="50vh"
-                          defaultLanguage="javascript"
+                          defaultLanguage="python"
                           value={formData.mainCode}
                           onChange={(value) =>
                             handleEditorChange(value, "mainCode")
@@ -486,7 +492,7 @@ const AddProblems = () => {
                     </div>
                     <div className="col-span-1 sm:col-span-2 flex justify-end space-x-4">
                       <button
-                        onClick={verifyTestCase}
+                        onClick={(e) => verifyTestCase(e)}
                         className="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-500"
                       >
                         Verify Test
@@ -529,7 +535,7 @@ const AddProblems = () => {
                   <div className="w-full max-w-4xl p-4 border">
                     <Editor
                       height="50vh"
-                      defaultLanguage="javascript"
+                      defaultLanguage="python"
                       value={formData.clientTemplate}
                       onChange={(value) =>
                         handleEditorChange(value, "clientTemplate")

@@ -64,6 +64,7 @@ const PremiumSubscription: React.FC<PremiumSubscriptionProps> = ({
           role: user?.role!,
           blocked: user?.blocked!,
           premium: response.data.premium,
+          isOnline: response.data.isOnline,
         });
       }
     } catch (error) {
