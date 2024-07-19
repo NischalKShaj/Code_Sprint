@@ -198,8 +198,28 @@ const problemRepository = {
   getDailyProblems: async () => {
     try {
       const dailyProblems = await DailyProblemCollection.find();
-      if (dailyProblems) {
-        return dailyProblems;
+
+      const problemsIds = dailyProblems.map((id) => id.problemId);
+
+      const problems = await ProblemCollection.find(
+        { _id: { $in: problemsIds } },
+        { title: 1, category: 1, difficulty: 1 }
+      );
+
+      // Create a map of problems by their IDs
+      const problemMap = problems.reduce((map, problem) => {
+        map[problem._id] = problem;
+        return map;
+      }, {});
+
+      // Combine the daily problems with their respective details from the problem collection
+      const result = dailyProblems.map((dp) => ({
+        date: dp.date,
+        problem: problemMap[dp.problemId] || {},
+      }));
+
+      if (result) {
+        return result;
       } else {
         return null;
       }

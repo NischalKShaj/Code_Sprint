@@ -291,13 +291,17 @@ const userRepository = {
   // method for adding the problem after submission
   addProblem: async (id, userId) => {
     try {
-      const user = await UserCollection.findByIdAndUpdate(
-        { _id: userId },
-        { $push: { problems: id } },
-        { new: true }
-      );
+      const user = await UserCollection.findById({ _id: userId });
       if (user) {
-        return user;
+        const problemExist = user.problems.includes(id);
+
+        if (!problemExist) {
+          user.problems.push(id);
+          await user.save();
+          return user;
+        } else {
+          return user;
+        }
       } else {
         return null;
       }

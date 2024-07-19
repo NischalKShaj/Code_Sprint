@@ -134,15 +134,43 @@ const profileRepository = {
 
       const problems = await ProblemCollection.find(
         {
-          _id: { $in: solvedProblems.toString() },
+          _id: { $in: solvedProblems },
         },
         { title: 1, category: 1, difficulty: 1, _id: 1 }
       );
 
+      // extracting the difficulty of the solved problems
+      const solvedProblemsDifficulty = problems.reduce((acc, problem) => {
+        const { difficulty } = problem;
+        if (difficulty) {
+          acc[difficulty] = (acc[difficulty] || 0) + 1;
+        }
+        return acc;
+      }, {});
+
+      console.log("solved", solvedProblemsDifficulty);
+
+      // for getting all the problems difficulty
+      const allProblems = await ProblemCollection.find(
+        {},
+        { difficulty: 1, _id: 0 }
+      );
+
+      // extracting the count of each difficulty from all the problems
+      const difficultyCounts = allProblems.reduce((acc, problem) => {
+        const { difficulty } = problem;
+        if (difficulty) {
+          acc[difficulty] = (acc[difficulty] || 0) + 1;
+        }
+        return acc;
+      }, {});
+
+      console.log("diff", difficultyCounts);
+
       console.log("problem", problems);
 
       if (problems) {
-        return problems;
+        return { problems, difficultyCounts, solvedProblemsDifficulty };
       } else {
         return "no problems solved";
       }

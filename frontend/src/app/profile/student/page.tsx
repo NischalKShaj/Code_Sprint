@@ -41,15 +41,21 @@ const Profile = () => {
   const [subscribedVideos, setSubscribedVideos] = useState<Video[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [solvedProblems, setSolvedProblems] = useState<Solved[] | null>([]);
+  const [difficultyCount, setDifficultyCount] = useState({
+    Easy: 0,
+    Medium: 0,
+    Hard: 0,
+  });
+  const [solved, setSolved] = useState({ Easy: 0, Medium: 0, Hard: 0 });
   const coursesPerPage = 1;
   const router = useRouter();
 
   // static value for the problems submissions
-  const easy = 4;
-  const medium = 0;
-  const hard = 0;
-  const totalQuestion = 30;
-  const totalQuestionProgress = ((easy + medium + hard) / totalQuestion) * 100;
+  // const easy = 4;
+  // const medium = 0;
+  // const hard = 0;
+  // const totalQuestion = 30;
+  // const totalQuestionProgress = ((easy + medium + hard) / totalQuestion) * 100;
 
   useLayoutEffect(() => {
     if (!isAuthenticated) {
@@ -139,7 +145,9 @@ const Profile = () => {
         );
         if (response.status === 200) {
           console.log("soln", response.data);
-          setSolvedProblems(response.data);
+          setSolvedProblems(response.data.problems);
+          setSolved(response.data.solvedProblemsDifficulty);
+          setDifficultyCount(response.data.difficultyCounts);
         }
       } catch (error) {
         console.error("error", error);
@@ -194,6 +202,15 @@ const Profile = () => {
     indexOfLastCourse
   );
 
+  // For showing the progress in solving problems
+  const totalQuestions = Object.values(difficultyCount).reduce(
+    (a, b) => a + b,
+    0
+  );
+  const totalSolved = Object.values(solved).reduce((a, b) => a + b, 0);
+  const totalQuestionProgress =
+    totalQuestions > 0 ? (totalSolved / totalQuestions) * 100 : 0;
+
   return (
     <div>
       <SpinnerWrapper>
@@ -206,22 +223,30 @@ const Profile = () => {
                 <div className="flex space-x-5">
                   <div className="flex flex-col items-start">
                     <h2 className="text-green-500 font-bold">Easy</h2>
-                    <h3>4/10</h3>
+                    <h3>
+                      <h3>
+                        {solved.Easy || 0}/{difficultyCount.Easy}
+                      </h3>
+                    </h3>
                   </div>
                   <div className="flex flex-col items-start">
                     <h2 className="text-yellow-500 font-bold">Medium</h2>
-                    <h3>0/10</h3>
+                    <h3>
+                      {solved.Medium || 0}/{difficultyCount.Medium}
+                    </h3>
                   </div>
                   <div className="flex flex-col items-start">
                     <h2 className="text-red-500 font-bold">Hard</h2>
-                    <h3>0/10</h3>
+                    <h3>
+                      {solved.Hard || 0}/{difficultyCount.Hard}
+                    </h3>
                   </div>
                 </div>
               </div>
               <div className="w-[100px] h-[100px]">
                 <CircularProgressbar
                   value={totalQuestionProgress}
-                  text={`${easy + medium + hard}/${totalQuestion}`}
+                  text={`${totalSolved}/${totalQuestions}`}
                   styles={buildStyles({
                     textSize: "16px",
                     pathColor: "#4CAF50",
