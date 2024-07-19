@@ -5,13 +5,11 @@ const mongoose = require("mongoose");
 
 // defining the schema
 const dailyProblem = new mongoose.Schema({
-  problemId: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "problem",
-      default: [],
-    },
-  ],
+  problemId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "problem",
+  },
+
   date: {
     type: Date,
     default: Date.now,

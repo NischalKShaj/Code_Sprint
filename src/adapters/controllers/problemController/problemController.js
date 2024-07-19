@@ -134,11 +134,32 @@ const problemController = {
     }
   },
 
-  // controller for getting the daily problems
+  // controller for getting the daily problems (Admin)
   showDailyProblems: async (req, res) => {
     try {
       const response = await problemUseCase.getDailyProblems();
-      if (dailyProblems) {
+      console.log("response from controller", response.data);
+      if (response.success) {
+        console.log("response from here", response.data);
+        res.status(202).json(response.data);
+      } else {
+        console.log("response from here 404", response.data);
+
+        res.status(400).json(response.data);
+      }
+    } catch (error) {
+      console.log("response from here 500", response.data);
+
+      res.status(500).json(error.message);
+    }
+  },
+
+  // controller for getting the daily problem
+  dailyProblem: async (req, res) => {
+    try {
+      const date = req.params.date;
+      const response = await problemUseCase.dailyChallenge(date);
+      if (response.success) {
         res.status(202).json(response.data);
       } else {
         res.status(400).json(response.data);

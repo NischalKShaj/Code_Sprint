@@ -47,7 +47,8 @@ const users = new mongoose.Schema(
     ],
     dailyProblems: [
       {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "problem",
         default: [],
       },
     ],

@@ -1,3 +1,4 @@
+// file for profile
 "use client";
 
 // Import necessary modules
@@ -351,25 +352,7 @@ const Profile = () => {
             </div>
           </section>
         </div>
-        <section className="bg-[#D9D9D9] p-8 ml-[400px] mt-[-60px] mb-5 w-[1100px] rounded-lg shadow-lg">
-          <h1 className="text-left text-xl font-semibold">
-            Daily active status
-          </h1>
-          <div className="mt-[20px] flex items-center">
-            {/* <div>
-            <h3>Course name: {""}</h3>
-            <video
-              className="rounded-lg ml-0"
-              width="300"
-              height="200"
-              controls
-            >
-              videos: {""}
-            </video>
-          </div> */}
-          </div>
-        </section>
-        <section className="bg-[#D9D9D9] p-8 ml-[400px] mt-[60px] mb-5 w-[1100px] rounded-lg shadow-lg">
+        <section className="bg-[#D9D9D9] p-8 ml-[400px]  mb-5 w-[1100px] rounded-lg shadow-lg">
           <h1 className="text-left text-xl font-semibold">
             Submitted Problems
           </h1>

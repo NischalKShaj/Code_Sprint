@@ -185,5 +185,12 @@ router.post(
   problemController.problemSubmission
 );
 
+// router for getting the daily problems
+router.get(
+  "/problems/dailyProblems/:date",
+  authenticateUserJwt,
+  problemController.dailyProblem
+);
+
 // exporting the module
 module.exports = router;

@@ -17,14 +17,16 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const Header = () => {
-  const [isLoading, setIsLoading] = useState(true);
-  const { data: session } = useSession();
   const { isAuthorized, user } = AppState();
-  const [query, setQuery] = useState("");
   const authorized = AppState((state) => state.isAuthorized);
   const findAllCourse = CourseState((state) => state.findAllCourse);
   const allCourse = CourseState((state) => state.allCourse);
+  const [isLoading, setIsLoading] = useState(true);
+  const { data: session } = useSession();
+  const [query, setQuery] = useState("");
   const pathname = usePathname();
+  const today = new Date();
+  const formattedDate = today.toISOString().split("T")[0];
 
   useEffect(() => {
     setIsLoading(false);
@@ -149,7 +151,7 @@ const Header = () => {
           </li>
           <li>
             {currentUser.role === "student" ? (
-              <Link href="/contest">Contest</Link>
+              <Link href={`/contest?date=${formattedDate}`}>Contest</Link>
             ) : currentUser.role === "tutor" ? (
               <Link href="/mycourse">My Course</Link>
             ) : null}

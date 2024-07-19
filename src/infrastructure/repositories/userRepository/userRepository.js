@@ -289,11 +289,16 @@ const userRepository = {
   },
 
   // method for adding the problem after submission
-  addProblem: async (id, userId) => {
+  addProblem: async (id, userId, dailyChallenge) => {
     try {
       const user = await UserCollection.findById({ _id: userId });
       if (user) {
         const problemExist = user.problems.includes(id);
+
+        if (dailyChallenge) {
+          user.dailyProblems.push(id);
+          await user.save();
+        }
 
         if (!problemExist) {
           user.problems.push(id);

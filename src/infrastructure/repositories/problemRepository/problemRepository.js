@@ -172,8 +172,33 @@ const problemRepository = {
         { testCases: 1, _id: 0 }
       );
 
+      const dailyChallenge = await DailyProblemCollection.findOne({
+        problemId: id,
+      });
+
+      console.log("dailyC", dailyChallenge);
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0); // Reset time to midnight
+
+      let dailyChallengeData = null;
+
+      if (dailyChallenge) {
+        const challengeDate = new Date(dailyChallenge.date);
+        challengeDate.setHours(0, 0, 0, 0); // Reset time to midnight
+
+        // Compare only the date part
+        if (today.getTime() === challengeDate.getTime()) {
+          dailyChallengeData = dailyChallenge;
+        }
+      }
+
+      console.log("dailyChallengeData", dailyChallengeData);
+
+      console.log("dailyChallengeData", dailyChallengeData);
+
       if (mainCode && testCases) {
-        return { mainCode, testCases };
+        return { mainCode, testCases, dailyChallengeData };
       }
     } catch (error) {
       throw error;
@@ -199,12 +224,18 @@ const problemRepository = {
     try {
       const dailyProblems = await DailyProblemCollection.find();
 
+      console.log("dailyProblems", dailyProblems);
+
       const problemsIds = dailyProblems.map((id) => id.problemId);
+
+      console.log("problemsIds", problemsIds);
 
       const problems = await ProblemCollection.find(
         { _id: { $in: problemsIds } },
         { title: 1, category: 1, difficulty: 1 }
       );
+
+      console.log("problems", problems);
 
       // Create a map of problems by their IDs
       const problemMap = problems.reduce((map, problem) => {
@@ -212,14 +243,59 @@ const problemRepository = {
         return map;
       }, {});
 
+      console.log("problemMap", problemMap);
+
       // Combine the daily problems with their respective details from the problem collection
       const result = dailyProblems.map((dp) => ({
         date: dp.date,
         problem: problemMap[dp.problemId] || {},
       }));
 
-      if (result) {
+      console.log("result", result);
+
+      if (result.length > 0) {
         return result;
+      } else {
+        return null;
+      }
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  // method for getting the daily coding challenge
+  dailyChallenge: async (date) => {
+    try {
+      const passedDate = new Date(date);
+
+      passedDate.setHours(0, 0, 0, 0);
+
+      const nextDay = new Date(passedDate);
+      nextDay.setDate(passedDate.getDate() + 1);
+
+      // extracting the id of the particular problem according to the date
+      const problemId = await DailyProblemCollection.findOne(
+        {
+          date: { $gte: passedDate, $lt: nextDay },
+        },
+        { problemId: 1 }
+      );
+      console.log("problemId", problemId);
+
+      // extracting the problem and sending it to the frontend
+      const problem = await ProblemCollection.findById({
+        _id: problemId.problemId,
+      });
+
+      // extracting the test cases
+      const testCases = await TestCaseCollection.findOne(
+        { problemId: problemId.problemId },
+        { exampleTest: 1, testCases: 1 }
+      );
+
+      console.log("problem", problem);
+      if (problem && testCases) {
+        return { problem, testCases };
       } else {
         return null;
       }

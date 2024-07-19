@@ -211,9 +211,8 @@ const problemUseCase = {
   // use case for submitting code
   problemSubmission: async (id, clientCode, userId) => {
     try {
-      const { mainCode, testCases } = await problemRepository.problemSubmission(
-        id
-      );
+      const { mainCode, testCases, dailyChallengeData } =
+        await problemRepository.problemSubmission(id);
 
       const decodedMain = base64.decode(mainCode.mainCode);
 
@@ -230,7 +229,16 @@ const problemUseCase = {
 
       if (allPassed) {
         // if all the test cases are passed then the problem is added to the user collection
-        const user = await userRepository.addProblem(id, userId);
+        let user;
+        if (dailyChallengeData) {
+          user = await userRepository.addProblem(
+            id,
+            userId,
+            dailyChallengeData
+          );
+        } else {
+          user = await userRepository.addProblem(id, userId);
+        }
         if (user) {
           return { success: true, data: results };
         }
@@ -265,6 +273,22 @@ const problemUseCase = {
   getDailyProblems: async () => {
     try {
       const result = await problemRepository.getDailyProblems();
+      console.log("result in use case", result);
+      if (result) {
+        console.log("here");
+        return { success: true, data: result };
+      } else {
+        return { success: false, data: result };
+      }
+    } catch (error) {
+      return { success: false, data: error.message };
+    }
+  },
+
+  // use case for getting the daily coding problems
+  dailyChallenge: async (date) => {
+    try {
+      const result = await problemRepository.dailyChallenge(date);
       if (result) {
         return { success: true, data: result };
       } else {
