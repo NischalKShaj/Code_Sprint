@@ -6,9 +6,9 @@ const problemScheduler = require("../../application/usecase/problemUseCase/probl
 
 // creating the service for the scheduler
 module.exports = () => {
-  cron.schedule("0 0 * * *", async () => {
+  cron.schedule("30 9 * * *", async () => {
     try {
-      console.log("Running daily problem task at 1 PM");
+      console.log("Running daily problem task at 9:30 AM");
       const result = await problemScheduler.dailyProblem();
       console.log("Daily problem task result:", result);
     } catch (error) {

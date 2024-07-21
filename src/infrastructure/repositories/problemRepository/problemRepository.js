@@ -206,11 +206,11 @@ const problemRepository = {
   },
 
   // method for generating the daily problem and storing in the database
-  dailyProblem: async (id) => {
+  dailyProblem: async (id, now) => {
     try {
       const todaysProblem = new DailyProblemCollection({
         problemId: id,
-        date: Date.now(),
+        date: now.toDate(),
       });
       const savedProblem = await todaysProblem.save();
       return savedProblem;
@@ -219,7 +219,7 @@ const problemRepository = {
     }
   },
 
-  // method for getting the daily problems
+  // method for getting the daily problems(Admin side)
   getDailyProblems: async () => {
     try {
       const dailyProblems = await DailyProblemCollection.find();
@@ -266,40 +266,55 @@ const problemRepository = {
   // method for getting the daily coding challenge
   dailyChallenge: async (date) => {
     try {
+      // Normalize the input date to midnight UTC
       const passedDate = new Date(date);
+      passedDate.setUTCHours(0, 0, 0, 0); // Use UTC to match MongoDB's default storage
 
-      passedDate.setHours(0, 0, 0, 0);
-
+      // Calculate the next day's start in UTC
       const nextDay = new Date(passedDate);
-      nextDay.setDate(passedDate.getDate() + 1);
+      nextDay.setUTCDate(passedDate.getUTCDate() + 1);
 
-      // extracting the id of the particular problem according to the date
-      const problemId = await DailyProblemCollection.findOne(
+      console.log("Normalized date (UTC):", passedDate.toISOString());
+      console.log("Query range (UTC):", { $gte: passedDate, $lt: nextDay });
+
+      // Extract the problemId for the given date range
+      const problemIdRecord = await DailyProblemCollection.findOne(
         {
           date: { $gte: passedDate, $lt: nextDay },
         },
         { problemId: 1 }
       );
-      console.log("problemId", problemId);
 
-      // extracting the problem and sending it to the frontend
-      const problem = await ProblemCollection.findById({
-        _id: problemId.problemId,
-      });
+      console.log("problemIdRecord:", problemIdRecord);
 
-      // extracting the test cases
+      if (!problemIdRecord) {
+        console.log("No daily problem found for the given date");
+        return null;
+      }
+
+      const problemId = problemIdRecord.problemId;
+
+      // Fetch the problem details
+      const problem = await ProblemCollection.findById(problemId);
+
+      console.log("problem:", problem);
+
+      // Fetch the test cases
       const testCases = await TestCaseCollection.findOne(
-        { problemId: problemId.problemId },
+        { problemId },
         { exampleTest: 1, testCases: 1 }
       );
 
-      console.log("problem", problem);
+      console.log("testCases:", testCases);
+
       if (problem && testCases) {
         return { problem, testCases };
       } else {
+        console.log("Problem or test cases not found");
         return null;
       }
     } catch (error) {
+      console.error("Error in dailyChallenge:", error);
       throw error;
     }
   },

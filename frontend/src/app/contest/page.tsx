@@ -86,7 +86,7 @@ const Contest = () => {
     if (date) {
       fetchData();
     }
-  }, [date]);
+  }, [date, showProblem]);
 
   // function to check whether the test are cleared
   const handleTestCases = async () => {

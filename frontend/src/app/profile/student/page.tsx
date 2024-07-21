@@ -51,13 +51,6 @@ const Profile = () => {
   const coursesPerPage = 1;
   const router = useRouter();
 
-  // static value for the problems submissions
-  // const easy = 4;
-  // const medium = 0;
-  // const hard = 0;
-  // const totalQuestion = 30;
-  // const totalQuestionProgress = ((easy + medium + hard) / totalQuestion) * 100;
-
   useLayoutEffect(() => {
     if (!isAuthenticated) {
       router.push("/login");

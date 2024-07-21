@@ -4,6 +4,7 @@
 const base64 = require("base-64");
 const axios = require("axios");
 const dotenv = require("dotenv");
+const moment = require("moment-timezone");
 const problemService = require("../../../infrastructure/services/codeService");
 const problemRepository = require("../../../infrastructure/repositories/problemRepository/problemRepository");
 const userRepository = require("../../../infrastructure/repositories/userRepository/userRepository");
@@ -256,10 +257,15 @@ const problemUseCase = {
     try {
       const allProblems = await problemRepository.showProblems();
       if (allProblems) {
-        const randomIndex = Math.floor(Math.random() * allProblems.length); //random problem
+        const randomIndex = Math.floor(Math.random() * allProblems.length);
+        console.log("Random index:", randomIndex);
+
         const todaysProblem = allProblems[randomIndex]._id;
+        console.log("Today's problem ID:", todaysProblem);
+        const now = moment().tz("Asia/Kolkata");
         const dailyProblem = await problemRepository.dailyProblem(
-          todaysProblem
+          todaysProblem,
+          now
         );
         return dailyProblem;
       }

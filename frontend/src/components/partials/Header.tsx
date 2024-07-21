@@ -164,7 +164,7 @@ const Header = () => {
             )}
           </li>
           <li>
-            <Link href="/discuss">Discuss</Link>
+            <Link href="/chat">Discuss</Link>
           </li>
         </ul>
         <div>
