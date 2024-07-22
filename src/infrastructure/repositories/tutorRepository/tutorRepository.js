@@ -4,6 +4,7 @@
 const TutorCollection = require("../../../core/entities/user/tutorCollection");
 const TemporaryTutorCollection = require("../../../core/entities/temporary/temporaryTutorCollection");
 const CourseCollection = require("../../../core/entities/course/courseCollection");
+const UserCollection = require("../../../core/entities/user/userCollection");
 const bcryptjs = require("bcryptjs");
 const encrypt = require("../../../adapters/middleware/videoAuth");
 
@@ -12,22 +13,31 @@ const tutorRepository = {
   // method for finding the tutor
   findTutor: async (tutorData) => {
     try {
-      const tutorEmail = tutorData.email;
-      const tutorPassword = tutorData.password;
-      const tutorDetails = await TutorCollection.findOne({ email: tutorEmail });
-      const validPassword = bcryptjs.compareSync(
-        tutorPassword,
-        tutorDetails.password
-      );
-      console.log("tutorDetails", tutorDetails);
-      console.log("validPassword", validPassword);
-      if (tutorEmail === tutorDetails.email && validPassword) {
-        return tutorDetails;
+      const { email, password } = tutorData;
+
+      // Find the tutor by email
+      const tutorDetails = await TutorCollection.findOne({ email });
+
+      // Check if tutorDetails exists and compare password
+      if (
+        tutorDetails &&
+        bcryptjs.compareSync(password, tutorDetails.password)
+      ) {
+        // Update isOnline field to true
+        const updatedTutor = await TutorCollection.findByIdAndUpdate(
+          tutorDetails._id,
+          { isOnline: true },
+          { new: true, runValidators: true } // Ensure to return the new document and run schema validators
+        );
+
+        console.log("Updated Tutor:", updatedTutor);
+        return updatedTutor;
       } else {
+        console.log("Invalid email or password");
         return null;
       }
     } catch (error) {
-      console.log("error", error);
+      console.error("Error in findTutor:", error);
       throw error;
     }
   },
@@ -153,6 +163,40 @@ const tutorRepository = {
     } catch (error) {
       console.error("Error adding courses:", error);
       return { success: false, data: "Internal server error" };
+    }
+  },
+
+  // method for getting all the subscribers
+  getAllUsers: async (id) => {
+    try {
+      const tutor = await TutorCollection.findById({ _id: id });
+      if (!tutor) {
+        return null;
+      }
+      console.log("tutor", tutor);
+      // extracting the subscribers id
+      const subscribersId = tutor.subscribers.map((subscriber) =>
+        subscriber.userId.toString()
+      );
+
+      console.log("subscribers id", subscribersId);
+
+      // fetching the subscriber data
+      const subscribers = await UserCollection.find(
+        {
+          _id: { $in: subscribersId },
+        },
+        { _id: 1, username: 1, profileImage: 1, isOnline: 1 }
+      );
+
+      console.log("subscribers", subscribers);
+      if (subscribers) {
+        return subscribers;
+      } else {
+        return null;
+      }
+    } catch (error) {
+      throw error;
     }
   },
 };

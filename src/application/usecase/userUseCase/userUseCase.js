@@ -159,6 +159,21 @@ const userUseCase = {
       return { success: false, data: error.message };
     }
   },
+
+  // use case for getting all the tutors
+  getAllTutors: async (id) => {
+    try {
+      const result = await userRepository.getAllTutors(id);
+      if (result) {
+        return { success: true, data: result };
+      } else {
+        return { success: false, data: result };
+      }
+    } catch (error) {
+      console.error("error", error);
+      return { success: false, data: error.message };
+    }
+  },
 };
 
 module.exports = userUseCase;

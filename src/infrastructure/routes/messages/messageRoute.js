@@ -9,6 +9,12 @@ const {
 const messageController = require("../../../adapters/controllers/messageController/messageController");
 
 // creating the routes for the message
-router.post("/sendMessage", messageController.sendMessage);
+
+// router for getting the conversation between the sender and the receiver
+router.get(
+  "/get-conversation/:senderId/:receiverId",
+  authenticateUserJwt,
+  messageController.getConversation
+);
 
 module.exports = router;

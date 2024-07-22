@@ -213,6 +213,21 @@ const userController = {
     }
   },
 
+  // controller for getting all the tutor's from the subscribed courses
+  getAllTutors: async (req, res) => {
+    try {
+      const id = req.params.id;
+      const response = await userUseCase.getAllTutors(id);
+      if (response.success) {
+        res.status(202).json(response.data);
+      } else {
+        res.status(400).json(response.data);
+      }
+    } catch (error) {
+      res.status(500).json(error.message);
+    }
+  },
+
   // controller for log-out
   logoutUser: (req, res) => {
     try {

@@ -11,7 +11,7 @@ const tutorUseCase = {
   findTutor: async (userData) => {
     try {
       const result = await tutorRepository.findTutor(userData);
-      console.log("result", result);
+      console.log("result inside here", result);
       if (result) {
         return { success: true, data: result };
       } else {
@@ -96,6 +96,20 @@ const tutorUseCase = {
       }
     } catch (error) {
       return { success: false, data: "internal server error" };
+    }
+  },
+
+  // use case for finding all the subscribers
+  getAllUsers: async (id) => {
+    try {
+      const result = await tutorRepository.getAllUsers(id);
+      if (result) {
+        return { success: true, data: result };
+      } else {
+        return { success: false, data: result };
+      }
+    } catch (error) {
+      return { success: false, data: error.message };
     }
   },
 };

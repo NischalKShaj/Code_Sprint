@@ -192,5 +192,11 @@ router.get(
   problemController.dailyProblem
 );
 
+// router for getting all the tutors for the specific user
+router.get("/getTutors/:id", authenticateUserJwt, userController.getAllTutors);
+
+// router for getting all the subscribers for the tutors
+router.get("/getUsers/:id", authenticateUserJwt, tutorController.getAllUsers);
+
 // exporting the module
 module.exports = router;

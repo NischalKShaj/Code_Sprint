@@ -8,6 +8,7 @@ const bcryptjs = require("bcryptjs");
 const CourseCollection = require("../../../core/entities/course/courseCollection");
 const BannerCollection = require("../../../core/entities/banner/bannerCollection");
 const PayoutCollection = require("../../../core/entities/paymentRequest/paymentRequest");
+const mongoose = require("mongoose");
 
 // creating userRepository
 const userRepository = {
@@ -53,7 +54,12 @@ const userRepository = {
         bcryptjs.compareSync(userPassword, tutorDetails.password) &&
         tutorDetails.blocked === false
       ) {
-        return tutorDetails;
+        const updatedTutor = await TutorCollection.findByIdAndUpdate(
+          { _id: tutorDetails._id },
+          { isOnline: true },
+          { new: true } // Ensure to return the new document and run schema validators
+        );
+        return updatedTutor;
       }
 
       // If neither match, return null
@@ -307,6 +313,36 @@ const userRepository = {
         } else {
           return user;
         }
+      } else {
+        return null;
+      }
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  // method for getting all the tutors for the specific user
+  getAllTutors: async (id) => {
+    try {
+      const user = await UserCollection.findById({ _id: id });
+      if (!user) {
+        return null;
+      }
+
+      // extracting the tutors id from the users collection
+      const tutorsIds = user.courses.map((tutor) => tutor.tutorId.toString());
+      if (!tutorsIds) {
+        return null;
+      }
+
+      // extracting the tutor form the tutors collection
+      const tutors = await TutorCollection.find(
+        { _id: { $in: tutorsIds } },
+        { _id: 1, username: 1, profileImage: 1, isOnline: 1 }
+      );
+      console.log("tutors", tutors);
+      if (tutors) {
+        return tutors;
       } else {
         return null;
       }

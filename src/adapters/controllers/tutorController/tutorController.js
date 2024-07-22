@@ -115,6 +115,22 @@ const tutorController = {
       res.status(500).json(error.message);
     }
   },
+
+  // controller for getting all the subscribers
+  getAllUsers: async (req, res) => {
+    try {
+      const id = req.params.id;
+      console.log("id", id);
+      const response = await tutorUseCase.getAllUsers(id);
+      if (response.success) {
+        res.status(202).json(response.data);
+      } else {
+        res.status(400).json(response.data);
+      }
+    } catch (error) {
+      res.status(500).json(error.message);
+    }
+  },
 };
 
 module.exports = tutorController;
