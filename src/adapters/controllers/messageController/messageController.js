@@ -3,7 +3,7 @@
 // importing the required modules
 const messageUseCase = require("../../../application/usecase/messageUseCase/messageUseCase");
 
-// creating the controller
+// creating the controller for chats
 const messageController = {
   // controller for getting the conversation b/w the sender and the receiver
   getConversation: async (req, res) => {

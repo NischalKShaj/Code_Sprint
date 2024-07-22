@@ -251,16 +251,24 @@ const Chat = () => {
             </div>
           </aside>
         </div>
-        {chatArea ? (
-          <Message
-            senderId={user?.id}
-            receiverId={receiverId}
-            receiver={receiverStatus}
-            socket={socket}
-          />
-        ) : (
-          <h3>start any conversation</h3>
-        )}
+        <div
+          className={`transition-transform duration-300 ${
+            chatArea ? "w-[calc(100%-10rem)] ml-[18rem] mt-10" : " mt-10"
+          } sm:ml-0`}
+        >
+          {chatArea && user?.id ? (
+            <Message
+              senderId={user.id}
+              receiverId={receiverId}
+              receiver={receiverStatus}
+              socket={socket}
+            />
+          ) : (
+            <div className="chat-placeholder w-[calc(100%-50rem)] ml-[30rem] mt-10 h-[450px] flex items-center justify-center p-4 bg-gray-100 rounded-lg">
+              <h3 className="text-center text-gray-500">Start conversation</h3>
+            </div>
+          )}
+        </div>
       </SpinnerWrapper>
     </div>
   );
