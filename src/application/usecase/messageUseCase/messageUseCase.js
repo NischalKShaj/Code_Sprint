@@ -5,6 +5,7 @@ const messageRepository = require("../../../infrastructure/repositories/messageR
 
 // creating the use case
 const messageUseCase = {
+  // use case for getting the old conversations
   getConversation: async (senderId, receiverId) => {
     try {
       const result = await messageRepository.getConversation(
@@ -18,6 +19,22 @@ const messageUseCase = {
       }
     } catch (error) {
       return { success: false, data: error.message };
+    }
+  },
+
+  // use case for adding the conversation to the database
+  saveConversation: async (senderId, receiverId, message, createdAt) => {
+    try {
+      console.log("data", senderId, receiverId, message, createdAt);
+      let result = await messageRepository.saveConversation(
+        senderId,
+        receiverId,
+        message,
+        createdAt
+      );
+      console.log("result", result);
+    } catch (error) {
+      console.error("error", error);
     }
   },
 };

@@ -2,6 +2,7 @@
 
 // importing the required modules
 const { Server } = require("socket.io");
+const messageUseCase = require("../../application/usecase/messageUseCase/messageUseCase");
 
 const chatService = {
   init: (server) => {
@@ -16,9 +17,17 @@ const chatService = {
     io.on("connection", (socket) => {
       console.log(`Socket ${socket.id} connected`);
 
-      socket.on("sendMessage", (message) => {
+      socket.on("sendMessage", async (message) => {
         console.log("Message received:", message);
         io.emit("message", message);
+        await messageUseCase.saveConversation(
+          message.senderId,
+          message.receiverId,
+          message.message,
+          message.createdAt,
+          message.senderRole,
+          message.receiverRole
+        );
       });
 
       socket.on("disconnect", () => {

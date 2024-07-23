@@ -253,7 +253,7 @@ const Chat = () => {
         </div>
         <div
           className={`transition-transform duration-300 ${
-            chatArea ? "w-[calc(100%-10rem)] ml-[18rem] mt-10" : " mt-10"
+            chatArea ? "w-[calc(100%-10rem)] ml-[18rem] mt-10" : "mt-10"
           } sm:ml-0`}
         >
           {chatArea && user?.id ? (

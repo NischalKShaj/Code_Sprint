@@ -19,10 +19,13 @@ interface MessageProps {
 }
 
 interface Messages {
+  _id: string;
+  createdAt: string;
   message: string;
   senderId: string;
   receiverId: string;
-  timestamp: string;
+  senderModel: string;
+  receiverModel: string;
 }
 
 const Message = ({ senderId, receiverId, receiver, socket }: MessageProps) => {
@@ -31,22 +34,26 @@ const Message = ({ senderId, receiverId, receiver, socket }: MessageProps) => {
   const [typing, setTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  // Handle incoming messages and typing events
   useEffect(() => {
     socket.on("message", (message: Messages) => {
       setMessages((prevMessages) => [...prevMessages, message]);
     });
 
-    socket.on("typing", () => {
-      setTyping(true);
-      setTimeout(() => setTyping(false), 1000);
+    socket.on("typing", (data: { senderId: string; receiverId: string }) => {
+      if (data.receiverId === senderId) {
+        setTyping(true);
+        setTimeout(() => setTyping(false), 1000);
+      }
     });
 
     return () => {
       socket.off("message");
       socket.off("typing");
     };
-  }, [socket]);
+  }, [socket, senderId]);
 
+  // Fetch previous conversation between the sender and receiver
   useEffect(() => {
     const fetchData = async () => {
       const token = localStorage.getItem("access_token");
@@ -61,10 +68,25 @@ const Message = ({ senderId, receiverId, receiver, socket }: MessageProps) => {
           }
         );
         if (response.status === 202) {
-          setMessages(response.data.messages);
+          // Update messages state with the fetched conversation data
+          const fetchedMessages = response.data.conversation.map(
+            (msg: any) => ({
+              _id: msg._id,
+              createdAt: msg.createdAt,
+              message: msg.message,
+              senderId: msg.senderId,
+              receiverId: msg.receiverId,
+              senderModel: msg.senderModel,
+              receiverModel: msg.receiverModel,
+            })
+          );
+          setMessages(fetchedMessages);
+        } else {
+          setMessages([]);
         }
       } catch (error) {
-        console.error("error", error);
+        console.error("Error fetching messages:", error);
+        setMessages([]);
       }
     };
     if (senderId && receiverId) {
@@ -72,24 +94,30 @@ const Message = ({ senderId, receiverId, receiver, socket }: MessageProps) => {
     }
   }, [receiverId, senderId]);
 
+  // Scroll to the end of the message list when messages are updated
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  // Handle message sending
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     if (message && senderId && receiverId) {
       const newMessage: Messages = {
+        _id: "",
+        createdAt: new Date().toISOString(),
         message,
         senderId,
         receiverId,
-        timestamp: new Date().toISOString(),
+        senderModel: "student",
+        receiverModel: "tutor",
       };
       socket.emit("sendMessage", newMessage);
       setMessage("");
     }
   };
 
+  // Handle typing event
   const handleTyping = () => {
     socket.emit("typing", { senderId, receiverId });
   };
@@ -97,8 +125,6 @@ const Message = ({ senderId, receiverId, receiver, socket }: MessageProps) => {
   return (
     <div className="flex justify-end w-full">
       <div className="chat-container w-full max-w-7xl">
-        {" "}
-        {/* Increased the width here */}
         <div className="chat-header flex items-center p-4 bg-gray-200 rounded-lg">
           <div className="relative">
             <Image
@@ -127,21 +153,31 @@ const Message = ({ senderId, receiverId, receiver, socket }: MessageProps) => {
         </div>
         <div className="chat-messages h-96 overflow-y-auto p-4 bg-gray-100 rounded-lg">
           <ul className="space-y-2">
-            {messages.map((msg, index) => (
-              <li
-                key={index}
-                className={`flex ${
-                  msg.senderId === senderId ? "justify-end" : "justify-start"
-                }`}
-              >
-                <div className="message bg-blue-500 text-white p-2 rounded-lg max-w-xs break-words">
-                  <p>{msg.message}</p>
-                  <span className="text-xs text-gray-300">
-                    {new Date(msg.timestamp).toLocaleTimeString()}
-                  </span>
-                </div>
-              </li>
-            ))}
+            {messages.length === 0 ? (
+              <li className="text-center text-gray-500">Start conversation</li>
+            ) : (
+              messages.map((msg) => (
+                <li
+                  key={msg._id}
+                  className={`flex ${
+                    msg.senderId === senderId ? "justify-end" : "justify-start"
+                  }`}
+                >
+                  <div
+                    className={`message p-2 rounded-lg max-w-xs break-words ${
+                      msg.senderId === senderId
+                        ? "bg-blue-500 text-white"
+                        : "bg-gray-300 text-black"
+                    }`}
+                  >
+                    <p>{msg.message}</p>
+                    <span className="text-xs text-gray-300">
+                      {new Date(msg.createdAt).toLocaleTimeString()}
+                    </span>
+                  </div>
+                </li>
+              ))
+            )}
             {typing && (
               <li className="flex justify-start">
                 <div className="message bg-gray-500 text-white p-2 rounded-lg max-w-xs break-words">
