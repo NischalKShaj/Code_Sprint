@@ -49,7 +49,7 @@ router.post("/api/razorpay", userController.handler);
 router.post("/api/payment-success", userController.verifyPayment);
 
 // router for performing the logout
-router.get("/logout", userController.logoutUser);
+router.get("/logout/:id", userController.logoutUser);
 
 // router for getting the courses for the tutor
 router.get("/mycourse/:id", authenticateUserJwt, tutorController.getCourse);

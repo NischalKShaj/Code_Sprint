@@ -1,3 +1,4 @@
+// component for showing the chat
 "use client";
 
 // importing the required modules
@@ -171,7 +172,7 @@ const Message = ({ senderId, receiverId, receiver, socket }: MessageProps) => {
                     }`}
                   >
                     <p>{msg.message}</p>
-                    <span className="text-xs text-gray-300">
+                    <span className="text-xs text-black">
                       {new Date(msg.createdAt).toLocaleTimeString()}
                     </span>
                   </div>

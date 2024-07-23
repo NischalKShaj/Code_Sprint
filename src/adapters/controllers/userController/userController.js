@@ -229,12 +229,18 @@ const userController = {
   },
 
   // controller for log-out
-  logoutUser: (req, res) => {
+  logoutUser: async (req, res) => {
     try {
-      res
-        .clearCookie("access_token")
-        .status(200)
-        .json({ message: "Logged out successfully" });
+      const id = req.params.id;
+      const response = await userUseCase.logoutUser(id);
+      if (response.success) {
+        res
+          .clearCookie("access_token")
+          .status(200)
+          .json({ message: "Logged out successfully" });
+      } else {
+        res.status(404).json("logout failed");
+      }
     } catch (error) {
       console.error("error", error);
     }

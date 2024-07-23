@@ -9,6 +9,8 @@ import Swal from "sweetalert2";
 
 const Logout = () => {
   const { isLoggedOut } = AppState();
+  const user = AppState((state) => state.user);
+  const id = user?.id;
   const router = useRouter();
 
   // function for logging out the system
@@ -32,7 +34,7 @@ const Logout = () => {
 
       if (result.isConfirmed) {
         // Perform the logout
-        await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/logout`, {
+        await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/logout/${id}`, {
           withCredentials: true,
         });
         localStorage.removeItem("access_token");

@@ -174,6 +174,20 @@ const userUseCase = {
       return { success: false, data: error.message };
     }
   },
+
+  // use case for user logging out
+  logoutUser: async (id) => {
+    try {
+      const result = await userRepository.logoutUser(id);
+      if (result) {
+        return { success: true, data: result };
+      } else {
+        return { success: false, data: result };
+      }
+    } catch (error) {
+      return { success: false, data: error.message };
+    }
+  },
 };
 
 module.exports = userUseCase;

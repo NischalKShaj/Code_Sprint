@@ -8,6 +8,7 @@ const bcryptjs = require("bcryptjs");
 const CourseCollection = require("../../../core/entities/course/courseCollection");
 const BannerCollection = require("../../../core/entities/banner/bannerCollection");
 const PayoutCollection = require("../../../core/entities/paymentRequest/paymentRequest");
+const PaymentCollection = require("../../../core/entities/payment/paymentCollection");
 const mongoose = require("mongoose");
 
 // creating userRepository
@@ -346,6 +347,39 @@ const userRepository = {
       } else {
         return null;
       }
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  // method for logging out the user
+  logoutUser: async (id) => {
+    try {
+      const user = await UserCollection.findById(id);
+      if (user) {
+        // Update user's isOnline status
+        const updatedUser = await UserCollection.findByIdAndUpdate(
+          id,
+          { isOnline: false },
+          { new: true }
+        );
+        return updatedUser;
+      }
+
+      // Check if the id belongs to a tutor
+      const tutor = await TutorCollection.findById(id);
+      if (tutor) {
+        // Update tutor's isOnline status
+        const updatedTutor = await TutorCollection.findByIdAndUpdate(
+          id,
+          { isOnline: false },
+          { new: true }
+        );
+        return updatedTutor;
+      }
+
+      // If the id is not found in both collections, return null
+      return null;
     } catch (error) {
       throw error;
     }
