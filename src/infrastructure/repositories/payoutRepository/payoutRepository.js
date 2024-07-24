@@ -4,6 +4,7 @@
 const PayoutCollection = require("../../../core/entities/paymentRequest/paymentRequest");
 const TutorCollection = require("../../../core/entities/user/tutorCollection");
 const UserCollection = require("../../../core/entities/user/userCollection");
+const PaymentCollection = require("../../../core/entities/payment/paymentCollection");
 
 // creating the repository for creating the payout repository
 const payoutRepository = {
@@ -110,6 +111,42 @@ const payoutRepository = {
 
       console.log("premium", premiumUser);
       return premiumUser;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  // method for showing the payment history for the user
+  getPaymentHistory: async (id) => {
+    try {
+      const paymentRecords = await PaymentCollection.find({ userId: id });
+      console.log("paymentre", paymentRecords);
+
+      const paymentHistory = [];
+
+      // filtered data
+      for (const record of paymentRecords) {
+        // Fetch the tutor's data for the current payment record
+        const tutor = await TutorCollection.findById(record.paymentTo);
+
+        const filteredData = {
+          _id: record.userId,
+          amount: record.amount,
+          tutor: tutor.username,
+          course_name: record.paymentFor,
+          date: record.createdAt,
+          status: record.status,
+        };
+
+        // Add the filtered data to the payment history array
+        paymentHistory.push(filteredData);
+      }
+      console.log("filtered data", paymentHistory);
+      if (!paymentHistory) {
+        return null;
+      } else {
+        return paymentHistory;
+      }
     } catch (error) {
       throw error;
     }

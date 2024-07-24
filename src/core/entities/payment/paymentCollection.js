@@ -5,11 +5,6 @@ const mongoose = require("mongoose");
 
 // creating the schema
 const paymentSchema = new mongoose.Schema({
-  role: {
-    type: String,
-    enum: ["admin", "student", "tutor"],
-    required: true,
-  },
   amount: {
     type: Number,
     required: true,
@@ -30,6 +25,10 @@ const paymentSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now,
+  },
+  status: {
+    type: String,
+    required: true,
   },
 });
 

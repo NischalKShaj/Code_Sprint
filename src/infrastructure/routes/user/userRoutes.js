@@ -198,5 +198,12 @@ router.get("/getTutors/:id", authenticateUserJwt, userController.getAllTutors);
 // router for getting all the subscribers for the tutors
 router.get("/getUsers/:id", authenticateUserJwt, tutorController.getAllUsers);
 
+// router for getting the payment history for the users
+router.get(
+  "/payment-history/:id",
+  authenticateUserJwt,
+  payoutController.getPaymentHistory
+);
+
 // exporting the module
 module.exports = router;

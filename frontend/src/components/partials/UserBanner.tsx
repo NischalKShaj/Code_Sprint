@@ -31,21 +31,24 @@ const UserBanner = () => {
   }, []);
 
   return (
-    <div className="relative w-full h-56 md:h-96 overflow-hidden rounded-lg">
+    <div className="relative w-full overflow-hidden rounded-lg">
       <Carousel
         showThumbs={false}
         showStatus={false}
         infiniteLoop={true}
         autoPlay={true}
         dynamicHeight={false}
+        className="w-full h-56 sm:h-72 md:h-80 lg:h-96 xl:h-[30rem]" // Set heights for different breakpoints
       >
         {bannerImages.map((image, index) => (
-          <div key={index} className="relative w-full h-96">
+          <div
+            key={index}
+            className="relative w-full h-56 sm:h-72 md:h-80 lg:h-96 xl:h-[30rem]"
+          >
             <Image
               src={image}
               alt={`Slide ${index}`}
               layout="fill"
-              objectFit="cover"
               objectPosition="center"
               className="rounded-lg"
             />

@@ -203,6 +203,19 @@ const userRepository = {
           { new: true }
         );
 
+        // for updating the payment history for the student
+        const paymentHistory = new PaymentCollection({
+          amount: courseData.price,
+          userId: user,
+          paymentTo: courseData.tutor,
+          paymentFor: courseData.course_name,
+          createdAt: Date.now(),
+          status: "paid",
+        });
+
+        await paymentHistory.save();
+        console.log("payment history", paymentHistory);
+
         // for updating the payout amount
         const payoutData = await PayoutCollection.findOne({
           tutor: courseData.tutor.toString(),
@@ -286,6 +299,13 @@ const userRepository = {
               },
             },
           },
+          { new: true }
+        );
+
+        // for reducing the subscribers count from the course
+        const courseData = await CourseCollection.findByIdAndUpdate(
+          { _id: courseId },
+          { $inc: { totalSubscribed: -1 } },
           { new: true }
         );
         return user;

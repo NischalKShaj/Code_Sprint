@@ -37,32 +37,33 @@ const Home = () => {
   }, [status, session, isLoggedOut, isLoggedIn]);
 
   return (
-    <div>
+    <div className="px-4 md:px-8">
       {user?.role === "tutor" ? (
-        <section className="flex justify-center mt-7 mb-7 space-x-10">
-          <div>
-            <div className="flex items-center space-x-[300px] text-left">
-              <q className="text-3xl mt-9">
+        <section className="flex flex-col md:flex-row justify-center mt-7 mb-7 space-y-10 md:space-y-0 md:space-x-10">
+          <div className="flex flex-col items-center md:items-start">
+            <div className="flex flex-col md:flex-row items-center md:space-x-[300px] text-left">
+              <q className="text-2xl md:text-3xl mt-4 md:mt-9">
                 Welcome, tutor!
                 <br /> Share your knowledge,
                 <br /> inspire your students,
                 <br /> and empower the next generation.
-                <br /> Let`s make learning impactful.
+                <br /> Let’s make learning impactful.
               </q>
               <Image
                 src="/image/landing.webp"
                 alt="image for the landing page"
-                width={550}
-                height={550}
+                width={300} // Adjusted for smaller screens
+                height={300} // Adjusted for smaller screens
+                className="mt-4 md:mt-0"
               />
             </div>
-            <hr className="w-full h-4 mx-auto my-4 bg-gray-300 border-0 mt-4 rounded md:my-10 dark:bg-gray-700" />
-            <div>
-              <h2 className="text-3xl mt-6 mb-4 text-center">
+            <hr className="w-full h-4 mx-auto my-4 bg-gray-300 border-0 rounded md:my-10 dark:bg-gray-700" />
+            <div className="px-2">
+              <h2 className="text-2xl md:text-3xl mt-6 mb-4 text-center">
                 Instructions to Add a New Course
               </h2>
-              <hr className="w-20 h-1 mx-auto my-4 bg-black border-0 mt-2 rounded md:my-6 dark:bg-gray-700" />
-              <ul className="list-disc pl-6">
+              <hr className="w-16 h-1 mx-auto my-4 bg-black border-0 rounded md:my-6 dark:bg-gray-700" />
+              <ul className="list-disc pl-6 text-sm md:text-base">
                 <li>
                   <strong>Step 1:</strong> Navigate to the header and click on
                   <q>Add Course</q>. This action will initiate the course
@@ -87,13 +88,13 @@ const Home = () => {
                 </li>
               </ul>
             </div>
-            <hr className="w-full h-4 mx-auto my-4 bg-gray-300 border-0 mt-4 rounded md:my-10 dark:bg-gray-700" />
-            <div>
-              <h2 className="text-3xl mt-6 mb-4 text-center">
+            <hr className="w-full h-4 mx-auto my-4 bg-gray-300 border-0 rounded md:my-10 dark:bg-gray-700" />
+            <div className="px-2">
+              <h2 className="text-2xl md:text-3xl mt-6 mb-4 text-center">
                 Instructions to Edit a Course
               </h2>
-              <hr className="w-20 h-1 mx-auto my-4 bg-black border-0 mt-2 rounded md:my-6 dark:bg-gray-700" />
-              <ul className="list-disc pl-6">
+              <hr className="w-16 h-1 mx-auto my-4 bg-black border-0 rounded md:my-6 dark:bg-gray-700" />
+              <ul className="list-disc pl-6 text-sm md:text-base">
                 <li>
                   <strong>Step 1:</strong> Navigate to the header and click on
                   <q>My Course</q>. This action will navigate you to the list of
@@ -125,7 +126,7 @@ const Home = () => {
                 </li>
               </ul>
             </div>
-            <hr className="w-full h-4 mx-auto my-4 bg-gray-300 border-0 mt-4 rounded md:my-10 dark:bg-gray-700" />
+            <hr className="w-full h-4 mx-auto my-4 bg-gray-300 border-0 rounded md:my-10 dark:bg-gray-700" />
             <p className="text-center mt-8 text-lg">
               Thank you for contributing to our learning community! If you have
               any questions or need further assistance, feel free to contact our

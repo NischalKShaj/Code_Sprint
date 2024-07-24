@@ -128,6 +128,23 @@ const UserSideBar = () => {
                   Chat
                 </Link>
               </div>
+              <div className="relative mt-[10px] flex items-center">
+                <svg
+                  className="w-5 h-5 text-gray-500 mr-2"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M21 8c1.104 0 2 .896 2 2v8c0 1.104-.896 2-2 2H3c-1.104 0-2-.896-2-2V8c0-1.104.896-2 2-2h1V5c0-1.104.896-2 2-2h12c1.104 0 2 .896 2 2v1h1zm-3-3H6v2h12V5zm-3 8h2v2h-2v-2zM3 10v8h18v-8H3z" />
+                </svg>
+                <Link
+                  href="/paymentHistory"
+                  className="text-gray-500 hover:text-gray-700 ml-2"
+                >
+                  Payment History
+                </Link>
+              </div>
             </li>
             <li className="mt-">
               <hr className="w-48 h-1 mx-auto my-4 bg-gray-100 border-0 mb-[20px] rounded md:my-10 dark:bg-gray-700" />

@@ -63,6 +63,21 @@ const payoutUseCase = {
       return { success: false, data: error.message };
     }
   },
+
+  // use case for payment history
+  getPaymentHistory: async (id) => {
+    try {
+      const response = await payoutRepository.getPaymentHistory(id);
+      if (response) {
+        return { success: true, data: response };
+      } else {
+        return { success: false, data: response };
+      }
+    } catch (error) {
+      console.error("error", error);
+      return { success: false, data: error.message };
+    }
+  },
 };
 
 module.exports = payoutUseCase;
