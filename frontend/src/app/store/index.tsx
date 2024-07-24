@@ -65,6 +65,7 @@ interface State {
     email: string;
     profileImage: string;
     block: boolean;
+    isOnline: boolean;
   }[];
   // function for showing all the tutor
   findAllTutor: (
@@ -74,6 +75,7 @@ interface State {
       email: string;
       profileImage: string;
       block: boolean;
+      isOnline: boolean;
     }[]
   ) => void;
   // function to block and unblock the user

@@ -40,7 +40,7 @@ const UserBanner = () => {
         dynamicHeight={false}
       >
         {bannerImages.map((image, index) => (
-          <div key={index} className="h-96">
+          <div key={index} className="relative w-full h-96">
             <Image
               src={image}
               alt={`Slide ${index}`}

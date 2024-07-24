@@ -160,27 +160,27 @@ const CourseView = () => {
   return (
     <div>
       <SpinnerWrapper>
-        <div className="course-details flex flex-col justify-start text-end bg-gradient-to-r from-purple-500 to-indigo-500 py-4 px-8">
+        <div className="course-details flex flex-col justify-start text-end bg-gradient-to-r from-purple-500 to-indigo-500 py-4 px-4 md:px-8">
           <Link className="text-left flex" href="/mycourse">
             Back to courses
           </Link>
-          <div className="mr-[300px] text-left ml-[1000px] mt-[100px] mb-5 p-3 bg-gradient-to-r from-purple-500 to-indigo-500 shadow-lg rounded-lg">
+          <div className="mr-auto ml-auto mt-[100px] mb-5 p-3 bg-gradient-to-r from-purple-500 to-indigo-500 shadow-lg rounded-lg max-w-3xl">
             <h1 className="text-3xl font-bold mb-6">{course.course_name}</h1>
             {course.description}
             <p className="text-md mb-4">
               <strong>Category:</strong> {course.course_category}
             </p>
-            <div className="flex">
+            <div className="flex justify-between">
               <p>Price: &#8377; {course.price}</p>
               <Link href={`/mycourse/editCourse/`}>
-                <button className="bg-[#2a31f8] ml-[250px] text-white font-bold py-2 px-4 rounded-xl">
+                <button className="bg-[#2a31f8] text-white font-bold py-2 px-4 rounded-xl">
                   Edit Course
                 </button>
               </Link>
             </div>
           </div>
         </div>
-        <div className="bg-[#D9D9D9] p-8 w-[1000px] rounded-lg mb-7 shadow-md mx-auto mt-8">
+        <div className="bg-[#D9D9D9] p-8 w-full max-w-5xl rounded-lg mb-7 shadow-md mx-auto mt-8">
           <h2 className="text-2xl font-bold mb-4">
             Chapter: {currentChapterData.chapterName}
           </h2>
@@ -190,7 +190,7 @@ const CourseView = () => {
                 <h3 className="text-xl mb-2">{`Video ${index + 1}`}</h3>
                 <video
                   key={`${videoUrl}-${index}-video`}
-                  className="rounded-lg w-[500px]"
+                  className="rounded-lg w-full max-w-lg"
                   controls
                 >
                   <source src={videoUrl} type="video/mp4" />

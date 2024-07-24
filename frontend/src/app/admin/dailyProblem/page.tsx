@@ -68,10 +68,10 @@ const DailyProblem = () => {
     <div>
       <SpinnerWrapper>
         <AdminSidePanel />
-        <div className="flex-1 ml-[220px] flex justify-center mt-[25px]">
+        <div className="flex-1 ml-[220px] flex justify-center mt-[25px] px-4 sm:px-6">
           {dailyProblems && dailyProblems.length > 0 ? (
-            <div className="relative items-center justify-center overflow-x-auto shadow-md sm:rounded-lg">
-              <table className="w-[1000px] items-center justify-items-center text-sm text-center rtl:text-right text-gray-500 dark:text-gray-400">
+            <div className="relative overflow-x-auto shadow-md sm:rounded-lg w-full">
+              <table className="min-w-[1000px] text-sm text-center rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                   <tr>
                     <th
@@ -110,17 +110,15 @@ const DailyProblem = () => {
                         {problem.title}
                       </td>
                       <td
-                        className={`px-6 py-4 
-                    ${
-                      problem.difficulty === "Easy"
-                        ? "text-green-500"
-                        : problem.difficulty === "Medium"
-                        ? "text-yellow-500"
-                        : problem.difficulty === "Hard"
-                        ? "text-red-500"
-                        : ""
-                    }
-                   `}
+                        className={`px-6 py-4 ${
+                          problem.difficulty === "Easy"
+                            ? "text-green-500"
+                            : problem.difficulty === "Medium"
+                            ? "text-yellow-500"
+                            : problem.difficulty === "Hard"
+                            ? "text-red-500"
+                            : ""
+                        }`}
                       >
                         {problem.difficulty}
                       </td>
@@ -134,10 +132,10 @@ const DailyProblem = () => {
                   ))}
                 </tbody>
               </table>
-              <div className="flex justify-center mt-4">
+              <div className="flex justify-center mt-4 gap-2">
                 <button
                   onClick={() => paginate(currentPage - 1)}
-                  className={`px-4 py-2 mx-1 rounded ${
+                  className={`px-4 py-2 rounded ${
                     currentPage === 1
                       ? "bg-gray-300 cursor-not-allowed"
                       : "bg-blue-500 text-white"
@@ -148,7 +146,7 @@ const DailyProblem = () => {
                 </button>
                 <button
                   onClick={() => paginate(currentPage + 1)}
-                  className={`px-4 py-2 mx-1 rounded ${
+                  className={`px-4 py-2 rounded ${
                     currentPage ===
                     Math.ceil(dailyProblems.length / itemsPerPage)
                       ? "bg-gray-300 cursor-not-allowed"

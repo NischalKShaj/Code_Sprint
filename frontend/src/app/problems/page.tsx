@@ -126,8 +126,8 @@ const Problems = () => {
   return (
     <div>
       <SpinnerWrapper>
-        <div className="flex items-center justify-center space-x-10 left-24">
-          <div className="flex justify-center col-span-1 w-[300px]">
+        <div className="flex flex-wrap items-center justify-center space-x-0 md:space-x-10 left-0 md:left-24">
+          <div className="flex justify-center col-span-1 w-full md:w-[300px]">
             <select
               id="category"
               name="category"
@@ -143,7 +143,7 @@ const Problems = () => {
               ))}
             </select>
           </div>
-          <div className="col-span-1 flex justify-center w-[300px]">
+          <div className="col-span-1 flex justify-center w-full md:w-[300px] mt-3 md:mt-0">
             <select
               id="difficulty"
               name="difficulty"
@@ -160,10 +160,10 @@ const Problems = () => {
             </select>
           </div>
         </div>
-        <div className="flex-1  flex justify-center mt-[25px] mb-7">
+        <div className="flex-1 flex justify-center mt-[25px] mb-7">
           {currentProblems && currentProblems.length > 0 ? (
-            <div className="relative items-center justify-center overflow-x-auto shadow-md sm:rounded-lg">
-              <table className="w-[1000px] items-center justify-items-center text-sm text-center rtl:text-right text-gray-500 dark:text-gray-400">
+            <div className="relative items-center justify-center overflow-x-auto shadow-md sm:rounded-lg w-full max-w-[1000px]">
+              <table className="w-full items-center justify-items-center text-sm text-center rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead className="text-xs text-gray-700 uppercase bg-gray-300 dark:bg-gray-700 dark:text-gray-400">
                   <tr>
                     <th scope="col" className="px-6 py-3">
@@ -210,7 +210,6 @@ const Problems = () => {
                           {problem.title}
                         </Link>
                       </td>
-
                       <td
                         className={`px-6 py-4 ${
                           problem.difficulty === "Easy"

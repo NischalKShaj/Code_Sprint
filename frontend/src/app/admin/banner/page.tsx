@@ -114,24 +114,26 @@ const Banner = () => {
     <div>
       <SpinnerWrapper>
         <AdminSidePanel />
-        <div className="flex-1 ml-[220px] flex justify-center mt-[25px]">
+        <div className="flex-1 ml-[220px] flex justify-center mt-[25px] px-4 sm:px-6">
           {loading ? (
             <div>Loading...</div>
           ) : banners && banners.length > 0 ? (
-            <div className="relative items-center justify-center overflow-x-auto shadow-md sm:rounded-lg">
-              <table className="w-[1000px] items-center justify-items-center text-sm text-center rtl:text-right text-gray-500 dark:text-gray-400">
+            <div className="relative overflow-x-auto shadow-md sm:rounded-lg w-[1100px]">
+              {/* <div className="w-[1000px]"> */}
+              {/* Container for fixed width */}
+              <table className="min-w-full text-sm text-center rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                   <tr>
-                    <th scope="col" className="px-6 py-3">
+                    <th scope="col" className="px-4 py-2 sm:px-6 sm:py-3">
                       Name
                     </th>
-                    <th scope="col" className="px-6 py-3">
+                    <th scope="col" className="px-4 py-2 sm:px-6 sm:py-3">
                       Description
                     </th>
-                    <th scope="col" className="px-6 py-3">
+                    <th scope="col" className="px-4 py-2 sm:px-6 sm:py-3">
                       Banner Image
                     </th>
-                    <th scope="col" className="px-6 py-3">
+                    <th scope="col" className="px-4 py-2 sm:px-6 sm:py-3">
                       Actions
                     </th>
                   </tr>
@@ -142,9 +144,13 @@ const Banner = () => {
                       key={banner._id}
                       className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
                     >
-                      <td className="px-6 py-4">{banner.name}</td>
-                      <td className="px-6 py-4">{banner.description}</td>
-                      <td className="px-6 py-4">
+                      <td className="px-4 py-2 sm:px-6 sm:py-4">
+                        {banner.name}
+                      </td>
+                      <td className="px-4 py-2 sm:px-6 sm:py-4">
+                        {banner.description}
+                      </td>
+                      <td className="px-4 py-2 sm:px-6 sm:py-4">
                         <Image
                           width={150}
                           height={100}
@@ -153,15 +159,15 @@ const Banner = () => {
                           className="object-cover rounded-lg shadow-md"
                         />
                       </td>
-                      <td className="px-6 py-4 flex space-x-2">
+                      <td className="px-4 py-2 sm:px-6 sm:py-4 flex justify-center gap-2">
                         <button
-                          className="font-bold py-2 px-4 rounded-xl bg-green-600 text-white"
+                          className="font-bold py-1 px-2 sm:py-2 sm:px-4 rounded-xl bg-green-600 text-white"
                           onClick={() => handleEdit(banner._id)}
                         >
                           Edit
                         </button>
                         <button
-                          className="font-bold py-2 px-4 rounded-xl bg-red-600 text-white"
+                          className="font-bold py-1 px-2 sm:py-2 sm:px-4 rounded-xl bg-red-600 text-white"
                           onClick={() => handleDelete(banner._id)}
                         >
                           Delete
@@ -171,12 +177,13 @@ const Banner = () => {
                   ))}
                 </tbody>
               </table>
+              {/* </div> */}
               {/* Pagination buttons */}
-              <div className="flex justify-center mt-4">
+              <div className="flex flex-wrap justify-center mt-4 gap-2">
                 <button
                   onClick={() => paginate(currentPage - 1)}
                   disabled={currentPage === 1}
-                  className={`px-4 py-2 mx-1 ${
+                  className={`px-4 py-2 ${
                     currentPage === 1
                       ? "bg-gray-300 cursor-not-allowed"
                       : "bg-blue-500 text-white"
@@ -190,7 +197,7 @@ const Banner = () => {
                     <button
                       key={index}
                       onClick={() => paginate(index + 1)}
-                      className={`px-4 py-2 mx-1 ${
+                      className={`px-4 py-2 ${
                         currentPage === index + 1
                           ? "bg-blue-700 text-white"
                           : "bg-blue-500 text-white"
@@ -205,7 +212,7 @@ const Banner = () => {
                   disabled={
                     currentPage === Math.ceil(banners.length / bannersPerPage)
                   }
-                  className={`px-4 py-2 mx-1 ${
+                  className={`px-4 py-2 ${
                     currentPage === Math.ceil(banners.length / bannersPerPage)
                       ? "bg-gray-300 cursor-not-allowed"
                       : "bg-blue-500 text-white"

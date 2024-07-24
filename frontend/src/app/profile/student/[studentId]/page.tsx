@@ -129,12 +129,12 @@ const StudentId = () => {
     <div>
       <SpinnerWrapper>
         <UserSideBar />
-        <div className="flex flex-col items-center mb-24 bg-white mt-16">
-          <section className="bg-[#D9D9D9] p-8 rounded-lg shadow-md">
+        <div className="flex flex-col items-center mb-24 bg-white mt-16 px-4 lg:px-8">
+          <section className="bg-[#D9D9D9] p-8 rounded-lg shadow-md max-w-md w-full">
             <form onSubmit={handleUpdate}>
-              <div className="flex justify-center">
+              <div className="flex justify-center mb-4">
                 <Image
-                  className="w-24 h-24 rounded-full ring-4 dark:ring-gray-800 mt-[10px]"
+                  className="w-24 h-24 rounded-full ring-4 dark:ring-gray-800"
                   width={100}
                   height={100}
                   src={formData.profileImage || ""}

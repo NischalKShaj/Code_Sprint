@@ -4,9 +4,9 @@ import Link from "next/link";
 
 const Signup = () => {
   return (
-    <div>
+    <div className="flex justify-end items-center mt-4 sm:mt-0 mr-6 sm:mr-5">
       <Link href="/signup">
-        <button className="bg-[#686DE0] text-white font-bold py-2 px-4 rounded-xl absolute right-56 mr-3 mt-16">
+        <button className="bg-[#686DE0] text-white font-bold py-2 px-4 rounded-xl">
           Signup
         </button>
       </Link>

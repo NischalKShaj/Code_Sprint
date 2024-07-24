@@ -347,8 +347,8 @@ const Contest = () => {
               </div>
             )}
           </div>
-          <div className="items-right justify-end flex text-white">
-            <Link href="/problems">back to problems</Link>
+          <div className="items-right justify-end flex text-white mt-4">
+            <Link href="/problems">Back to Problems</Link>
           </div>
         </div>
       </SpinnerWrapper>

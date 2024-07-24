@@ -74,10 +74,10 @@ const Problems = () => {
     <div>
       <SpinnerWrapper>
         <AdminSidePanel />
-        <div className="flex-1 ml-[220px] flex justify-center mt-[25px]">
+        <div className="flex-1 ml-[220px] flex justify-center mt-[25px] px-4 md:ml-[220px]">
           {currentProblems && currentProblems.length > 0 ? (
-            <div className="relative items-center justify-center overflow-x-auto shadow-md sm:rounded-lg">
-              <table className="w-[1000px] items-center justify-items-center text-sm text-center rtl:text-right text-gray-500 dark:text-gray-400">
+            <div className="relative items-center justify-center overflow-x-auto shadow-md sm:rounded-lg w-[1000px]">
+              <table className="min-w-full text-sm text-center rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                   <tr>
                     <th
@@ -147,7 +147,7 @@ const Problems = () => {
                   ))}
                 </tbody>
               </table>
-              <div className="flex justify-center mt-4">
+              <div className="flex justify-center mt-4 flex-wrap gap-2">
                 <button
                   onClick={prevPage}
                   className={`px-4 py-2 mx-1 ${

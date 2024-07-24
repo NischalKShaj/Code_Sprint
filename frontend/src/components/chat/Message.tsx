@@ -124,8 +124,8 @@ const Message = ({ senderId, receiverId, receiver, socket }: MessageProps) => {
   };
 
   return (
-    <div className="flex justify-end w-full">
-      <div className="chat-container w-full max-w-7xl">
+    <div className="flex justify-end w-full lg:ml-[250px]">
+      <div className="chat-container w-full max-w-7xl mx-auto p-4 relative left-4">
         <div className="chat-header flex items-center p-4 bg-gray-200 rounded-lg">
           <div className="relative">
             <Image
@@ -142,7 +142,7 @@ const Message = ({ senderId, receiverId, receiver, socket }: MessageProps) => {
             ></span>
           </div>
           <div className="ml-4">
-            <h3>{receiver.username}</h3>
+            <h3 className="text-lg font-semibold">{receiver.username}</h3>
             <span
               className={`text-sm ${
                 receiver.isOnline ? "text-green-500" : "text-red-500"
@@ -152,7 +152,7 @@ const Message = ({ senderId, receiverId, receiver, socket }: MessageProps) => {
             </span>
           </div>
         </div>
-        <div className="chat-messages h-96 overflow-y-auto p-4 bg-gray-100 rounded-lg">
+        <div className="chat-messages h-96 overflow-y-auto p-4 bg-gray-100 rounded-lg mt-2">
           <ul className="space-y-2">
             {messages.length === 0 ? (
               <li className="text-center text-gray-500">Start conversation</li>

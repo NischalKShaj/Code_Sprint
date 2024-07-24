@@ -354,99 +354,100 @@ const CourseId = () => {
   return (
     <div>
       <SpinnerWrapper>
-        <>
-          {course && (
-            <>
-              <div className="course-details flex flex-col justify-start text-end bg-gradient-to-r from-purple-500 to-indigo-500 py-4 px-8">
-                <Link className="text-left flex" href="/course">
-                  Back to courses
-                </Link>
-                <div className="mr-[300px] text-left ml-[1000px] mt-[100px] mb-5 p-3 bg-gradient-to-r from-purple-500 to-indigo-500 shadow-lg rounded-lg">
-                  {course.description}
-                  {!courseSubscribed && !userData?.premium && (
-                    <>
-                      <button
-                        className="bg-[#2a31f8] mt-5 text-white font-bold py-2 px-4 rounded-xl"
-                        onClick={handleSubscribe}
-                      >
-                        Subscribe
-                      </button>
-                      <p>Price: &#8377; {course.price}</p>
-                    </>
-                  )}
-                  {courseSubscribed && !userData?.premium && (
+        {course && (
+          <>
+            <div className="course-details flex flex-col justify-start text-end bg-gradient-to-r from-purple-500 to-indigo-500 py-4 px-4 sm:px-8">
+              <Link className="text-left flex mb-4" href="/course">
+                Back to courses
+              </Link>
+              <div className="mx-auto max-w-screen-lg mt-5 p-3 bg-gradient-to-r from-purple-500 to-indigo-500 shadow-lg rounded-lg">
+                {course.description}
+                {!courseSubscribed && !userData?.premium && (
+                  <>
                     <button
-                      className="bg-[#f82a2a] mt-5 text-white font-bold py-2 px-4 rounded-xl"
-                      onClick={handleUnsubscribe}
+                      className="bg-[#2a31f8] mt-5 text-white font-bold py-2 px-4 rounded-xl"
+                      onClick={handleSubscribe}
                     >
-                      Unsubscribe
+                      Subscribe
                     </button>
-                  )}
-                </div>
+                    <p>Price: &#8377; {course.price}</p>
+                  </>
+                )}
+                {courseSubscribed && !userData?.premium && (
+                  <button
+                    className="bg-[#f82a2a] mt-5 text-white font-bold py-2 px-4 rounded-xl"
+                    onClick={handleUnsubscribe}
+                  >
+                    Unsubscribe
+                  </button>
+                )}
               </div>
-              <div className="flex">
-                <section className="bg-[#D9D9D9] p-8 ml-[200px] mt-5 mb-5 w-[650px] rounded-lg shadow-lg">
-                  <h1 className="text-center text-3xl font-semibold">
-                    {course?.course_name}
-                  </h1>
-                  {courseSubscribed || userData?.premium ? (
-                    <div className="flex flex-col mt-[30px] grid-cols-2 gap-4">
-                      <h2 className="text-2xl font-medium text-center">
-                        {currentChapter?.chapterName}
-                      </h2>
-                      {currentVideos?.map((videoUrl, index) => (
-                        <div className="flex relative" key={index}>
-                          <video
-                            src={videoUrl}
-                            className="rounded-lg ml-9"
-                            width="300"
-                            height="200"
-                            controls
-                          />
-                          <div className="ml-5">
-                            <input
-                              type="checkbox"
-                              className="ml-14 mt-[80px] w-6 h-6"
-                              checked={!!courseCompletion[videoUrl]}
-                              onChange={() => handleCheckboxChange(videoUrl)}
-                            />
-                          </div>
-                        </div>
-                      ))}
-                      {renderPagination()}
-                    </div>
-                  ) : (
-                    <p>subscribe to watch the videos</p>
-                  )}
-                </section>
-                <section className="bg-[#D9D9D9] p-8 ml-[300px] mt-5 mb-5 w-[500px] h-[300px] rounded-lg shadow-lg">
-                  <h1 className="text-left text-xl font-semibold">
-                    Course Completion Status
-                  </h1>
-                  <div className="mt-[60px] space-y-6 flex items-center">
-                    <div>
-                      <h3>Total Tutorials: {totalTutorials}</h3>
-                      <h3>Completed: {completedCount}</h3>
-                    </div>
-                    <div className="ml-4">
-                      <div className="w-[100px] h-[100px] ml-[100px]">
-                        <CircularProgressbar
-                          value={completionPercentage}
-                          text={`${completionPercentage}%`}
-                          styles={buildStyles({
-                            pathColor: "#4CAF50",
-                            textColor: "#000",
-                            trailColor: "#A5D6A7",
-                          })}
+            </div>
+            <div className="flex flex-col md:flex-row md:ml-[50px] lg:ml-[300px]">
+              <section className="bg-[#D9D9D9] p-4 sm:p-8 mx-4 md:mx-8 mt-5 mb-5 w-full md:w-[650px] rounded-lg shadow-lg">
+                <h1 className="text-center text-2xl sm:text-3xl font-semibold">
+                  {course?.course_name}
+                </h1>
+                {courseSubscribed || userData?.premium ? (
+                  <div className="flex flex-col mt-4 gap-4">
+                    <h2 className="text-xl sm:text-2xl font-medium text-center">
+                      {currentChapter?.chapterName}
+                    </h2>
+                    {currentVideos?.map((videoUrl, index) => (
+                      <div
+                        className="flex flex-col sm:flex-row items-start"
+                        key={index}
+                      >
+                        <video
+                          src={videoUrl}
+                          className="rounded-lg mb-4 sm:mb-0 sm:mr-4"
+                          width="300"
+                          height="200"
+                          controls
                         />
+                        <div className="flex items-center mt-2 sm:mt-0">
+                          <input
+                            type="checkbox"
+                            className="w-6 h-6"
+                            checked={!!courseCompletion[videoUrl]}
+                            onChange={() => handleCheckboxChange(videoUrl)}
+                          />
+                        </div>
                       </div>
+                    ))}
+                    {renderPagination()}
+                  </div>
+                ) : (
+                  <p className="text-center">Subscribe to watch the videos</p>
+                )}
+              </section>
+              <section className="bg-[#D9D9D9] p-4 sm:p-8 mx-4 md:mx-8 mt-5 mb-5 w-full md:w-[500px] h-auto md:h-[300px] rounded-lg shadow-lg">
+                <h1 className="text-left text-lg sm:text-xl font-semibold">
+                  Course Completion Status
+                </h1>
+                <div className="mt-4 sm:mt-[60px] space-y-4 sm:space-y-6 flex flex-col sm:flex-row items-center">
+                  <div>
+                    <h3>Total Tutorials: {totalTutorials}</h3>
+                    <h3>Completed: {completedCount}</h3>
+                  </div>
+                  <div className="mt-4 sm:mt-0 ml-0 sm:ml-4">
+                    <div className="w-[100px] h-[100px]">
+                      <CircularProgressbar
+                        value={completionPercentage}
+                        text={`${completionPercentage}%`}
+                        styles={buildStyles({
+                          pathColor: "#4CAF50",
+                          textColor: "#000",
+                          trailColor: "#A5D6A7",
+                        })}
+                      />
                     </div>
                   </div>
-                </section>
-              </div>
-            </>
-          )}
-        </>
+                </div>
+              </section>
+            </div>
+          </>
+        )}
       </SpinnerWrapper>
     </div>
   );

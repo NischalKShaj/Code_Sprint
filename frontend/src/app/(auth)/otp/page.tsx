@@ -80,15 +80,15 @@ const OTP = () => {
   }, [timer, isResending]);
 
   return (
-    <div className="flex flex-col items-center mb-36 bg-white mt-16">
-      <section className="bg-gray-100 p-8 h-[400px] w-[400px] rounded-3xl shadow-md">
+    <div className="flex flex-col items-center mb-36 bg-white mt-16 px-4 sm:px-0">
+      <section className="bg-gray-100 p-8 h-auto sm:h-[400px] w-full max-w-[400px] rounded-3xl shadow-md">
         <h3 className="text-center text-2xl font-bold mb-6">
           OTP Verification
         </h3>
         <p className="text-sm text-red-500 mb-6">
           {timer > 0
             ? `Resend in ${timer} seconds`
-            : `New OTP has been send to the mail`}
+            : `New OTP has been sent to the mail`}
         </p>
 
         <div className="mb-6">
@@ -100,7 +100,7 @@ const OTP = () => {
             >
               Please enter the OTP sent to your email
             </label>
-            <div className="mt-11 flex justify-between space-x-4">
+            <div className="mt-11 flex justify-between space-x-2 sm:space-x-4">
               <input
                 type="text"
                 id="otp1"
@@ -141,16 +141,6 @@ const OTP = () => {
             </div>
           </form>
         </div>
-        {/* {isResending && (
-          <div className="mt-6">
-            <button
-              className="bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg"
-              onClick={handleResend}
-            >
-              Resend OTP
-            </button>
-          </div>
-        )} */}
       </section>
     </div>
   );

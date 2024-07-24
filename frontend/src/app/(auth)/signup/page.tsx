@@ -108,13 +108,13 @@ const Signup = () => {
   };
 
   return (
-    <div className="flex flex-col items-center mb-24 bg-white mt-16">
-      <h3 className="text-2xl font-bold mb-6 text-center items-center">
+    <div className="flex flex-col items-center mb-24 bg-white mt-16 px-4 sm:px-0">
+      <h3 className="text-2xl font-bold mb-6 text-center">
         Learn with Passion. Connect with Experts.
         <br /> Sign up today!
       </h3>
       {message && <p className="text-red-500 mt-4">{message}</p>}
-      <section className="bg-[#D9D9D9] p-8 w-[370px] rounded-lg shadow-md">
+      <section className="bg-[#D9D9D9] p-8 w-full max-w-[370px] rounded-lg shadow-md">
         <form onSubmit={handleSubmit}>
           <input
             type="text"
@@ -147,7 +147,9 @@ const Signup = () => {
                 value="student"
                 required
               />
-              <label htmlFor="student">Student</label>
+              <label htmlFor="student" className="ml-2">
+                Student
+              </label>
             </div>
             <div className="flex items-center mb-4">
               <input
@@ -158,7 +160,9 @@ const Signup = () => {
                 value="tutor"
                 required
               />
-              <label htmlFor="tutor">Tutor</label>
+              <label htmlFor="tutor" className="ml-2">
+                Tutor
+              </label>
             </div>
           </div>
           <input

@@ -82,15 +82,15 @@ const TutorProfilePage = () => {
     <div>
       <SpinnerWrapper>
         <TutorSideBar />
-        <div className="flex items-center mb-36 bg-white mt-6">
-          <section className="bg-[#D9D9D9] p-8 ml-[500px] mt-[50px] w-[950px] rounded-lg shadow-lg">
+        <div className="flex flex-col lg:flex-row items-center mb-36 bg-white mt-6">
+          <section className="bg-[#D9D9D9] p-8 w-full lg:w-[950px] mt-5 lg:mt-[50px] lg:ml-[500px] rounded-lg shadow-lg">
             <h1 className="text-left text-xl font-semibold mb-4">
               Subscribers list
             </h1>
-            <div className="flex justify-between items-center">
+            <div className="w-full overflow-x-auto">
               {totalSub.length > 0 ? (
                 // Table to display subscribers
-                <table className="w-[950px] top-[100px] items-center justify-items-center text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 rounded-lg overflow-hidden">
+                <table className="min-w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 rounded-lg overflow-hidden">
                   <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                     <tr>
                       <th scope="col" className="p-4">
@@ -111,9 +111,9 @@ const TutorProfilePage = () => {
                         key={index}
                         className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
                       >
-                        <td className="w-4 p-4">{subscriber.username}</td>
-                        <td className="w-4 p-4">{subscriber.email}</td>
-                        <td className="w-4 p-4">{subscriber.courseTitle}</td>
+                        <td className="p-4">{subscriber.username}</td>
+                        <td className="p-4">{subscriber.email}</td>
+                        <td className="p-4">{subscriber.courseTitle}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -126,11 +126,11 @@ const TutorProfilePage = () => {
             </div>
           </section>
         </div>
-        <section className="bg-[#D9D9D9] p-8 ml-[500px] mt-[-90px] mb-5 w-[950px] rounded-lg shadow-lg">
+        <section className="bg-[#D9D9D9] p-8 w-full lg:w-[950px] mt-5 lg:mt-[-45px] lg:ml-[500px] mb-5 rounded-lg shadow-lg">
           <h1 className="text-left text-xl font-semibold">
             Total Subscribers: {totalSub.length}
           </h1>
-          <div className="mt-[0px] flex items-center">
+          <div className="mt-2 flex items-center">
             <TotalSubscriber />
           </div>
         </section>

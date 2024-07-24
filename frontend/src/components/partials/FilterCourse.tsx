@@ -76,8 +76,8 @@ const FilterCourse: React.FC = () => {
   };
 
   return (
-    <div className="absolute top-[300px] left-[50px] z-40 w-72">
-      <ul className="w-48 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+    <div className="relative w-full max-w-xs md:max-w-sm lg:max-w-md mx-auto p-4">
+      <ul className="w-full text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
         <li className="w-full border-b border-gray-200 rounded-t-lg dark:border-gray-600">
           <div className="flex items-center ps-3">
             <input
@@ -132,7 +132,7 @@ const FilterCourse: React.FC = () => {
             </label>
           </div>
         </li>
-        <div className="flex justify-center items-center">
+        <div className="flex justify-center items-center py-2">
           <button
             onClick={handleFilter}
             className="bg-[#686DE0] text-white font-bold py-2 px-4 rounded-xl"

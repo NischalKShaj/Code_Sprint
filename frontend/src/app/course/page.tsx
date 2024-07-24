@@ -211,11 +211,11 @@ const Course = () => {
     <div>
       <SpinnerWrapper>
         <FilterCourse />
-        <div className="flex flex-col items-center mb-36 bg-white mt-16">
-          <h1 className="text-3xl mr-[500px] font-bold mb-6">
+        <div className="flex flex-col items-center mb-36 bg-white mt-16 px-4 sm:px-6 lg:px-8">
+          <h1 className="text-2xl sm:text-3xl font-bold mb-6 text-center">
             Explore, Learn, Achieve, Master
           </h1>
-          <section className="bg-[#D9D9D9] p-8 w-[1300px] rounded-lg shadow-md">
+          <section className="bg-[#D9D9D9] p-4 sm:p-6 md:p-8 w-full max-w-screen-lg rounded-lg shadow-md">
             {currentCourses.map((course) => {
               const isCourseSubscribed = isSubscribed.some(
                 (sub) => sub.course_id === course._id
@@ -224,10 +224,13 @@ const Course = () => {
               return (
                 <div
                   key={course._id}
-                  className="flex items-start border border-black p-4 mb-4 rounded-lg relative"
+                  className="flex flex-col md:flex-row items-start border border-black p-4 mb-4 rounded-lg relative"
                 >
                   {firstVideoUrl && (
-                    <video className="rounded-lg w-72 mr-4" controls={false}>
+                    <video
+                      className="rounded-lg w-full md:w-72 mb-4 md:mb-0 md:mr-4"
+                      controls={false}
+                    >
                       <source
                         src={firstVideoUrl}
                         type={getMimeType(firstVideoUrl)}
@@ -235,8 +238,8 @@ const Course = () => {
                       Your browser does not support the video tag.
                     </video>
                   )}
-                  <div className="ml-[100px] mt-[50px] flex-grow">
-                    <h2 className="text-xl font-bold mb-2">
+                  <div className="flex-grow">
+                    <h2 className="text-lg sm:text-xl font-bold mb-2">
                       {course.course_name}
                     </h2>
                     <p className="text-sm mb-1">
@@ -245,7 +248,7 @@ const Course = () => {
                     <p className="text-sm">{course.description}</p>
                   </div>
                   {role && (
-                    <div className="flex items-center mt-[100px]">
+                    <div className="mt-4 md:mt-0 md:ml-4">
                       {isCourseSubscribed || user?.premium ? (
                         <button
                           onClick={() => handleSubscribe(course._id)}
@@ -268,7 +271,7 @@ const Course = () => {
             })}
           </section>
           <nav className="mt-4" aria-label="Pagination">
-            <ul className="flex justify-center">
+            <ul className="flex flex-wrap justify-center">
               {Array.from({
                 length: Math.ceil(courses.length / coursesPerPage),
               }).map((_, index) => (

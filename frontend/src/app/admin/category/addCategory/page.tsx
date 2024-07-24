@@ -113,7 +113,7 @@ const AddCategory = () => {
     <div>
       <SpinnerWrapper>
         <AdminSidePanel />
-        <section className="bg-[#D9D9D9] p-8 h-full w-[570px] mt-[30px] flex items-center justify-center rounded-lg shadow-md mx-auto">
+        <section className="bg-[#D9D9D9] p-8 mt-[30px] flex items-center justify-center rounded-lg shadow-md mx-auto max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl w-full">
           <form
             onSubmit={handleSubmit}
             className="flex flex-col items-center justify-center text-left w-full"

@@ -24,44 +24,40 @@ const AdminHeader = () => {
 
   return (
     <>
-      <header className="bg-[#F0E6E6] flex items-center justify-between">
+      <header className="bg-[#F0E6E6] flex items-center justify-between p-4 md:p-6">
         <div className="flex items-center">
           <Link href="/admin">
             <Image
               src="/image/test-removebg-preview.png"
-              width={250}
-              height={250}
+              width={150} // Adjusted for smaller screens
+              height={150} // Adjusted for smaller screens
               alt="logo"
             />
           </Link>
         </div>
-        {pathname === "/admin/banner" && (
-          <div className="flex items-center mr-[100px]">
+        <div className="flex items-center space-x-4 md:space-x-8">
+          {pathname === "/admin/banner" && (
             <Link href="/admin/banner/addBanner">
-              <button className="bg-[#686DE0] text-white font-bold py-2 px-4 rounded-xl relative">
+              <button className="bg-[#686DE0] text-white font-bold py-2 px-4 rounded-xl">
                 Add Banner
               </button>
             </Link>
-          </div>
-        )}
-        {pathname === "/admin/category" && (
-          <div className="flex items-center mr-[100px]">
+          )}
+          {pathname === "/admin/category" && (
             <Link href="/admin/category/addCategory">
-              <button className="bg-[#686DE0] text-white font-bold py-2 px-4 rounded-xl relative">
+              <button className="bg-[#686DE0] text-white font-bold py-2 px-4 rounded-xl">
                 Add Category
               </button>
             </Link>
-          </div>
-        )}
-        {pathname === "/admin/problem" && (
-          <div className="flex items-center mr-[100px]">
+          )}
+          {pathname === "/admin/problem" && (
             <Link href="/admin/problem/addProblems">
-              <button className="bg-[#686DE0] text-white font-bold py-2 px-4 rounded-xl relative">
+              <button className="bg-[#686DE0] text-white font-bold py-2 px-4 rounded-xl">
                 Add Problems
               </button>
             </Link>
-          </div>
-        )}
+          )}
+        </div>
       </header>
     </>
   );

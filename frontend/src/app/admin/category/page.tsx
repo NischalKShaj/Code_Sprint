@@ -83,8 +83,8 @@ const Category = () => {
       <SpinnerWrapper>
         <AdminSidePanel />
         {categories && categories.length > 0 ? (
-          <div className="relative items-center justify-center overflow-x-auto shadow-md sm:rounded-lg">
-            <table className="w-[950px] top-[100px] items-center justify-items-center ml-[400px] text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+          <div className="relative mt-6 overflow-x-auto shadow-md sm:rounded-lg lg:w-[950px] lg:ml-[500px] mx-4 sm:mx-6">
+            <table className="min-w-[950px] text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
               <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
                   <th scope="col" className="px-6 py-3">
@@ -109,11 +109,11 @@ const Category = () => {
                 ))}
               </tbody>
             </table>
-            <div className="flex justify-center mt-4">
+            <div className="flex flex-wrap justify-center mt-4 gap-2">
               <button
                 onClick={() => handlePageChange(currentPage - 1)}
                 disabled={currentPage === 1}
-                className={`px-4 py-2 mx-1 ${
+                className={`px-4 py-2 ${
                   currentPage === 1
                     ? "bg-gray-300 cursor-not-allowed"
                     : "bg-blue-500 text-white"
@@ -127,7 +127,7 @@ const Category = () => {
                   <button
                     key={index}
                     onClick={() => handlePageChange(index + 1)}
-                    className={`px-4 py-2 mx-1 ${
+                    className={`px-4 py-2 ${
                       currentPage === index + 1
                         ? "bg-blue-700 text-white"
                         : "bg-blue-500 text-white"
@@ -143,7 +143,7 @@ const Category = () => {
                   currentPage ===
                   Math.ceil(categories.length / categoriesPerPage)
                 }
-                className={`px-4 py-2 mx-1 ${
+                className={`px-4 py-2 ${
                   currentPage ===
                   Math.ceil(categories.length / categoriesPerPage)
                     ? "bg-gray-300 cursor-not-allowed"

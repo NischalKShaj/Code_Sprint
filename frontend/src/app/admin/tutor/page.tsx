@@ -85,7 +85,7 @@ const TutorPage = () => {
         <AdminSidePanel />
         {allTutors && allTutors.length > 0 ? (
           <div className="relative items-center justify-center overflow-x-auto top-1 shadow-md sm:rounded-lg">
-            <table className="w-[950px] top-[100px] items-center justify-items-center ml-[400px] text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+            <table className="w-full max-w-4xl mx-auto mt-6 text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
               <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
                   <th scope="col" className="p-4"></th>
@@ -120,22 +120,33 @@ const TutorPage = () => {
                     </th>
                     <td className="px-6 py-4">
                       <div className="flex items-center">
-                        <div className="h-2.5 w-2.5 rounded-full bg-green-500 me-2"></div>
-                        Online
+                        <div
+                          className={`h-2.5 w-2.5 rounded-full ${
+                            tutor.isOnline ? "bg-green-500" : "bg-red-500"
+                          } me-2`}
+                        ></div>
+                        <span
+                          className={`${
+                            tutor.isOnline ? "text-green-500" : "text-red-500"
+                          }`}
+                        >
+                          {tutor.isOnline ? "Online" : "Offline"}
+                        </span>
                       </div>
                     </td>
+
                     <td className="px-6 py-4">
                       {tutor.block ? (
                         <button
                           onClick={() => handleBlock(tutor.id)}
-                          className="font-bold py-2 px-4 rounded-xl absolute bg-green-600 text-white"
+                          className="font-bold py-2 px-4 rounded-xl bg-green-600 text-white"
                         >
                           Unblock
                         </button>
                       ) : (
                         <button
                           onClick={() => handleBlock(tutor.id)}
-                          className="font-bold py-2 px-4 rounded-xl absolute bg-red-600 text-white"
+                          className="font-bold py-2 px-4 rounded-xl bg-red-600 text-white"
                         >
                           Block
                         </button>

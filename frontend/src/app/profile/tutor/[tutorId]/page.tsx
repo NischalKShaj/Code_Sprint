@@ -132,9 +132,9 @@ const StudentId = () => {
     <div>
       <SpinnerWrapper>
         <UserSideBar />
-        <div className="flex flex-col items-center mb-24 bg-white mt-16">
-          <section className="bg-[#D9D9D9] p-8 rounded-lg shadow-md">
-            <form onSubmit={handleUpdate}>
+        <div className="flex flex-col items-center mb-24 bg-white mt-16 p-4">
+          <section className="bg-[#D9D9D9] p-8 rounded-lg shadow-md w-full max-w-lg">
+            <form onSubmit={handleUpdate} className="space-y-4">
               <div className="flex justify-center">
                 <Image
                   className="w-24 h-24 rounded-full ring-4 dark:ring-gray-800 mt-[10px]"
@@ -149,7 +149,7 @@ const StudentId = () => {
                 id="profileImage"
                 name="profileImage"
                 onChange={handleFileChange}
-                className="p-4 bg-gray-50 border border-gray-300 rounded-lg w-full mt-3"
+                className="p-4 bg-gray-50 border border-gray-300 rounded-lg w-full"
                 accept="image/*"
               />
               <input
@@ -159,7 +159,7 @@ const StudentId = () => {
                 value={formData.username}
                 onChange={handleChange}
                 placeholder="Username"
-                className="p-4 bg-gray-50 border border-gray-300 rounded-lg w-full mt-3"
+                className="p-4 bg-gray-50 border border-gray-300 rounded-lg w-full"
               />
               <input
                 type="email"
@@ -168,9 +168,9 @@ const StudentId = () => {
                 value={formData.email}
                 onChange={handleChange}
                 placeholder="Email"
-                className="p-4 bg-gray-50 border border-gray-300 rounded-lg w-full mt-3"
+                className="p-4 bg-gray-50 border border-gray-300 rounded-lg w-full"
               />
-              <div className="border border-gray-300 bg-gray-50 rounded-lg p-4 w-full mt-3">
+              <div className="border border-gray-300 bg-gray-50 rounded-lg p-4 w-full">
                 <div className="flex items-center mb-4">
                   <span className="mr-2">Role:</span>
                   <span className="font-normal">
@@ -187,9 +187,9 @@ const StudentId = () => {
                 value={formData.phone}
                 onChange={handleChange}
                 required
-                className="p-4 bg-gray-50 border border-gray-300 rounded-lg w-full mt-3"
+                className="p-4 bg-gray-50 border border-gray-300 rounded-lg w-full"
               />
-              <button className="bg-[#686DE0] text-white font-bold py-2 px-4 rounded-xl w-full mt-7">
+              <button className="bg-[#686DE0] text-white font-bold py-2 px-4 rounded-xl w-full">
                 Update
               </button>
             </form>

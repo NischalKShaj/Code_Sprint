@@ -235,7 +235,7 @@ const ProblemId = () => {
           <p className="text-white mt-2">
             <strong>Constraints:</strong> {problem?.constraints}
           </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-6">
             <div>
               <label
                 htmlFor="source_code"
@@ -272,7 +272,6 @@ const ProblemId = () => {
                         <div className="text-red-600 font-bold text-xl">
                           <p>Wrong Answer!</p>
                         </div>
-
                         <p>
                           <strong>Input:</strong> {test.input}
                         </p>
@@ -292,7 +291,7 @@ const ProblemId = () => {
                     ))
                   )}
                 </div>
-                <div className="flex space-x-5 mt-4">
+                <div className="flex flex-wrap space-x-2 mt-4">
                   <button
                     onClick={handleTestCase}
                     className="bg-green-600 text-white px-4 py-2 rounded-md flex items-center"
@@ -328,7 +327,7 @@ const ProblemId = () => {
                     </div>
                   ))}
                 </div>
-                <div className="flex space-x-5 mt-4">
+                <div className="flex flex-wrap space-x-2 mt-4">
                   <button
                     onClick={handleTestCase}
                     className="bg-green-600 text-white px-4 py-2 rounded-md flex items-center"
@@ -346,7 +345,7 @@ const ProblemId = () => {
               </div>
             )}
           </div>
-          <div className="items-right justify-end flex text-white">
+          <div className="flex justify-end text-white mt-4">
             <Link href="/problems">back to problems</Link>
           </div>
         </div>

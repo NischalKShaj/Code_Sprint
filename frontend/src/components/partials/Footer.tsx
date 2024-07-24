@@ -8,7 +8,8 @@ const Footer = () => {
   return (
     <footer className="bg-[#F0E6E6] py-4 mt-auto">
       <div className="mx-auto w-full max-w-screen-xl px-4">
-        <div className="flex md:justify-between">
+        <div className="flex flex-col md:flex-row md:justify-between">
+          {/* Logo Section */}
           <div className="mb-6 md:mb-0">
             <Link href="/" className="flex items-center">
               <Image
@@ -19,7 +20,10 @@ const Footer = () => {
               />
             </Link>
           </div>
+
+          {/* Links Section */}
           <div className="grid grid-cols-2 gap-4 sm:gap-6 sm:grid-cols-3">
+            {/* Services */}
             <div>
               <h2 className="mb-2 text-sm font-semibold text-gray-900 uppercase dark:text-black">
                 Services
@@ -47,6 +51,8 @@ const Footer = () => {
                 </li>
               </ul>
             </div>
+
+            {/* Follow Us */}
             <div>
               <h2 className="mb-2 text-sm font-semibold text-gray-900 uppercase dark:text-black">
                 Follow us
@@ -55,7 +61,7 @@ const Footer = () => {
                 <li>
                   <Link
                     href="https://github.com/NischalKShaj"
-                    className="hover:underline "
+                    className="hover:underline"
                   >
                     Github
                   </Link>
@@ -70,6 +76,8 @@ const Footer = () => {
                 </li>
               </ul>
             </div>
+
+            {/* Legal */}
             <div>
               <h2 className="mb-2 text-sm font-semibold text-gray-900 uppercase dark:text-black">
                 Legal
@@ -89,8 +97,11 @@ const Footer = () => {
             </div>
           </div>
         </div>
-        <hr className="my-6 border-gray-200 sm:mx-auto dark:border-gray-700 lg:my-8" />
-        <div className="sm:flex sm:items-center sm:justify-between">
+
+        <hr className="my-6 border-gray-200 dark:border-gray-700" />
+
+        {/* Bottom Section */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
           <span className="text-sm text-gray-500 sm:text-center dark:text-gray-400">
             © 2024{" "}
             <Link href="/" className="hover:underline">
@@ -98,10 +109,10 @@ const Footer = () => {
             </Link>
             . All Rights Reserved.
           </span>
-          <div className="flex mt-4 sm:justify-center sm:mt-0">
+          <div className="flex flex-wrap justify-center sm:justify-start mt-4 sm:mt-0">
             <a
               href="#"
-              className="text-gray-500 hover:text-gray-900 dark:hover:text-white"
+              className="text-gray-500 hover:text-gray-900 dark:hover:text-white mx-2"
             >
               <svg
                 className="w-4 h-4"
@@ -120,7 +131,7 @@ const Footer = () => {
             </a>
             <a
               href="#"
-              className="text-gray-500 hover:text-gray-900 dark:hover:text-white ms-5"
+              className="text-gray-500 hover:text-gray-900 dark:hover:text-white mx-2"
             >
               <svg
                 className="w-4 h-4"
@@ -135,7 +146,7 @@ const Footer = () => {
             </a>
             <a
               href="#"
-              className="text-gray-500 hover:text-gray-900 dark:hover:text-white ms-5"
+              className="text-gray-500 hover:text-gray-900 dark:hover:text-white mx-2"
             >
               <svg
                 className="w-4 h-4"
@@ -154,7 +165,7 @@ const Footer = () => {
             </a>
             <a
               href="#"
-              className="text-gray-500 hover:text-gray-900 dark:hover:text-white ms-5"
+              className="text-gray-500 hover:text-gray-900 dark:hover:text-white mx-2"
             >
               <svg
                 className="w-4 h-4"

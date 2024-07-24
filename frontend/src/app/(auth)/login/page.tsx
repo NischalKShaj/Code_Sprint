@@ -80,13 +80,6 @@ const Login = () => {
     }
   };
 
-  // useEffect(() => {
-  //   if (status === "authenticated" && session?.accessToken) {
-  //     localStorage.setItem("access_token", session.accessToken);
-  //     router.push("/");
-  //   }
-  // }, [status, session, router]);
-
   //  for google and github authentication purpose
   const handleOAuth = async (provider: string) => {
     try {
@@ -132,17 +125,17 @@ const Login = () => {
         Login to your CodeSprint account
       </h3>
       {message && <p className="text-red-500 mt-4">{message}</p>}
-      <section className="bg-[#D9D9D9] p-8 h-[400px] w-[370px] rounded-lg shadow-md">
+      <section className="bg-[#D9D9D9] p-8 h-[400px] w-full max-w-[370px] rounded-lg shadow-md">
         <button
           onClick={() => handleOAuth("google")}
-          className="p-4 bg-gray-50 border test border-gray-300 rounded-lg  w-full mt-3"
+          className="p-4 bg-gray-50 border test border-gray-300 rounded-lg w-full mt-3"
         >
           <FontAwesomeIcon className="mr-5" icon={faGoogle} />
           continue with google
         </button>
         <button
           onClick={() => handleOAuth("github")}
-          className="p-4 bg-gray-50 border border-gray-300 rounded-lg  w-full mt-3"
+          className="p-4 bg-gray-50 border border-gray-300 rounded-lg w-full mt-3"
         >
           <FontAwesomeIcon className="mr-5" icon={faGithub} />
           continue with github
@@ -152,7 +145,7 @@ const Login = () => {
             type="email"
             id="email"
             placeholder="email"
-            className="p-4 bg-gray-50 border border-gray-300 rounded-lg  w-full mt-3"
+            className="p-4 bg-gray-50 border border-gray-300 rounded-lg w-full mt-3"
             onChange={handleLogin}
             required
           />
@@ -160,7 +153,7 @@ const Login = () => {
             type="password"
             id="password"
             placeholder="password"
-            className="p-4 bg-gray-50 border border-gray-300 rounded-lg  w-full mt-3"
+            className="p-4 bg-gray-50 border border-gray-300 rounded-lg w-full mt-3"
             onChange={handleLogin}
             required
           />

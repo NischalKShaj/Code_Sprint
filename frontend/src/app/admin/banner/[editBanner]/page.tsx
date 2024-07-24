@@ -162,7 +162,7 @@ const EditBanner = () => {
     <div>
       <SpinnerWrapper>
         <AdminSidePanel />
-        <section className="bg-[#D9D9D9] p-8 h-full w-[570px] mt-[30px] flex items-center justify-center rounded-lg shadow-md mx-auto">
+        <section className="bg-[#D9D9D9] p-6 sm:p-8 h-full w-full max-w-lg mt-6 mx-auto flex items-center justify-center rounded-lg shadow-md">
           <form
             onSubmit={handleSubmit}
             encType="multipart/form-data"
@@ -188,10 +188,7 @@ const EditBanner = () => {
               onChange={handleChange}
             />
 
-            <label
-              htmlFor="banner_image"
-              className="text-gray-500 mr-[50px] mt-3"
-            >
+            <label htmlFor="banner_image" className="text-gray-500 mt-3">
               Select a valid image format
             </label>
             <input
@@ -203,7 +200,7 @@ const EditBanner = () => {
               accept="image/*"
             />
             {imagePreview && (
-              <div className="relative mt-4">
+              <div className="relative mt-4 w-full max-w-xs sm:max-w-sm mx-auto">
                 <img
                   src={imagePreview}
                   alt="Banner Preview"
@@ -211,7 +208,7 @@ const EditBanner = () => {
                 />
                 <button
                   type="button"
-                  className="absolute top-0 right-0 bg-red-600 text-white rounded-full p-2"
+                  className="absolute top-1 right-1 bg-red-600 text-white rounded-full p-2"
                   onClick={removeImagePreview}
                 >
                   &times;

@@ -81,19 +81,21 @@ const Header = () => {
 
   return (
     <>
-      <header className="bg-[#F0E6E6] flex">
+      <header className="bg-[#F0E6E6] flex flex-col sm:flex-row items-center p-4 sm:p-6">
         <Link href="/">
           <Image
             src="/image/test-removebg-preview.png"
             width={250}
             height={250}
             alt="logo"
+            className="mb-4 sm:mb-0"
           />
         </Link>
-        {pathname === "/course" && (
-          <div className="flex flex-row">
+
+        {(pathname === "/course" || pathname === "/problems") && (
+          <div className="flex flex-col sm:flex-row items-center sm:items-start sm:ml-6 mt-4 sm:mt-0">
             <button
-              className="button bg-gray-50 text-white font-bold py-2 px-4 rounded-3xl absolute left-[250px] mr-3 mt-[65px]"
+              className="button bg-gray-50 text-white font-bold py-2 px-4 rounded-3xl"
               onClick={handleSearch}
             >
               <span>
@@ -111,41 +113,14 @@ const Header = () => {
               type="text"
               id="search"
               placeholder="Search anything..."
-              className="p-4 bg-gray-50 border-gray-300 rounded-3xl w-[550px] h-10 pl-16 pr-3 mr-3 mt-16"
+              className="p-4 bg-gray-50 border-gray-300 rounded-3xl w-[550px] h-10 pl-16 pr-3 mt-4 sm:mt-0 sm:ml-3"
               value={query}
               onChange={handleChange}
             />
           </div>
         )}
-        {pathname === "/problems" && (
-          <div className="flex flex-row">
-            <button
-              className="button bg-gray-50 text-white font-bold py-2 px-4 rounded-3xl absolute left-[250px] mr-3 mt-[65px]"
-              // onClick={handleSearch}
-            >
-              <span>
-                <svg
-                  viewBox="0 0 20 20"
-                  height="20"
-                  width="20"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path d="M9.145 18.29c-5.042 0-9.145-4.102-9.145-9.145s4.103-9.145 9.145-9.145 9.145 4.103 9.145 9.145-4.102 9.145-9.145 9.145zm0-15.167c-3.321 0-6.022 2.702-6.022 6.022s2.702 6.022 6.022 6.022 6.023-2.702 6.023-6.022-2.702-6.022-6.023-6.022zm9.263 12.443c-.817 1.176-1.852 2.188-3.046 2.981l5.452 5.453 3.014-3.013-5.42-5.421z"></path>
-                </svg>
-              </span>
-            </button>
-            <input
-              type="text"
-              id="search"
-              placeholder="Search anything..."
-              className="p-4 bg-gray-50 border-gray-300 rounded-3xl w-[550px] h-10 pl-16 pr-3 mr-3 mt-16"
-              // value={query}
-              // onChange={handleChange}
-            />
-          </div>
-        )}
 
-        <ul className="flex space-x-20 items-center justify-center text-lg mx-5">
+        <ul className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-20 items-center justify-center text-lg mx-5 mt-4 sm:mt-0">
           <li>
             <Link href="/course">Course</Link>
           </li>
@@ -167,30 +142,41 @@ const Header = () => {
             <Link href="/chat">Discuss</Link>
           </li>
         </ul>
-        <div>
+
+        <div className="flex flex-col sm:flex-row items-center mt-4 sm:mt-0">
           {authorized || session ? (
-            <div className="flex">
+            <div className="flex items-center">
+              <Link
+                href={`/profile/${currentUser.role}`}
+                className="mt-4 sm:mt-0 mx-8 text-lg"
+              >
+                {currentUser.username}
+              </Link>
               {authorized ? (
                 <Logout />
               ) : (
                 <button
-                  className="bg-[#686DE0] text-white font-bold py-2 px-4 rounded-xl mr-3 mt-16 mx-44 absolute"
+                  className="bg-[#686DE0] text-white font-bold py-2 px-4 rounded-xl sm:mr-3 mt-4 sm:mt-0"
                   onClick={() => signOut()}
                 >
                   Logout
                 </button>
               )}
-              <Link
-                href={`/profile/${currentUser.role}`}
-                className="mt-[76px] mx-8"
-              >
-                {currentUser.username}
-              </Link>
             </div>
           ) : (
-            <div>
-              <Login />
-              <Signup />
+            <div className="flex flex-col sm:flex-row items-center">
+              <div className="flex items-center mt-4 sm:mt-0">
+                <Link href="/login">
+                  <button className="bg-[#686DE0] text-white font-bold py-2 px-4 rounded-xl sm:mr-4">
+                    Login
+                  </button>
+                </Link>
+                <Link href="/signup">
+                  <button className="bg-[#686DE0] text-white font-bold py-2 px-4 rounded-xl">
+                    Signup
+                  </button>
+                </Link>
+              </div>
             </div>
           )}
         </div>

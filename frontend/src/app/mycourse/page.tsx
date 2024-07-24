@@ -154,16 +154,16 @@ const MyCourse: React.FC = () => {
     <div className="flex flex-col items-center mb-36 bg-white mt-16">
       <SpinnerWrapper>
         <TutorSideBar />
-        <section className="bg-[#D9D9D9] p-8 w-[1000px] rounded-lg shadow-md">
+        <section className="bg-[#D9D9D9] p-8 w-full max-w-6xl rounded-lg shadow-md">
           {flattenedVideos.map((video, index) => (
-            <div key={index} style={{ margin: "20px 0" }}>
+            <div key={index} className="my-5">
               <h3 className="text-2xl text-center font-bold mb-6">
                 {video.courseTitle}
               </h3>
               <div className="mb-6">
                 <p className="text-md text-left mb-4">{video.description}</p>
                 <div className="flex justify-center">
-                  <video className="rounded-lg" width="600" controls>
+                  <video className="rounded-lg w-full max-w-xl" controls>
                     <source
                       src={video.videoUrl}
                       type={getMimeType(video.videoUrl)}

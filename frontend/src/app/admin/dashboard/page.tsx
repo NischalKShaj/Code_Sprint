@@ -35,12 +35,18 @@ const AdminDashboard = () => {
     <div>
       <SpinnerWrapper>
         <AdminSidePanel />
-        <div className="flex mt-[50px] ml-[350px] mr-[150px]">
-          <BarGraph />
-          <TutorBarGraph />
+        <div className="flex flex-wrap mt-[50px]  mx-4 lg:mx-[150px] gap-4">
+          <div className="flex-1 min-w-[300px]  ml-[350px] mr-[150px] lg:min-w-[350px]">
+            <BarGraph />
+          </div>
+          <div className="flex-1 min-w-[300px] lg:min-w-[350px]">
+            <TutorBarGraph />
+          </div>
         </div>
-        <div className="ml-[350px] mr-[150px]">
-          <CourseBarGraph />
+        <div className="mt-8 mx-4 lg:mx-[150px]">
+          <div className="min-w-[300px]  ml-[350px] mr-[150px] lg:min-w-[350px]">
+            <CourseBarGraph />
+          </div>
         </div>
       </SpinnerWrapper>
     </div>

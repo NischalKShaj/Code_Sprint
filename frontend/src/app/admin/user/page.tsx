@@ -81,7 +81,7 @@ const UserPage = () => {
         <AdminSidePanel />
         {allUser && allUser.length > 0 ? (
           <div className="relative items-center justify-center overflow-x-auto shadow-md sm:rounded-lg">
-            <table className="w-[950px] top-[100px] items-center justify-items-center ml-[400px] text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+            <table className="w-full max-w-4xl mx-auto text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
               <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
                   <th scope="col" className="p-4"></th>
@@ -118,22 +118,33 @@ const UserPage = () => {
                     </th>
                     <td className="px-6 py-4">
                       <div className="flex items-center">
-                        <div className="h-2.5 w-2.5 rounded-full bg-green-500 me-2"></div>
-                        Online
+                        <div
+                          className={`h-2.5 w-2.5 rounded-full ${
+                            user.isOnline ? "bg-green-500" : "bg-red-500"
+                          } me-2`}
+                        ></div>
+                        <span
+                          className={`${
+                            user.isOnline ? "text-green-500" : "text-red-500"
+                          }`}
+                        >
+                          {user.isOnline ? "Online" : "Offline"}
+                        </span>
                       </div>
                     </td>
+
                     <td className="px-6 py-4">
                       {user.block ? (
                         <button
                           onClick={() => handleBlock(user.id)}
-                          className="font-bold py-2 px-4 rounded-xl absolute bg-green-600 text-white"
+                          className="font-bold py-2 px-4 rounded-xl bg-green-600 text-white"
                         >
                           Unblock
                         </button>
                       ) : (
                         <button
                           onClick={() => handleBlock(user.id)}
-                          className="font-bold py-2 px-4 rounded-xl absolute bg-red-600 text-white"
+                          className="font-bold py-2 px-4 rounded-xl bg-red-600 text-white"
                         >
                           Block
                         </button>

@@ -166,69 +166,71 @@ const PayoutPage = () => {
     <div>
       <SpinnerWrapper>
         <AdminSidePanel />
-        <div className="flex-1 ml-[220px] flex justify-center mt-[25px]">
+        <div className="flex-1 ml-[220px] flex justify-center mt-[25px] px-4">
           {loading ? (
             <div>Loading...</div>
           ) : (
             <div className="relative items-center justify-center overflow-x-auto shadow-md sm:rounded-lg">
-              <table className="w-[1000px] items-center justify-items-center text-sm text-center rtl:text-right text-gray-500 dark:text-gray-400">
-                <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                  <tr>
-                    <th scope="col" className="p-4">
-                      Index
-                    </th>
-                    <th scope="col" className="px-6 py-3">
-                      Name
-                    </th>
-                    <th scope="col" className="px-6 py-3">
-                      Email
-                    </th>
-                    <th scope="col" className="px-6 py-3">
-                      Amount to be paid
-                    </th>
-                    <th scope="col" className="px-6 py-3">
-                      Payment Status
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {currentPayouts.map((payment, index) => (
-                    <tr
-                      key={index}
-                      className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
-                    >
-                      <td className="w-4 p-4 text-base font-semibold">
-                        {(currentPage - 1) * payoutsPerPage + index + 1}
-                      </td>
-                      <td className="px-6 py-4 text-base font-semibold">
-                        {payment.tutor_name}
-                      </td>
-                      <td className="px-6 py-4 text-base font-semibold">
-                        {payment.tutor_email}
-                      </td>
-                      <td className="px-6 py-4 text-base font-semibold">
-                        {payment.wallet}
-                      </td>
-                      <td className="px-6 py-4 text-base font-semibold text-center">
-                        {payment.wallet !== "0" ? (
-                          <button
-                            onClick={() => handlePay(payment)}
-                            className="bg-[#686DE0] text-white font-bold py-2 px-4 rounded-xl"
-                          >
-                            Pay
-                          </button>
-                        ) : (
-                          <button className="bg-[#686DE0] text-white font-bold py-2 px-4 rounded-xl">
-                            Paid
-                          </button>
-                        )}
-                      </td>
+              <div className="w-full overflow-x-auto">
+                <table className="min-w-full text-sm text-center rtl:text-right text-gray-500 dark:text-gray-400">
+                  <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                    <tr>
+                      <th scope="col" className="p-4">
+                        Index
+                      </th>
+                      <th scope="col" className="px-6 py-3">
+                        Name
+                      </th>
+                      <th scope="col" className="px-6 py-3">
+                        Email
+                      </th>
+                      <th scope="col" className="px-6 py-3">
+                        Amount to be paid
+                      </th>
+                      <th scope="col" className="px-6 py-3">
+                        Payment Status
+                      </th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {currentPayouts.map((payment, index) => (
+                      <tr
+                        key={index}
+                        className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+                      >
+                        <td className="w-4 p-4 text-base font-semibold">
+                          {(currentPage - 1) * payoutsPerPage + index + 1}
+                        </td>
+                        <td className="px-6 py-4 text-base font-semibold">
+                          {payment.tutor_name}
+                        </td>
+                        <td className="px-6 py-4 text-base font-semibold">
+                          {payment.tutor_email}
+                        </td>
+                        <td className="px-6 py-4 text-base font-semibold">
+                          {payment.wallet}
+                        </td>
+                        <td className="px-6 py-4 text-base font-semibold text-center">
+                          {payment.wallet !== "0" ? (
+                            <button
+                              onClick={() => handlePay(payment)}
+                              className="bg-[#686DE0] text-white font-bold py-2 px-4 rounded-xl"
+                            >
+                              Pay
+                            </button>
+                          ) : (
+                            <button className="bg-[#686DE0] text-white font-bold py-2 px-4 rounded-xl">
+                              Paid
+                            </button>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
               {/* Pagination buttons */}
-              <div className="flex justify-center mt-4">
+              <div className="flex justify-center mt-4 flex-wrap gap-2">
                 <button
                   onClick={() => paginate(currentPage - 1)}
                   disabled={currentPage === 1}
@@ -282,7 +284,7 @@ const PayoutPage = () => {
           options={{ clientId: `${process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID}` }}
         >
           <div className="fixed inset-0 bg-opacity-50 flex items-center justify-center">
-            <div className="bg-white p-6 rounded-lg shadow-lg">
+            <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
               <PayPalButtons
                 style={{ layout: "vertical" }}
                 createOrder={(data, actions) => {

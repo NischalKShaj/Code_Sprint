@@ -209,32 +209,29 @@ const Profile = () => {
     <div>
       <SpinnerWrapper>
         <UserSideBar />
-        <div className="flex items-center mb-36 bg-white mt-6">
-          <section className="bg-[#D9D9D9] p-8 ml-[400px] w-[500px] h-[300px] rounded-lg shadow-lg">
+        <div className="flex flex-col lg:flex-row items-center mb-24 bg-white mt-6 space-y-4 lg:space-y-0 lg:space-x-4">
+          {/* Solved Problems Section */}
+          <section className="bg-[#D9D9D9] p-8 rounded-lg shadow-lg w-full lg:w-[500px] h-auto lg:h-[300px] lg:ml-[500px]">
             <h1 className="text-left text-xl font-semibold">Solved Problems</h1>
-            <div className="flex justify-between items-center h-[200px]">
-              <div>
-                <div className="flex space-x-5">
-                  <div className="flex flex-col items-start">
-                    <h2 className="text-green-500 font-bold">Easy</h2>
-                    <h3>
-                      <h3>
-                        {solved.Easy || 0}/{difficultyCount.Easy}
-                      </h3>
-                    </h3>
-                  </div>
-                  <div className="flex flex-col items-start">
-                    <h2 className="text-yellow-500 font-bold">Medium</h2>
-                    <h3>
-                      {solved.Medium || 0}/{difficultyCount.Medium}
-                    </h3>
-                  </div>
-                  <div className="flex flex-col items-start">
-                    <h2 className="text-red-500 font-bold">Hard</h2>
-                    <h3>
-                      {solved.Hard || 0}/{difficultyCount.Hard}
-                    </h3>
-                  </div>
+            <div className="flex flex-col lg:flex-row justify-between items-center h-auto lg:h-[200px] space-y-4 lg:space-y-0">
+              <div className="flex flex-col lg:flex-row space-y-4 lg:space-x-5 lg:space-y-0">
+                <div className="flex flex-col items-start">
+                  <h2 className="text-green-500 font-bold">Easy</h2>
+                  <h3>
+                    {solved.Easy || 0}/{difficultyCount.Easy}
+                  </h3>
+                </div>
+                <div className="flex flex-col items-start">
+                  <h2 className="text-yellow-500 font-bold">Medium</h2>
+                  <h3>
+                    {solved.Medium || 0}/{difficultyCount.Medium}
+                  </h3>
+                </div>
+                <div className="flex flex-col items-start">
+                  <h2 className="text-red-500 font-bold">Hard</h2>
+                  <h3>
+                    {solved.Hard || 0}/{difficultyCount.Hard}
+                  </h3>
                 </div>
               </div>
               <div className="w-[100px] h-[100px]">
@@ -251,9 +248,10 @@ const Profile = () => {
               </div>
             </div>
           </section>
-          <section className="bg-[#D9D9D9] p-8 ml-[100px] mt-11 w-[500px] rounded-lg shadow-lg">
-            <h1 className="text-left text-xl font-semibold">My Courses</h1>
 
+          {/* My Courses Section */}
+          <section className="bg-[#D9D9D9] p-8 rounded-lg shadow-lg w-full lg:w-[500px]">
+            <h1 className="text-left text-xl font-semibold">My Courses</h1>
             {subscribedCourse.length === 0 ? (
               <p className="text-center mt-4">
                 Subscribe to any course to see your courses.
@@ -273,7 +271,7 @@ const Profile = () => {
                     return (
                       <div
                         key={course.course_id}
-                        className="space-y-6 flex items-center"
+                        className="space-y-6 flex flex-col lg:flex-row items-center"
                       >
                         <div className="flex flex-col mt-8">
                           <h3>Course name: {course.course_name}</h3>
@@ -292,13 +290,13 @@ const Profile = () => {
                   return (
                     <div
                       key={course.course_id}
-                      className="space-y-6 flex items-center"
+                      className="space-y-6 flex flex-col lg:flex-row items-center"
                     >
                       <div className="flex flex-col mt-8">
                         <h3>Course name: {course.course_name}</h3>
                         {firstVideo ? (
                           <video
-                            className="rounded-lg ml-0"
+                            className="rounded-lg"
                             width="300"
                             height="200"
                           >
@@ -311,7 +309,7 @@ const Profile = () => {
                       </div>
                       {firstVideo && (
                         <Link href={`/course/${course.course_id}`}>
-                          <button className="bg-[#686DE0] text-white font-bold py-2 px-4 ml-[50px] rounded-xl">
+                          <button className="bg-[#686DE0] text-white font-bold py-2 px-4 rounded-xl mt-4 lg:mt-0">
                             Show
                           </button>
                         </Link>
@@ -321,9 +319,8 @@ const Profile = () => {
                 })}
               </>
             )}
-
             {/* Pagination Controls */}
-            <div className="mt-4 flex justify-center">
+            <div className="mt-4 flex justify-center flex-wrap">
               {Array.from(
                 {
                   length: Math.ceil(subscribedCourse.length / coursesPerPage),
@@ -345,13 +342,15 @@ const Profile = () => {
             </div>
           </section>
         </div>
-        <section className="bg-[#D9D9D9] p-8 ml-[400px]  mb-5 w-[1100px] rounded-lg shadow-lg">
+
+        {/* Submitted Problems Section */}
+        <section className="bg-[#D9D9D9] p-8 rounded-lg shadow-lg w-full lg:w-[1100px] mx-auto mb-5 lg:ml-[500px]">
           <h1 className="text-left text-xl font-semibold">
             Submitted Problems
           </h1>
-          <div className="mt-[20px] flex items-center">
+          <div className="mt-[20px] flex flex-col lg:flex-row">
             {solvedProblems?.length && solvedProblems.length > 0 ? (
-              <table className="w-[1050px] top-[100px] items-center justify-items-center text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 rounded-lg overflow-hidden">
+              <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 rounded-lg overflow-hidden">
                 <thead className="text-xs text-gray-700 uppercase bg-gray-200 dark:bg-gray-700 dark:text-gray-400">
                   <tr>
                     <th scope="col" className="p-4">
