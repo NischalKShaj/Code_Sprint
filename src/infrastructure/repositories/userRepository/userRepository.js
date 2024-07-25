@@ -8,6 +8,7 @@ const bcryptjs = require("bcryptjs");
 const CourseCollection = require("../../../core/entities/course/courseCollection");
 const BannerCollection = require("../../../core/entities/banner/bannerCollection");
 const PayoutCollection = require("../../../core/entities/paymentRequest/paymentRequest");
+const ProblemCollection = require("../../../core/entities/problems/problemCollection");
 const PaymentCollection = require("../../../core/entities/payment/paymentCollection");
 const mongoose = require("mongoose");
 
@@ -319,17 +320,34 @@ const userRepository = {
   addProblem: async (id, userId, dailyChallenge) => {
     try {
       const user = await UserCollection.findById({ _id: userId });
+
+      const problem = await ProblemCollection.findById({ _id: id });
+
       if (user) {
         const problemExist = user.problems.includes(id);
 
         if (dailyChallenge) {
-          user.dailyProblems.push(id);
+          const dailyProblemEntry = {
+            problemId: id,
+            date: new Date(),
+          };
+          // saving the daily problem
+          user.dailyProblems.push(dailyProblemEntry);
+          // updating the streak
+          user.streak += 1;
           await user.save();
         }
 
         if (!problemExist) {
           user.problems.push(id);
-          await user.save();
+          problem.count += 1;
+          try {
+            // Save the updated problem and user documents
+            await problem.save();
+            await user.save();
+          } catch (error) {
+            throw error;
+          }
           return user;
         } else {
           return user;

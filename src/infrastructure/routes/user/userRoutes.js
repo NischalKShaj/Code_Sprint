@@ -113,6 +113,13 @@ router.get(
   profileController.getSolvedProblems
 );
 
+// router for getting the streak
+router.get(
+  "/profile/streak/:id",
+  authenticateUserJwt,
+  profileController.getStreak
+);
+
 // router for unsubscribing the course
 router.post(
   "/course/unsubscribe/:id",

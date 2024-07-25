@@ -178,6 +178,59 @@ const profileRepository = {
       throw error;
     }
   },
+
+  // method for getting the streak for the user
+  getStreak: async (id) => {
+    try {
+      const user = await UserCollection.findById({ _id: id });
+      if (!user) {
+        throw new Error("user not found");
+      }
+
+      // for getting todays date
+      const today = new Date();
+      today.setUTCHours(0, 0, 0, 0);
+
+      // for getting todays date
+      const yesterday = new Date(today);
+      yesterday.setUTCDate(today.getUTCDate() - 1);
+
+      // Retrieve all daily problems for the user
+      const dailyProblems = user.dailyProblems;
+
+      // checking whether there was any submission today
+      const hasSubmissionToday = dailyProblems.some((entry) => {
+        const submissionDate = new Date(entry.date);
+        return submissionDate.getTime() === today.getTime();
+      });
+
+      // checking whether there was any submission yesterday
+      const hasSubmissionYesterday = dailyProblems.some((entry) => {
+        const submissionDate = new Date(entry.date);
+        return submissionDate.getTime() === yesterday.getTime();
+      });
+
+      let newStreak;
+
+      if (hasSubmissionYesterday) {
+        if (hasSubmissionToday) {
+          newStreak = user.streak + 1;
+        } else {
+          newStreak = user.streak;
+        }
+      } else {
+        newStreak = 0;
+      }
+
+      user.streak = newStreak;
+      await user.save();
+
+      console.log("user streak", newStreak);
+      return newStreak;
+    } catch (error) {
+      throw error;
+    }
+  },
 };
 
 module.exports = profileRepository;

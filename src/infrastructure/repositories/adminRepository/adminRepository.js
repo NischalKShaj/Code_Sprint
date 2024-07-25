@@ -4,6 +4,7 @@
 const UserCollection = require("../../../core/entities/user/userCollection");
 const TutorCollection = require("../../../core/entities/user/tutorCollection");
 const CourseCollection = require("../../../core/entities/course/courseCollection");
+const ProblemCollection = require("../../../core/entities/problems/problemCollection");
 const dotenv = require("dotenv");
 dotenv.config();
 
@@ -121,15 +122,47 @@ const adminRepository = {
 
       console.log("tutorGraph", tutorGraphs);
 
-      const totalSubscribers = await CourseCollection.find(
-        {},
-        { totalSubscribed: 1, course_name: 1 }
-      );
+      const totalSubscribers = await CourseCollection.aggregate([
+        {
+          $project: {
+            course_name: 1,
+            totalSubscribed: 1,
+          },
+        },
+        {
+          $sort: { totalSubscribed: -1 }, // Sort by totalSubscribed in descending order
+        },
+        {
+          $limit: 2, // Limit to the top 2 results
+        },
+      ]);
 
       console.log("total", totalSubscribers);
 
+      const totalSolvedProblem = await ProblemCollection.aggregate([
+        {
+          $project: {
+            title: 1,
+            count: 1,
+          },
+        },
+        {
+          $sort: { count: -1 },
+        },
+        {
+          $limit: 3,
+        },
+      ]);
+
+      console.log("solved", totalSolvedProblem);
+
       if (userGraphs && tutorGraphs) {
-        return { userGraphs, tutorGraphs, totalSubscribers };
+        return {
+          userGraphs,
+          tutorGraphs,
+          totalSubscribers,
+          totalSolvedProblem,
+        };
       } else {
         return null;
       }

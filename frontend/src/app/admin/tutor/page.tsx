@@ -84,8 +84,8 @@ const TutorPage = () => {
       <SpinnerWrapper>
         <AdminSidePanel />
         {allTutors && allTutors.length > 0 ? (
-          <div className="relative items-center justify-center overflow-x-auto top-1 shadow-md sm:rounded-lg">
-            <table className="w-full max-w-4xl mx-auto mt-6 text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+          <div className="relative ml-[10px] mt-[25px] sm:ml-[50px] md:ml-[100px] lg:ml-[500px] w-full max-w-[1000px] mx-auto items-center justify-center overflow-x-auto shadow-md sm:rounded-lg">
+            <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
               <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
                   <th scope="col" className="p-4"></th>

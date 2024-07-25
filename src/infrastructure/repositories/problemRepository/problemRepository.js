@@ -72,6 +72,7 @@ const problemRepository = {
         constraints: data.constraints,
         mainCode: mainCode,
         clientCode: clientCode,
+        count: 0,
       });
 
       let savedProblem = await problemData.save();

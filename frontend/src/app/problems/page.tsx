@@ -1,7 +1,5 @@
-// file to show all the problems in user side
 "use client";
 
-// importing the required modules
 import axios from "axios";
 import React, { useEffect, useLayoutEffect, useState } from "react";
 import dotenv from "dotenv";
@@ -19,10 +17,18 @@ interface Category {
   category_name: string;
 }
 
+interface Problem {
+  _id: string;
+  title: string;
+  difficulty: string;
+  category: string;
+  premium: boolean;
+}
+
 const Problems = () => {
   const isAuthorized = AppState((state) => state.isAuthorized);
   const showProblems = ProblemState((state) => state.showProblems);
-  const problems = ProblemState((state) => state.problems);
+  const problems = ProblemState((state) => state.problems) as Problem[];
   const [loading, setLoading] = useState(true);
   const [difficulty, setDifficulty] = useState<string[]>([]);
   const [category, setCategory] = useState<Category[]>([]);
@@ -30,6 +36,7 @@ const Problems = () => {
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
+  const [filteredProblems, setFilteredProblems] = useState<Problem[]>([]);
 
   const router = useRouter();
 
@@ -94,6 +101,29 @@ const Problems = () => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    // Filter the problems based on the selected category and difficulty
+    const filterProblems = () => {
+      let filtered = problems;
+
+      if (selectedCategory) {
+        filtered = filtered.filter(
+          (problem) => problem.category === selectedCategory
+        );
+      }
+
+      if (selectedDifficulty) {
+        filtered = filtered.filter(
+          (problem) => problem.difficulty === selectedDifficulty
+        );
+      }
+
+      setFilteredProblems(filtered);
+    };
+
+    filterProblems();
+  }, [selectedCategory, selectedDifficulty, problems]);
+
   if (loading) {
     return (
       <SpinnerWrapper>
@@ -105,14 +135,14 @@ const Problems = () => {
   // Get current problems
   const indexOfLastProblem = currentPage * itemsPerPage;
   const indexOfFirstProblem = indexOfLastProblem - itemsPerPage;
-  const currentProblems = problems?.slice(
+  const currentProblems = filteredProblems?.slice(
     indexOfFirstProblem,
     indexOfLastProblem
   );
 
   // Change page
   const nextPage = () => {
-    if (currentPage < Math.ceil(problems.length / itemsPerPage)) {
+    if (currentPage < Math.ceil(filteredProblems.length / itemsPerPage)) {
       setCurrentPage(currentPage + 1);
     }
   };
@@ -195,7 +225,7 @@ const Problems = () => {
                     >
                       <td className="px-6 py-4">{index + 1}</td>
                       <td
-                        className="px-6 py-4"
+                        className="px-6 py-4 text-start"
                         style={{
                           width: "300px",
                           whiteSpace: "nowrap",
@@ -253,12 +283,14 @@ const Problems = () => {
                 <button
                   onClick={nextPage}
                   className={`px-4 py-2 mx-1 rounded ${
-                    currentPage === Math.ceil(problems.length / itemsPerPage)
+                    currentPage ===
+                    Math.ceil(filteredProblems.length / itemsPerPage)
                       ? "bg-gray-300 cursor-not-allowed"
                       : "bg-blue-500 text-white"
                   }`}
                   disabled={
-                    currentPage === Math.ceil(problems.length / itemsPerPage)
+                    currentPage ===
+                    Math.ceil(filteredProblems.length / itemsPerPage)
                   }
                 >
                   Next

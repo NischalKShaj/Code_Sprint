@@ -79,9 +79,10 @@ const UserPage = () => {
     <div>
       <SpinnerWrapper>
         <AdminSidePanel />
+
         {allUser && allUser.length > 0 ? (
-          <div className="relative items-center justify-center overflow-x-auto shadow-md sm:rounded-lg">
-            <table className="w-full max-w-4xl mx-auto text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+          <div className="relative ml-[10px] mt-[25px] sm:ml-[50px] md:ml-[100px] lg:ml-[500px] w-full max-w-[1000px] mx-auto items-center justify-center overflow-x-auto shadow-md sm:rounded-lg">
+            <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
               <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
                   <th scope="col" className="p-4"></th>
@@ -154,7 +155,7 @@ const UserPage = () => {
                 ))}
               </tbody>
             </table>
-            <div className="flex justify-center mt-4">
+            <div className="flex flex-col sm:flex-row justify-center mt-4">
               <button
                 onClick={() => handlePageChange(currentPage - 1)}
                 disabled={currentPage === 1}
@@ -162,22 +163,24 @@ const UserPage = () => {
               >
                 Previous
               </button>
-              {Array.from(
-                { length: Math.ceil(allUser.length / usersPerPage) },
-                (_, index) => (
-                  <button
-                    key={index}
-                    onClick={() => handlePageChange(index + 1)}
-                    className={`px-4 py-2 mx-1 ${
-                      currentPage === index + 1
-                        ? "bg-blue-700 text-white"
-                        : "bg-blue-500 text-white"
-                    } rounded`}
-                  >
-                    {index + 1}
-                  </button>
-                )
-              )}
+              <div className="flex flex-wrap gap-2">
+                {Array.from(
+                  { length: Math.ceil(allUser.length / usersPerPage) },
+                  (_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => handlePageChange(index + 1)}
+                      className={`px-4 py-2 mx-1 ${
+                        currentPage === index + 1
+                          ? "bg-blue-700 text-white"
+                          : "bg-blue-500 text-white"
+                      } rounded`}
+                    >
+                      {index + 1}
+                    </button>
+                  )
+                )}
+              </div>
               <button
                 onClick={() => handlePageChange(currentPage + 1)}
                 disabled={

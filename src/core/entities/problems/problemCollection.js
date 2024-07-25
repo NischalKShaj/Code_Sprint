@@ -43,6 +43,10 @@ const problems = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  count: {
+    type: Number,
+    default: 0,
+  },
 });
 
 module.exports = new mongoose.model("problem", problems);

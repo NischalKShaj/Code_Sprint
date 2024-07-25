@@ -47,6 +47,7 @@ const AdminSidePanel = () => {
           email: user.email,
           profileImage: user.profileImage,
           block: user.blocked,
+          isOnline: user.isOnline,
         }));
 
         console.log("Formatted Data:", formattedData);

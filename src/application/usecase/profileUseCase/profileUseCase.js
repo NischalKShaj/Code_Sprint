@@ -84,6 +84,20 @@ const profileUseCase = {
       return { success: false, data: error.message };
     }
   },
+
+  // use case for getting the streak
+  getStreak: async (id) => {
+    try {
+      const result = await profileRepository.getStreak(id);
+      if (result) {
+        return { success: true, data: result };
+      } else {
+        return { success: false, data: result };
+      }
+    } catch (error) {
+      return { success: false, data: error.message };
+    }
+  },
 };
 
 module.exports = profileUseCase;

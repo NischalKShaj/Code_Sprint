@@ -9,6 +9,7 @@ import TutorBarGraph from "@/components/graph/TutorBarGraph";
 import { AppState } from "@/app/store";
 import { useRouter } from "next/navigation";
 import CourseBarGraph from "@/components/graph/CourseBarGraph";
+import ProblemGraph from "@/components/graph/ProblemGraph";
 
 const AdminDashboard = () => {
   const isAdmin = AppState((state) => state.isAdmin);
@@ -43,9 +44,12 @@ const AdminDashboard = () => {
             <TutorBarGraph />
           </div>
         </div>
-        <div className="mt-8 mx-4 lg:mx-[150px]">
-          <div className="min-w-[300px]  ml-[350px] mr-[150px] lg:min-w-[350px]">
+        <div className="flex flex-wrap mt-[50px]  mx-4 lg:mx-[150px] gap-4">
+          <div className="flex-1 min-w-[300px]  ml-[350px] mr-[150px] lg:min-w-[350px]">
             <CourseBarGraph />
+          </div>
+          <div className="flex-1 min-w-[300px] lg:min-w-[350px]">
+            <ProblemGraph />
           </div>
         </div>
       </SpinnerWrapper>

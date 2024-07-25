@@ -1,7 +1,19 @@
 // file to create the schema for the user
 const mongoose = require("mongoose");
 
-// creating schema for the database
+// creating the schema for the daily problem
+const dailyProblemSchema = new mongoose.Schema({
+  problemId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "problem",
+  },
+  date: {
+    type: Date,
+    required: true,
+  },
+});
+
+// creating schema for the user
 const users = new mongoose.Schema(
   {
     username: {
@@ -45,13 +57,11 @@ const users = new mongoose.Schema(
         default: [],
       },
     ],
-    dailyProblems: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "problem",
-        default: [],
-      },
-    ],
+    dailyProblems: [dailyProblemSchema],
+    streak: {
+      type: Number,
+      default: 0,
+    },
     otp: {
       type: String,
     },

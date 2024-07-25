@@ -92,10 +92,10 @@ const Header = () => {
           />
         </Link>
 
-        {(pathname === "/course" || pathname === "/problems") && (
-          <div className="flex flex-col sm:flex-row items-center sm:items-start sm:ml-6 mt-4 sm:mt-0">
+        {pathname === "/course" && (
+          <div className="flex flex-col sm:flex-row items-center sm:ml-6 mt-4 sm:mt-0 w-full sm:w-auto flex-wrap relative">
             <button
-              className="button bg-gray-50 text-white font-bold py-2 px-4 rounded-3xl"
+              className="absolute left-0 top-1/2 transform -translate-y-1/2 ml-3 bg-gray-50 text-white font-bold py-2 px-4 rounded-3xl"
               onClick={handleSearch}
             >
               <span>
@@ -113,14 +113,14 @@ const Header = () => {
               type="text"
               id="search"
               placeholder="Search anything..."
-              className="p-4 bg-gray-50 border-gray-300 rounded-3xl w-[550px] h-10 pl-16 pr-3 mt-4 sm:mt-0 sm:ml-3"
+              className="p-4 bg-gray-50 border-gray-300 rounded-3xl w-full sm:w-[550px] h-10 pl-16 pr-3 mt-4 sm:mt-0"
               value={query}
               onChange={handleChange}
+              style={{ maxWidth: "100%" }}
             />
           </div>
         )}
-
-        <ul className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-20 items-center justify-center text-lg mx-5 mt-4 sm:mt-0">
+        <ul className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-20 items-center justify-center text-lg mx-5 mt-4 sm:mt-0 w-full sm:w-auto flex-wrap">
           <li>
             <Link href="/course">Course</Link>
           </li>
@@ -143,9 +143,9 @@ const Header = () => {
           </li>
         </ul>
 
-        <div className="flex flex-col sm:flex-row items-center mt-4 sm:mt-0">
+        <div className="flex flex-col sm:flex-row items-center mt-4 sm:mt-0 w-full sm:w-auto flex-wrap">
           {authorized || session ? (
-            <div className="flex items-center">
+            <div className="flex items-center w-full sm:w-auto justify-between sm:justify-start">
               <Link
                 href={`/profile/${currentUser.role}`}
                 className="mt-4 sm:mt-0 mx-8 text-lg"
