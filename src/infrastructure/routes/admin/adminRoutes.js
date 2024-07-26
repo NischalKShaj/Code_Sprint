@@ -12,6 +12,7 @@ const bannerController = require("../../../adapters/controllers/bannerController
 const payoutController = require("../../../adapters/controllers/payoutController/payoutController");
 const categoryController = require("../../../adapters/controllers/categoryController/categoryController");
 const problemController = require("../../../adapters/controllers/problemController/problemController");
+const courseController = require("../../../adapters/controllers/courseController/courseController");
 
 // defining all the required routes
 
@@ -131,6 +132,12 @@ router.get(
   authenticateAdminJwt,
   problemController.showDailyProblems
 );
+
+// router for getting all the courses
+router.get("/all-courses", authenticateAdminJwt, courseController.getAllCourse);
+
+// router for getting the particular course
+router.get("/courses/:id", authenticateAdminJwt, courseController.getCourse);
 
 // router for logging out
 router.get("/logout", adminController.adminLogout);

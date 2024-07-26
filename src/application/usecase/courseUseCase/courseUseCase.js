@@ -118,6 +118,35 @@ const courseUseCase = {
       return { success: false, data: error.message };
     }
   },
+
+  // use case for showing all the courses in the admin side
+  getAllCourse: async () => {
+    try {
+      const courses = await courseRepository.getAllCourse();
+      if (courses.length > 0) {
+        return { success: true, data: courses };
+      } else {
+        return { success: false, data: "No courses found" };
+      }
+    } catch (error) {
+      console.error("Error in findAllCourses use case:", error);
+      return { success: false, data: "Internal server error" };
+    }
+  },
+
+  // use case for getting the specific course for showing in the admin side
+  getCourse: async (courseId) => {
+    try {
+      const result = await courseRepository.getCourse(courseId);
+      if (result) {
+        return { success: true, data: result };
+      } else {
+        return { success: true, data: result };
+      }
+    } catch (error) {
+      return { success: false, data: error.message };
+    }
+  },
 };
 
 module.exports = courseUseCase;

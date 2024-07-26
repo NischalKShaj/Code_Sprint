@@ -6,6 +6,7 @@ const router = express.Router();
 const {
   authenticateUserJwt,
 } = require("../../../adapters/middleware/userAuth");
+const upload = require("../../../adapters/middleware/multer");
 const messageController = require("../../../adapters/controllers/messageController/messageController");
 
 // creating the routes for the message

@@ -225,6 +225,29 @@ const courseRepository = {
       throw error;
     }
   },
+
+  // method for showing all the courses in the admin side
+  getAllCourse: async () => {
+    try {
+      const courses = await CourseCollection.find();
+      return courses;
+    } catch (error) {
+      console.error("Error in findAllCourses repository:", error);
+      throw error;
+    }
+  },
+
+  // method for showing the showing the course in the admin side
+  getCourse: async (courseId) => {
+    try {
+      const course = await CourseCollection.findById({ _id: courseId });
+      if (course) {
+        return course;
+      } else null;
+    } catch (error) {
+      throw error;
+    }
+  },
 };
 
 module.exports = courseRepository;

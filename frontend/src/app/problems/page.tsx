@@ -1,5 +1,7 @@
+// file for showing problems
 "use client";
 
+// importing required modules
 import axios from "axios";
 import React, { useEffect, useLayoutEffect, useState } from "react";
 import dotenv from "dotenv";

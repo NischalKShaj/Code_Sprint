@@ -176,6 +176,35 @@ const courseController = {
       res.status(500).json(error.message);
     }
   },
+
+  // controller for getting all the courses
+  getAllCourse: async (req, res) => {
+    try {
+      const response = await courseUseCase.getAllCourse();
+      if (response.success) {
+        res.status(200).json(response.data);
+      } else {
+        res.status(404).json(response.data);
+      }
+    } catch (error) {
+      res.status(500).json(error.message);
+    }
+  },
+
+  // controller for getting the specific course
+  getCourse: async (req, res) => {
+    try {
+      const courseId = req.params.id;
+      const result = await courseUseCase.getCourse(courseId);
+      if (result.success) {
+        res.status(202).json(result.data);
+      } else {
+        res.status(400).json(result.data);
+      }
+    } catch (error) {
+      res.status(500).json(error.message);
+    }
+  },
 };
 
 module.exports = courseController;
