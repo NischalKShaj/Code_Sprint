@@ -70,7 +70,7 @@ const DailyProblem = () => {
         <AdminSidePanel />
         <div className="flex-1 ml-[220px] flex justify-center mt-[25px] px-4 sm:px-6">
           {dailyProblems && dailyProblems.length > 0 ? (
-            <div className="relative overflow-x-auto shadow-md sm:rounded-lg w-full">
+            <div className="relative overflow-x-auto shadow-md sm:rounded-lg w-[1000px]">
               <table className="min-w-[1000px] text-sm text-center rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                   <tr>

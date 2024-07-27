@@ -376,7 +376,7 @@ const Profile = () => {
                       <td className="w-4 p-4">{index + 1}</td>
                       <td className="w-4 p-4">
                         <Link
-                          className="text-black"
+                          className="text-black hover:text-blue-700"
                           href={`/problems/${problem._id}`}
                         >
                           {problem.title}

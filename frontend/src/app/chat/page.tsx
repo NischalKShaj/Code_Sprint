@@ -264,7 +264,7 @@ const Chat = () => {
               socket={socket}
             />
           ) : (
-            <div className="chat-placeholder w-[calc(100%-50rem)] ml-[30rem] mt-10 h-[450px] flex items-center justify-center p-4 bg-gray-100 rounded-lg">
+            <div className="chat-placeholder w-[calc(100%-50rem)] mb-10 ml-[30rem] mt-10 h-[450px] flex items-center justify-center p-4 bg-gray-100 rounded-lg">
               <h3 className="text-center text-gray-500">Start conversation</h3>
             </div>
           )}

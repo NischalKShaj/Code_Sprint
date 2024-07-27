@@ -187,28 +187,34 @@ const profileRepository = {
         throw new Error("user not found");
       }
 
-      // for getting todays date
+      // For getting today's date at midnight
       const today = new Date();
       today.setUTCHours(0, 0, 0, 0);
 
-      // for getting todays date
+      // For getting yesterday's date at midnight
       const yesterday = new Date(today);
       yesterday.setUTCDate(today.getUTCDate() - 1);
 
       // Retrieve all daily problems for the user
       const dailyProblems = user.dailyProblems;
 
-      // checking whether there was any submission today
-      const hasSubmissionToday = dailyProblems.some((entry) => {
-        const submissionDate = new Date(entry.date);
-        return submissionDate.getTime() === today.getTime();
-      });
+      // Function to check if there was any submission on a specific date
+      const hasSubmissionOnDate = (date) => {
+        return dailyProblems.some((entry) => {
+          const submissionDate = new Date(entry.date);
+          submissionDate.setUTCHours(0, 0, 0, 0);
+          return submissionDate.getTime() === date.getTime();
+        });
+      };
 
-      // checking whether there was any submission yesterday
-      const hasSubmissionYesterday = dailyProblems.some((entry) => {
-        const submissionDate = new Date(entry.date);
-        return submissionDate.getTime() === yesterday.getTime();
-      });
+      // Checking whether there was any submission today
+      const hasSubmissionToday = hasSubmissionOnDate(today);
+
+      // Checking whether there was any submission yesterday
+      const hasSubmissionYesterday = hasSubmissionOnDate(yesterday);
+
+      console.log("today", hasSubmissionToday);
+      console.log("yesterday", hasSubmissionYesterday);
 
       let newStreak;
 
@@ -219,7 +225,11 @@ const profileRepository = {
           newStreak = user.streak;
         }
       } else {
-        newStreak = 0;
+        if (hasSubmissionToday) {
+          newStreak = 1;
+        } else {
+          newStreak = 0;
+        }
       }
 
       user.streak = newStreak;

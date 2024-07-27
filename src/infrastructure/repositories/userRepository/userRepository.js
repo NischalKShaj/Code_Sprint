@@ -331,12 +331,15 @@ const userRepository = {
             problemId: id,
             date: new Date(),
           };
+          console.log("daily problem entry", dailyProblemEntry);
           // saving the daily problem
           user.dailyProblems.push(dailyProblemEntry);
           // updating the streak
           user.streak += 1;
           await user.save();
         }
+
+        console.log("user daily problems", user);
 
         if (!problemExist) {
           user.problems.push(id);
