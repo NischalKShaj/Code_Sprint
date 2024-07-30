@@ -16,7 +16,7 @@ jobs:
         run: docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
 
       - name: Build Docker Image
-        run: docker build -t nischalkshaj/codesprint .
+        run: docker build -t nischalkshaj/codesprint -f ./Dockerfile.backend .
 
       - name: Publish Image to Docker Hub
         run: docker push nischalkshaj/codesprint:latest
