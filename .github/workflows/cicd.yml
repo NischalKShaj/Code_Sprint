@@ -23,7 +23,7 @@ jobs:
             ${{ runner.os }}-node-
 
       - name: Login to Docker Hub
-        run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
       - name: Build Backend Docker Image
         run: docker build -t nischalkshaj/codesprint/backend:latest -f ./Dockerfile.backend .
@@ -48,10 +48,10 @@ jobs:
         run: docker pull nischalkshaj/codesprint/frontend:latest
 
       - name: Verify Backend Docker Image
-        run: docker images nischalkshaj/codesprint/backend:latest || exit 1
+        run: docker images -q nischalkshaj/codesprint/backend:latest || exit 1
 
       - name: Verify Frontend Docker Image
-        run: docker images nischalkshaj/codesprint/frontend:latest || exit 1
+        run: docker images -q nischalkshaj/codesprint/frontend:latest || exit 1
 
       - name: Stop and Remove Existing Backend Container
         run: |
@@ -98,4 +98,4 @@ jobs:
         run: docker logs codesprint-frontend-container
 
       - name: Clean Up Docker System
-        run: docker system prune -f
+        run: docker system prune -f --all --volumes
