@@ -47,7 +47,6 @@ jobs:
           -e REGION='${{ secrets.REGION }}' \
           -e BUCKET_NAME='${{ secrets.BUCKET_NAME }}' \
           -e SQS_QUEUE_URL='${{ secrets.SQS_QUEUE_URL }}' \
-          -e JUDGE0='http://3.106.119.26:2358' \
           nischalkshaj/codesprint:latest
 
       - name: Check Logs if Container Fails
