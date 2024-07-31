@@ -18,15 +18,22 @@ jobs:
       - name: Build Docker Image
         run: docker build -t nischalkshaj/codesprint -f ./Dockerfile.backend .
 
-      - name: Publish Image to Docker Hub
+      - name: Publish Docker Image to Docker Hub
         run: docker push nischalkshaj/codesprint:latest
 
   deploy:
     needs: build
     runs-on: self-hosted
     steps:
-      - name: Pull Image from Docker Hub
+      - name: Pull Docker Image from Docker Hub
         run: docker pull nischalkshaj/codesprint:latest
+
+      - name: Stop and Remove Existing Container
+        run: |
+          if [ $(docker ps -q -f name=codesprint-app-container) ]; then
+            docker stop codesprint-app-container
+            docker rm codesprint-app-container
+          fi
 
       - name: Run Docker Container
         run: docker run -d -p 4000:4000 --name codesprint-app-container -e MONGO_PASSWORD='${{secrets.MONGO_PASSWORD}}' nischalkshaj/codesprint:latest

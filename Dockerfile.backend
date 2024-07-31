@@ -6,15 +6,16 @@ WORKDIR /app
 
 # Copy package.json and package-lock.json to the container's working directory
 COPY package.json ./
+COPY package-lock.json ./
 
 # Install dependencies inside the container
 RUN npm install
 
-# Copy the backend application code into /app/backend inside the container
-COPY src /app/backend
+# Copy the backend application code into the container
+COPY src /app/src
 
 # Expose port 4000 for the backend service
 EXPOSE 4000
 
 # Command to run the backend application
-CMD ["nodemon", "/src/infrastructure/server/app.js"]
+CMD ["nodemon", "/app/src/infrastructure/server/app.js"]
