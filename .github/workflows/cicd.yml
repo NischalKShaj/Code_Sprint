@@ -16,16 +16,13 @@ jobs:
         run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build Backend Docker Image
-        run: docker build -t nischalkshaj/codesprint -f ./Dockerfile.backend .
+        run: docker build -t nischalkshaj/codesprint/backend -f ./Dockerfile.backend .
 
       - name: Build Frontend Docker Image
-        run:
-          docker build -t nischalkshaj/codesprint/frontend -f ./Dockerfile.frontend \
-          --build-arg NEXT_APP_ENV='production' \
-          --build-arg NEXT_PUBLIC_SERVER_URL='${{ secrets.NEXT_PUBLIC_SERVER_URL }}' .
+        run: docker build -t nischalkshaj/codesprint/frontend -f ./Dockerfile.frontend --build-arg NEXT_APP_ENV='production' --build-arg NEXT_PUBLIC_SERVER_URL='${{ secrets.NEXT_PUBLIC_SERVER_URL }}' .
 
       - name: Publish Backend Docker Image to Docker Hub
-        run: docker push nischalkshaj/codesprint:latest
+        run: docker push nischalkshaj/codesprint/backend:latest
 
       - name: Publish Frontend Docker Image to Docker Hub
         run: docker push nischalkshaj/codesprint/frontend:latest
@@ -35,29 +32,22 @@ jobs:
     runs-on: self-hosted
     steps:
       - name: Pull Backend Docker Image from Docker Hub
-        run: docker pull nischalkshaj/codesprint:latest
+        run: docker pull nischalkshaj/codesprint/backend:latest
 
       - name: Pull Frontend Docker Image from Docker Hub
         run: docker pull nischalkshaj/codesprint/frontend:latest
 
       - name: Stop and Remove Existing Backend Container
         run: |
-          if [ $(docker ps -q -f name=codesprint-app-container) ]; then
-            docker stop codesprint-app-container
-            docker rm codesprint-app-container
-          fi
-
-      - name: Stop and Remove Existing Frontend Container
-        run: |
-          if [ $(docker ps -q -f name=codesprint-frontend-container) ]; then
-            docker stop codesprint-frontend-container
-            docker rm codesprint-frontend-container
+          if [ $(docker ps -q -f name=codesprint-backend-container) ]; then
+            docker stop codesprint-backend-container
+            docker rm codesprint-backend-container
           fi
 
       - name: Run Backend Docker Container
         run: |
           docker run -d -p 4000:4000 \
-          --name codesprint-app-container \
+          --name codesprint-backend-container \
           -e NODE_ENV='production' \
           -e MONGODB_LOCAL_URI='mongodb://localhost:27017/code_sprint' \
           -e MONGODB_CLOUD_URI='${{ secrets.MONGODB_URI }}' \
@@ -66,7 +56,14 @@ jobs:
           -e REGION='${{ secrets.REGION }}' \
           -e BUCKET_NAME='${{ secrets.BUCKET_NAME }}' \
           -e SQS_QUEUE_URL='${{ secrets.SQS_QUEUE_URL }}' \
-          nischalkshaj/codesprint:latest
+          nischalkshaj/codesprint/backend:latest
+
+      - name: Stop and Remove Existing Frontend Container
+        run: |
+          if [ $(docker ps -q -f name=codesprint-frontend-container) ]; then
+            docker stop codesprint-frontend-container
+            docker rm codesprint-frontend-container
+          fi
 
       - name: Run Frontend Docker Container
         run: |
@@ -74,10 +71,10 @@ jobs:
           --name codesprint-frontend-container \
           nischalkshaj/codesprint/frontend:latest
 
-      - name: Check Backend Logs if Container Fails
+      - name: Check Logs if Backend Container Fails
         if: failure()
-        run: docker logs codesprint-app-container
+        run: docker logs codesprint-backend-container
 
-      - name: Check Frontend Logs if Container Fails
+      - name: Check Logs if Frontend Container Fails
         if: failure()
         run: docker logs codesprint-frontend-container

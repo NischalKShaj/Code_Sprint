@@ -1,15 +1,31 @@
 # Dockerfile.frontend
+
+# Stage 1: Build the Next.js application
 FROM node:18-alpine AS builder
 
 WORKDIR /app
 
+# Install dependencies
 COPY frontend/package.json frontend/package-lock.json ./
 RUN npm install
 
-COPY frontend ./
+# Copy the rest of the application files
+COPY frontend .
+
+# Build the application
 RUN npm run build
 
+# Stage 2: Serve the built application with Nginx
 FROM nginx:1.23-alpine
-COPY --from=builder /app/out /usr/share/nginx/html
+
+# Copy built files from the previous stage
+COPY --from=builder /app/.next /usr/share/nginx/html/_next
+COPY --from=builder /app/public /usr/share/nginx/html/public
+COPY --from=builder /app/static /usr/share/nginx/html/static
+COPY --from=builder /app/index.html /usr/share/nginx/html/index.html
+
+# Expose port 80 for Nginx
 EXPOSE 80
+
+# Start Nginx server
 CMD ["nginx", "-g", "daemon off;"]
