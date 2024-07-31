@@ -16,10 +16,10 @@ jobs:
         run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build Backend Docker Image
-        run: docker build -t nischalkshaj/codesprint/backend -f ./Dockerfile.backend .
+        run: docker build -t nischalkshaj/codesprint/backend:latest -f ./Dockerfile.backend .
 
       - name: Build Frontend Docker Image
-        run: docker build -t nischalkshaj/codesprint/frontend -f ./Dockerfile.frontend --build-arg NEXT_APP_ENV='production' --build-arg NEXT_PUBLIC_SERVER_URL='${{ secrets.NEXT_PUBLIC_SERVER_URL }}' .
+        run: docker build -t nischalkshaj/codesprint/frontend:latest -f ./Dockerfile.frontend --build-arg NEXT_APP_ENV='production' --build-arg NEXT_PUBLIC_SERVER_URL='${{ secrets.NEXT_PUBLIC_SERVER_URL }}' .
 
       - name: Publish Backend Docker Image to Docker Hub
         run: docker push nischalkshaj/codesprint/backend:latest
