@@ -31,11 +31,17 @@ jobs:
       - name: Build Frontend Docker Image
         run: docker build -t nischalkshaj/codesprint/frontend:latest -f ./Dockerfile.frontend --build-arg NEXT_APP_ENV='production' --build-arg NEXT_PUBLIC_SERVER_URL='${{ secrets.NEXT_PUBLIC_SERVER_URL }}' .
 
+      - name: Verify Backend Docker Image
+        run: docker images -q nischalkshaj/codesprint/backend:latest || exit 1
+
+      - name: Verify Frontend Docker Image
+        run: docker images -q nischalkshaj/codesprint/frontend:latest || exit 1
+
       - name: Publish Backend Docker Image to Docker Hub
-        run: docker push nischalkshaj/codesprint/backend:latest
+        run: docker push nischalkshaj/codesprint/backend:latest || exit 1
 
       - name: Publish Frontend Docker Image to Docker Hub
-        run: docker push nischalkshaj/codesprint/frontend:latest
+        run: docker push nischalkshaj/codesprint/frontend:latest || exit 1
 
   deploy:
     needs: build
