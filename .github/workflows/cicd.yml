@@ -37,3 +37,7 @@ jobs:
 
       - name: Run Docker Container
         run: docker run -d -p 4000:4000 --name codesprint-app-container -e MONGO_PASSWORD='${{secrets.MONGO_PASSWORD}}' nischalkshaj/codesprint:latest
+
+      - name: Check Logs if Container Fails
+        if: failure()
+        run: docker logs codesprint-app-container
