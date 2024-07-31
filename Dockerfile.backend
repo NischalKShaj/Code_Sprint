@@ -14,7 +14,7 @@ RUN npm install
 COPY . .
 
 # Copy the .env file
-COPY .env .env
+COPY .env ./
 
 # Expose port 4000 for the backend service
 EXPOSE 4000
