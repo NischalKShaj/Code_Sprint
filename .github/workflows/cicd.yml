@@ -15,27 +15,46 @@ jobs:
       - name: Login to Docker Hub
         run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build Docker Image
+      - name: Build Backend Docker Image
         run: docker build -t nischalkshaj/codesprint -f ./Dockerfile.backend .
 
-      - name: Publish Docker Image to Docker Hub
+      - name: Build Frontend Docker Image
+        run:
+          docker build -t nischalkshaj/codesprint/frontend -f ./Dockerfile.frontend \
+          --build-arg NEXT_APP_ENV='production' \
+          --build-arg NEXT_PUBLIC_SERVER_URL='${{ secrets.NEXT_PUBLIC_SERVER_URL }}' .
+
+      - name: Publish Backend Docker Image to Docker Hub
         run: docker push nischalkshaj/codesprint:latest
+
+      - name: Publish Frontend Docker Image to Docker Hub
+        run: docker push nischalkshaj/codesprint/frontend:latest
 
   deploy:
     needs: build
     runs-on: self-hosted
     steps:
-      - name: Pull Docker Image from Docker Hub
+      - name: Pull Backend Docker Image from Docker Hub
         run: docker pull nischalkshaj/codesprint:latest
 
-      - name: Stop and Remove Existing Container
+      - name: Pull Frontend Docker Image from Docker Hub
+        run: docker pull nischalkshaj/codesprint/frontend:latest
+
+      - name: Stop and Remove Existing Backend Container
         run: |
           if [ $(docker ps -q -f name=codesprint-app-container) ]; then
             docker stop codesprint-app-container
             docker rm codesprint-app-container
           fi
 
-      - name: Run Docker Container
+      - name: Stop and Remove Existing Frontend Container
+        run: |
+          if [ $(docker ps -q -f name=codesprint-frontend-container) ]; then
+            docker stop codesprint-frontend-container
+            docker rm codesprint-frontend-container
+          fi
+
+      - name: Run Backend Docker Container
         run: |
           docker run -d -p 4000:4000 \
           --name codesprint-app-container \
@@ -49,6 +68,16 @@ jobs:
           -e SQS_QUEUE_URL='${{ secrets.SQS_QUEUE_URL }}' \
           nischalkshaj/codesprint:latest
 
-      - name: Check Logs if Container Fails
+      - name: Run Frontend Docker Container
+        run: |
+          docker run -d -p 80:80 \
+          --name codesprint-frontend-container \
+          nischalkshaj/codesprint/frontend:latest
+
+      - name: Check Backend Logs if Container Fails
         if: failure()
         run: docker logs codesprint-app-container
+
+      - name: Check Frontend Logs if Container Fails
+        if: failure()
+        run: docker logs codesprint-frontend-container
