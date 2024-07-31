@@ -13,9 +13,6 @@ RUN npm install
 # Copy the backend application code into /app inside the container
 COPY . .
 
-# Copy the .env file
-COPY .env ./
-
 # Expose port 4000 for the backend service
 EXPOSE 4000
 
