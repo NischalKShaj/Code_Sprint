@@ -39,7 +39,9 @@ jobs:
         run: |
           docker run -d -p 4000:4000 \
           --name codesprint-app-container \
-          -e MONGODB_URI='${{ secrets.MONGODB_URI }}' \
+          -e NODE_ENV='production' \
+          -e MONGODB_LOCAL_URI='mongodb://localhost:27017/code_sprint' \
+          -e MONGODB_CLOUD_URI='${{ secrets.MONGODB_URI }}' \
           -e ACCESS_KEY='${{ secrets.ACCESS_KEY }}' \
           -e BUCKET_SECRET_KEY='${{ secrets.BUCKET_SECRET_KEY }}' \
           -e REGION='${{ secrets.REGION }}' \
