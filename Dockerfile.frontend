@@ -19,10 +19,14 @@ FROM nginx:1.23-alpine
 # Remove default nginx configuration
 RUN rm /etc/nginx/conf.d/default.conf
 
+# Copy custom nginx configuration
+COPY nginx.conf /etc/nginx/nginx.conf
+
 # Copy built files from the previous stage
 COPY --from=builder /app/.next /usr/share/nginx/html/_next
 COPY --from=builder /app/public /usr/share/nginx/html/public
-COPY --from=builder /app/static /usr/share/nginx/html/static
+# Remove or comment out this line if `static` directory is not used
+# COPY --from=builder /app/static /usr/share/nginx/html/static
 
 # Expose port 80 for Nginx
 EXPOSE 80
