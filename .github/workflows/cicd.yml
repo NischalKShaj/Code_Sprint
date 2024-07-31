@@ -39,11 +39,11 @@ jobs:
         run: |
           docker run -d -p 4000:4000 \
           --name codesprint-app-container \
-          -e MONGO_PASSWORD='${{ secrets.MONGO_PASSWORD }}' \
-          -e AWS_ACCESS_KEY_ID='${{ secrets.ACCESS_KEY }}' \
-          -e AWS_SECRET_ACCESS_KEY='${{ secrets.BUCKET_SECRET_KEY }}' \
-          -e AWS_REGION='${{ secrets.REGION }}' \
-          -e S3_BUCKET_NAME='${{ secrets.BUCKET_NAME }}' \
+          -e MONGO='${{ secrets.MONGO }}' \
+          -e ACCESS_KEY='${{ secrets.ACCESS_KEY }}' \
+          -e BUCKET_SECRET_KEY='${{ secrets.BUCKET_SECRET_KEY }}' \
+          -e REGION='${{ secrets.REGION }}' \
+          -e BUCKET_NAME='${{ secrets.BUCKET_NAME }}' \
           -e SQS_QUEUE_URL='${{ secrets.SQS_QUEUE_URL }}' \
           nischalkshaj/codesprint:latest
 
