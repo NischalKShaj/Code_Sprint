@@ -39,7 +39,7 @@ jobs:
         run: |
           docker run -d -p 4000:4000 \
           --name codesprint-app-container \
-          -e MONGODB='${{ secrets.MONGODB }}' \
+          -e MONGODB_URI='${{ secrets.MONGODB_URI }}' \
           -e ACCESS_KEY='${{ secrets.ACCESS_KEY }}' \
           -e BUCKET_SECRET_KEY='${{ secrets.BUCKET_SECRET_KEY }}' \
           -e REGION='${{ secrets.REGION }}' \
